@@ -9,9 +9,10 @@ import io.gatling.http.request.builder.HttpRequestBuilder.toActionBuilder
 
 class BasicSimulation extends Simulation {
 
+  // configs for all http requests
   val httpProtocol = http
-    .baseUrl("http://computer-database.gatling.io")
-    .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+    .baseUrl("http://computer-database.gatling.io") // base url
+    .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") // http headers
     .doNotTrackHeader("1")
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
@@ -19,10 +20,11 @@ class BasicSimulation extends Simulation {
 
   val headers_10 = Map("Content-Type" -> "application/x-www-form-urlencoded")
 
+  // scenario definition
   val scn = scenario("Scenario Name")
-    .exec(http("request_1")
-      .get("/"))
-    .pause(7)
+    .exec(http("request_1") // A HTTP request, named "request_1"
+      .get("/")) // GET method
+    .pause(7) // think time
     .exec(http("request_2")
       .get("/computers?f=macbook"))
     .pause(2)
@@ -55,5 +57,6 @@ class BasicSimulation extends Simulation {
       .formParam("discontinued", "")
       .formParam("company", "37"))
 
+  // set concurrency number of users
   setUp(scn.inject(atOnceUsers(1)).protocols(httpProtocol))
 }

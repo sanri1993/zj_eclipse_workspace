@@ -4,11 +4,14 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import scala.concurrent.duration._
 
+/**
+ * Looping
+ */
 class AdvancedSimulationStep04 extends Simulation {
 
   object Search {
 
-    val feeder = csv("search.csv").random
+    val feeder = csv("data/search.csv").random
 
     val search = exec(http("Home")
       .get("/"))

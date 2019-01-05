@@ -161,16 +161,16 @@
 					</executions>
 				</plugin>
 				<!-- gatling -->
-				<!-- run: mvn gatling:test -->
-				<!-- run: mvn gatling:test -Dgatling.simulationClass=gatling.demo.BasicSimulation -->
+				<!-- run: mvn clean gatling:test -->
+				<!-- run: mvn clean gatling:test -Dgatling.simulationClass=gatling.demo.BasicSimulation -->
 				<plugin>
 					<groupId>io.gatling</groupId>
 					<artifactId>gatling-maven-plugin</artifactId>
 					<version>${gatling-plugin.version}</version>
 					<configuration>
 						<simulationsFolder>src/test/scala</simulationsFolder>
-						<simulationClass>gatling.demo.BasicSimulation</simulationClass>
-						<resultsFolder>/Users/zhengjin/Downloads/tmp_files/gatling</resultsFolder>
+						<!-- <simulationClass>gatling.demo.BasicSimulation</simulationClass> -->
+						<resultsFolder>results/gatling</resultsFolder>
 					</configuration>
 				</plugin>
 			</plugins>

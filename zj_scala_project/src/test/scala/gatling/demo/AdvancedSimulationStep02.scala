@@ -4,6 +4,9 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import scala.concurrent.duration._
 
+/**
+ * Configure virtual users
+ */
 class AdvancedSimulationStep02 extends Simulation {
 
   object Search {

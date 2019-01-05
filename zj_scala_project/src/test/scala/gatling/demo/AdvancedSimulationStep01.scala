@@ -4,13 +4,17 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import scala.concurrent.duration._
 
+/**
+ * Isolate processes
+ */
 class AdvancedSimulationStep01 extends Simulation {
 
   // Let's split this big scenario into composable business processes,
   // like one would do with PageObject pattern with Selenium object are native Scala singletons
   object Search {
 
-    val search = exec(http("Home") // let's give proper names, they are displayed in the reports, and used as keys
+    // let's give proper names, they are displayed in the reports, and used as keys
+    val search = exec(http("Home")
       .get("/"))
       .pause(1) // let's set the pauses to 1 sec for demo purpose
       .exec(http("Search")

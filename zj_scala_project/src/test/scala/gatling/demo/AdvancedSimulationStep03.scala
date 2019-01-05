@@ -4,14 +4,21 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import scala.concurrent.duration._
 
+/**
+ * Use dynamic data with Feeders and Checks
+ */
 class AdvancedSimulationStep03 extends Simulation {
 
   object Search {
 
-    // We need dynamic data so that all users don't play the same and we end up with a behavior completely different from the live system (caching, JIT...)
-    // ==> Feeders!
+    // We need dynamic data so that all users don't play the same 
+    // and we end up with a behavior completely different from the live system (caching, JIT...) ==> Feeders!
 
-    val feeder = csv("search.csv").random // default is queue, so for this test, we use random to avoid feeder starvation
+    // files must be placed in src/main/resources or src/test/resources
+    
+    // default is queue, so for this test, we use random to avoid feeder starvation
+    // csv file with columns: searchCriterion, searchComputerName
+    val feeder = csv("data/search.csv").random
 
     val search = exec(http("Home")
       .get("/"))
