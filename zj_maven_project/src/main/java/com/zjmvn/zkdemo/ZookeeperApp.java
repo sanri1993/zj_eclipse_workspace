@@ -7,10 +7,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.KeeperException;
 
-public class ZkApp {
+public class ZookeeperApp {
 
 	private final static String TAG = ZookeeperLock.class.getSimpleName() + " => ";
-	private final static Logger logger = Logger.getLogger(ZkApp.class);
+	private final static Logger logger = Logger.getLogger(ZookeeperApp.class);
 
 	private static List<String> msgCache = new ArrayList<>(20);
 

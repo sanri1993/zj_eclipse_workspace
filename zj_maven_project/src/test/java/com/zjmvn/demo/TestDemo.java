@@ -7,10 +7,10 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestDemo01 {
+public class TestDemo {
 
-	private final static String TAG = TestDemo01.class.getSimpleName() + " => ";
-	private final static Logger logger = Logger.getLogger(TestDemo01.class);
+	private final static String TAG = TestDemo.class.getSimpleName() + " => ";
+	private final static Logger logger = Logger.getLogger(TestDemo.class);
 
 	@Test
 	public void testSample01() {

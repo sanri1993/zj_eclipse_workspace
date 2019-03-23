@@ -1,4 +1,4 @@
-package com.zjmvn.demo;
+package com.zjmvn.rtidb;
 
 import com._4paradigm.rtidb.client.GetFuture;
 import com._4paradigm.rtidb.client.PutFuture;
