@@ -24,12 +24,13 @@ import org.apache.log4j.Logger;
 public class WordCount {
 
 	private static final Logger logger = Logger.getLogger(WordCount.class);
-	
+
 	public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
 
 		private final static IntWritable one = new IntWritable(1);
 		private Text word = new Text();
 
+		@Override
 		public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter)
 				throws IOException {
 			String line = value.toString();
@@ -55,8 +56,23 @@ public class WordCount {
 	}
 
 	public static void main(String[] args) throws Exception {
+
+		// input:
+//		Hello World Bye World
+//		Hello Hadoop Goodbye Hadoop
+
+		// run cmd:
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCount tmp output
+
+		// output:
+//		< Bye, 1>
+//		< Goodbye, 1>
+//		< Hadoop, 2>
+//		< Hello, 2>
+//		< World, 2>
+
 		logger.info("hadoop WordCount is started.");
-		
+
 		JobConf conf = new JobConf(WordCount.class);
 		conf.setJobName("wordcount");
 
