@@ -16,6 +16,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<jmeter.version>5.0</jmeter.version>
+		<hadoop.version>3.2.0</hadoop.version>
 	</properties>
 
 	<dependencies>
@@ -24,6 +25,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
 		</dependency>
 
 		<dependency>
@@ -66,12 +72,29 @@
 			</exclusions>
 		</dependency>
 
+		<!-- hadoop -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>${hadoop.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${hadoop.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<version>${hadoop.version}</version>
+		</dependency>
+
+		<!-- 4paradigm -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
 			<version>3.6.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com._4paradigm</groupId>
 			<artifactId>rtidb-client</artifactId>
@@ -109,12 +132,12 @@
 									<exclude>com._4paradigm:*</exclude>
 								</excludes>
 							</artifactSet>
-							<finalName>zjMvnDemo</finalName>
+							<finalName>zj-mvn-demo</finalName>
 							<transformers>
-								<!-- set main -->
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.zjmvn.demo.App</mainClass>
+									<!-- <mainClass>com.zjmvn.demo.App</mainClass> -->
+									<mainClass>com.zjmvn.hadoop.WordCount</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
