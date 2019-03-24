@@ -16,6 +16,9 @@ run project:
 ```sh
 $ mvn package -Dmaven.test.skip=true
 $ java -jar zj-mvn-demo.jar
+
+# for hadoop-docker java1.7
+$ mvn clean package
 ```
 
 check files in archived jar:

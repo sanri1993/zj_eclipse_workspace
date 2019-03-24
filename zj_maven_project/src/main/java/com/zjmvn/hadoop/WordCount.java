@@ -19,9 +19,12 @@ import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.TextInputFormat;
 import org.apache.hadoop.mapred.TextOutputFormat;
+import org.apache.log4j.Logger;
 
 public class WordCount {
 
+	private static final Logger logger = Logger.getLogger(WordCount.class);
+	
 	public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
 
 		private final static IntWritable one = new IntWritable(1);
@@ -52,6 +55,8 @@ public class WordCount {
 	}
 
 	public static void main(String[] args) throws Exception {
+		logger.info("hadoop WordCount is started.");
+		
 		JobConf conf = new JobConf(WordCount.class);
 		conf.setJobName("wordcount");
 
@@ -65,11 +70,13 @@ public class WordCount {
 		conf.setInputFormat(TextInputFormat.class);
 		conf.setOutputFormat(TextOutputFormat.class);
 
-		FileInputFormat.setInputPaths(conf, new Path(args[0]));
-		FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+		for (String arg : args) {
+			logger.info("argument: " + arg);
+		}
+		FileInputFormat.setInputPaths(conf, new Path(args[1]));
+		FileOutputFormat.setOutputPath(conf, new Path(args[2]));
 
 		JobClient.runJob(conf);
-
 	}
 
 }
