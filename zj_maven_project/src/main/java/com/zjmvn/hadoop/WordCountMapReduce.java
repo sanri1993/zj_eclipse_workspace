@@ -52,7 +52,7 @@ public class WordCountMapReduce {
 //		Text4：today has good weather
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce tmp output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce wordcount/input wordcount/output
 
 		// output:
 //		good	5

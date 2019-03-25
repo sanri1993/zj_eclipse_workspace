@@ -62,7 +62,7 @@ public class WordCount {
 //		Hello Hadoop Goodbye Hadoop
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCount tmp output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCount input output
 
 		// output:
 //		< Bye, 1>
