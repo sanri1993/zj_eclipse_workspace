@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
 /**
  * 合并多个小文件
  */
-public class ManyToOne {
+public class ManyToOneMapReduce {
 
-	private static final Logger logger = Logger.getLogger(ManyToOne.class);
+	private static final Logger logger = Logger.getLogger(ManyToOneMapReduce.class);
 
 	private static class FileMapper extends Mapper<NullWritable, BytesWritable, Text, BytesWritable> {
 
@@ -58,7 +58,7 @@ public class ManyToOne {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(ManyToOne.class);
+		job.setJarByClass(ManyToOneMapReduce.class);
 		job.setMapperClass(FileMapper.class);
 
 		job.setMapOutputKeyClass(Text.class);

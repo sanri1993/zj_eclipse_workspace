@@ -13,9 +13,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class FlowCount {
+public class FlowCountMapReduce {
 
-	private static final Logger logger = Logger.getLogger(FlowCount.class);
+	private static final Logger logger = Logger.getLogger(FlowCountMapReduce.class);
 
 	private static class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> {
 
@@ -82,7 +82,7 @@ public class FlowCount {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(FlowCount.class);
+		job.setJarByClass(FlowCountMapReduce.class);
 		job.setMapperClass(FlowCountMapper.class);
 		job.setReducerClass(FlowCountReducer.class);
 

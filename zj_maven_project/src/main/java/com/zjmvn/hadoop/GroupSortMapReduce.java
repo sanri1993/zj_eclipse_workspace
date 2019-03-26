@@ -17,9 +17,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class GroupSort {
+public class GroupSortMapReduce {
 
-	private static final Logger logger = Logger.getLogger(WordCountMapReduce.class);
+	private static final Logger logger = Logger.getLogger(GroupSortMapReduce.class);
 
 	private static class MyGroupingComparator extends WritableComparator {
 
@@ -96,7 +96,7 @@ public class GroupSort {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(GroupSort.class);
+		job.setJarByClass(GroupSortMapReduce.class);
 		job.setMapperClass(SortMapper.class);
 		job.setReducerClass(SortReducer.class);
 

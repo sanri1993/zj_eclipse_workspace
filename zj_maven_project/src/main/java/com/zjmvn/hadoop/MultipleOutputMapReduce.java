@@ -15,9 +15,9 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.log4j.Logger;
 
-public class MultipleOutput {
+public class MultipleOutputMapReduce {
 
-	private static final Logger logger = Logger.getLogger(WordCountMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MultipleOutputMapReduce.class);
 
 	private static class MultipleOutputMapper extends Mapper<LongWritable, Text, Text, Text> {
 
@@ -79,7 +79,7 @@ public class MultipleOutput {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(MultipleOutput.class);
+		job.setJarByClass(MultipleOutputMapReduce.class);
 		job.setMapperClass(MultipleOutputMapper.class);
 		job.setReducerClass(MultipleOutputReducer.class);
 
