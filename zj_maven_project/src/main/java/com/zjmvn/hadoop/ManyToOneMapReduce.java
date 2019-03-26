@@ -7,7 +7,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -25,19 +24,11 @@ public class ManyToOneMapReduce {
 
 	private static class FileMapper extends Mapper<NullWritable, BytesWritable, Text, BytesWritable> {
 
-		private Text filenamekey;
-
-		@Override
-		public void setup(Context context) throws IOException, InterruptedException {
-			InputSplit split = context.getInputSplit();
-			String filename = ((FileSplit) split).getPath().getName();
-			this.filenamekey = new Text(filename);
-		}
-
 		@Override
 		public void map(NullWritable key, BytesWritable value, Context context)
 				throws IOException, InterruptedException {
-			context.write(this.filenamekey, value);
+			String filename = ((FileSplit) context.getInputSplit()).getPath().getName();
+			context.write(new Text(filename), value);
 		}
 	}
 

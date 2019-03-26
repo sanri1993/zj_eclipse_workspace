@@ -42,7 +42,7 @@ public class MyRecordReader extends RecordReader<NullWritable, BytesWritable> {
 				in = fs.open(file);
 				IOUtils.readFully(in, contents, 0, contents.length);
 				this.value.set(contents, 0, contents.length);
-				logger.info(String.format("reader %s, content %s", file.toString(), new String(contents)));
+				logger.info(String.format("reader for: %s, content: %s", file.toString(), new String(contents)));
 			} finally {
 				if (in != null) {
 					IOUtils.closeStream(in);
