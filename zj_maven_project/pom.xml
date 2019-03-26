@@ -140,7 +140,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.zjmvn.hadoop.GroupSort</mainClass>
+									<mainClass>com.zjmvn.hadoop.MultipleOutput</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

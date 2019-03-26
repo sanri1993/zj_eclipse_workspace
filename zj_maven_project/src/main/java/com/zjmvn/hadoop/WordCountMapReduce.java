@@ -18,7 +18,7 @@ public class WordCountMapReduce {
 
 	private static final Logger logger = Logger.getLogger(WordCountMapReduce.class);
 
-	public static class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+	private static class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -30,7 +30,7 @@ public class WordCountMapReduce {
 		}
 	}
 
-	public static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+	private static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 
 		@Override
 		public void reduce(Text key, Iterable<IntWritable> values, Context context)
@@ -52,8 +52,7 @@ public class WordCountMapReduce {
 //		Text4：today has good weather
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce
-		// wordcount/input wordcount/output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce wordcount/input wordcount/output
 
 		// output:
 //		good	5

@@ -25,7 +25,7 @@ public class WordCount {
 
 	private static final Logger logger = Logger.getLogger(WordCount.class);
 
-	public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
+	private static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
 
 		private final static IntWritable one = new IntWritable(1);
 		private Text word = new Text();
@@ -42,7 +42,7 @@ public class WordCount {
 		}
 	}
 
-	public static class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
+	private static class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
 
 		@Override
 		public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output,
