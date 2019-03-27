@@ -140,7 +140,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.zjmvn.hadoop.JoinMapReduce</mainClass>
+									<mainClass>com.zjmvn.hadoop.StepSecondMapReduce</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
