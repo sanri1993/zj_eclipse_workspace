@@ -66,7 +66,7 @@ public class StepSecondMapReduce {
 		// O  F,H,A,
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.StepSecondMapReduce first/output second/output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.StepSecondMapReduce first/output/part-r-0* second/output
 
 		// output:
 		// A-B  E C
