@@ -140,8 +140,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<!-- <mainClass>com.zjmvn.hadoop.WordCountMapReduce</mainClass> -->
-									<mainClass>com.zjmvn.hdfs.DeleteFileHdfs</mainClass>
+									<!-- <mainClass>com.zjmvn.demo.App</mainClass> -->
 								</transformer>
 							</transformers>
 						</configuration>

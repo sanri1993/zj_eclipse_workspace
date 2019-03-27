@@ -51,32 +51,32 @@ public class FlowCountMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-//		13726230501	200	1100
-//		13396230502	300	1200
-//		13897230503	400	1300
-//		13897230503	100	300
-//		13597230534	500	1400
-//		13597230534	300	1200
+		// 13726230501  200 1100
+		// 13396230502  300 1200
+		// 13897230503  400 1300
+		// 13897230503  100 300
+		// 13597230534  500 1400
+		// 13597230534  300 1200
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.FlowCount flowcount/input flowcount/output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.FlowCountMapReduce flowcount/input flowcount/output
 
 		// output:
 		// 5 partition
 		// bin/hdfs dfs -ls flowcount/output
-//		-rw-r--r--   1 root supergroup          0 2019-03-25 05:13 flowcount/output/_SUCCESS
-//		-rw-r--r--   1 root supergroup         26 2019-03-25 05:13 flowcount/output/part-r-00000
-//		-rw-r--r--   1 root supergroup         26 2019-03-25 05:13 flowcount/output/part-r-00001
-//		-rw-r--r--   1 root supergroup         26 2019-03-25 05:13 flowcount/output/part-r-00002
-//		-rw-r--r--   1 root supergroup         26 2019-03-25 05:13 flowcount/output/part-r-00003
-//		-rw-r--r--   1 root supergroup          0 2019-03-25 05:13 flowcount/output/part-r-00004
+		// 2019-03-25 05:13 flowcount/output/_SUCCESS
+		// 2019-03-25 05:13 flowcount/output/part-r-00000
+		// 2019-03-25 05:13 flowcount/output/part-r-00001
+		// 2019-03-25 05:13 flowcount/output/part-r-00002
+		// 2019-03-25 05:13 flowcount/output/part-r-00003
+		// 2019-03-25 05:13 flowcount/output/part-r-00004
 
 		// bin/hdfs dfs -cat flowcount/output/*
-//		13726230501	200	1100	1300
-//		13396230502	300	1200	1500
-//		13897230503	500	1600	2100
-//		13597230534	800	2600	3400
-		
+		// 13726230501  200 1100 1300
+		// 13396230502  300 1200 1500
+		// 13897230503  500 1600 2100
+		// 13597230534  800 2600 3400
+
 		logger.info("FlowCount mapreduce is started.");
 
 		Configuration conf = new Configuration();
@@ -99,13 +99,10 @@ public class FlowCountMapReduce {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(FlowBean.class);
 
-		for (String arg : args) {
-			logger.info("argument: " + arg);
-		}
 		// 指定job输入目录
-		FileInputFormat.setInputPaths(job, new Path(args[1]));
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
 		// 指定job输出目录
-		FileOutputFormat.setOutputPath(job, new Path(args[2]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		boolean res = job.waitForCompletion(true);
 		System.exit(res ? 0 : 1);

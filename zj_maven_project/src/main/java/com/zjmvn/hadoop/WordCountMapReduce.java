@@ -46,21 +46,21 @@ public class WordCountMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-//		Text1：the weather is good
-//		Text2：today is good
-//		Text3：good weather is good
-//		Text4：today has good weather
+		// Text1: the weather is good
+		// Text2: today is good
+		// Text3: good weather is good
+		// Text4: today has good weather
 
 		// run cmd:
 		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce wordcount/input wordcount/output
 
 		// output:
-//		good	5
-//		has	1
-//		is	3
-//		the	1
-//		today	2
-//		weather	3
+		// good 5
+		// has 1
+		// is 3
+		// the 1
+		// today 2
+		// weather 3
 
 		logger.info("WordCount mapreduce is started.");
 
@@ -82,11 +82,12 @@ public class WordCountMapReduce {
 		for (String arg : args) {
 			logger.info("argument: " + arg);
 		}
-		FileInputFormat.setInputPaths(job, new Path(args[1]));
-		FileOutputFormat.setOutputPath(job, new Path(args[2]));
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		if (!job.waitForCompletion(true)) {
 			logger.info("WordCount mapreduce is failed.");
+			System.exit(1);
 		}
 	}
 

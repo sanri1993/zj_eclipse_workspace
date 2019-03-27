@@ -8,13 +8,13 @@ import org.apache.hadoop.fs.FileSystem;
 
 public class BaseHdfs {
 
-	// #1
-	// run cmd: java -jar src/zj-mvn-demo.jar
-	// fix IOException: No FileSystem for scheme: hdfs
+	// method #1
+	// run: java -jar src/zj-mvn-demo.jar com.zjmvn.hdfs.ListFilesHdfs
+	// "IOException: No FileSystem for scheme: hdfs" fix:
 	// config.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
 
-	// #2
-	// run cmd: bin/hadoop jar src/zj-mvn-demo.jar
+	// method #2
+	// run: bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hdfs.ListFilesHdfs
 
 	private static FileSystem fs;
 

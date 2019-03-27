@@ -34,7 +34,7 @@ public class ManyToOneMapReduce {
 
 	public static void main(String[] args) throws Exception {
 
-		// input, create files, cmd:
+		// input, create files:
 		// for i in {1..10}; do echo "file$i for mapreduce ManyToOne test" > file$i.txt; done
 
 		// input on hdfs:
@@ -42,7 +42,7 @@ public class ManyToOneMapReduce {
 		// bin/hdfs dfs -ls ManyToOne/input
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.ManyToOne ManyToOne/input ManyToOne/output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.ManyToOneMapReduce ManyToOne/input ManyToOne/output
 
 		logger.info("ManyToOne mapreduce is started.");
 
@@ -61,11 +61,12 @@ public class ManyToOneMapReduce {
 		job.setInputFormatClass(MyInputFormat.class);
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
-		FileInputFormat.setInputPaths(job, new Path(args[1]));
-		FileOutputFormat.setOutputPath(job, new Path(args[2]));
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		if (!job.waitForCompletion(true)) {
 			logger.info("ManyToOne mapreduce is failed.");
+			System.exit(1);
 		}
 	}
 

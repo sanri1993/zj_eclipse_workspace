@@ -12,7 +12,8 @@ public class PutGetFileHdfs {
 	private static final Logger logger = Logger.getLogger(PutGetFileHdfs.class);
 
 	public static void main(String[] args) throws Exception {
-
+		// run: bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hdfs.PutGetFileHdfs
+		
 		String fileName = "zj-mvn-demo.jar";
 		String localPath = "/usr/local/hadoop/src";
 		String hdfsPath = "/user/root/mkdir";
@@ -21,7 +22,7 @@ public class PutGetFileHdfs {
 		String fromPath;
 		String toPath;
 
-		FileSystem fs = BaseHdfs.getFileSystem();
+		final FileSystem fs = BaseHdfs.getFileSystem();
 		try {
 			if (!fs.exists(new Path(hdfsPath))) {
 				fs.mkdirs(new Path(hdfsPath));

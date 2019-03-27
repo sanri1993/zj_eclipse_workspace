@@ -67,29 +67,29 @@ public class GroupSortMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-//		Order_000004,Pdt_06,102.8
-//		Order_000001,Pdt_01,222.8
-//		Order_000002,Pdt_03,522.8
-//		Order_000003,Pdt_01,282.8
-//		Order_000002,Pdt_04,122.4
-//		Order_000001,Pdt_05,25.8
-//		Order_000003,Pdt_01,612.1
-//		Order_000004,Pdt_07,716.2
+		// Order_000004,Pdt_06,102.8
+		// Order_000001,Pdt_01,222.8
+		// Order_000002,Pdt_03,522.8
+		// Order_000003,Pdt_01,282.8
+		// Order_000002,Pdt_04,122.4
+		// Order_000001,Pdt_05,25.8
+		// Order_000003,Pdt_01,612.1
+		// Order_000004,Pdt_07,716.2
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.GroupCount groupcount/input groupcount/output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.GroupSortMapReduce groupcount/input groupcount/output
 
 		// output:
 		// bin/hdfs dfs -ls groupcount/output
-//		-rw-r--r--   1 root supergroup          0 2019-03-25 06:30 groupcount/output/_SUCCESS
-//		-rw-r--r--   1 root supergroup         38 2019-03-25 06:30 groupcount/output/part-r-00000
-//		-rw-r--r--   1 root supergroup         39 2019-03-25 06:30 groupcount/output/part-r-00001
+		// 2019-03-25 06:30 groupcount/output/_SUCCESS
+		// 2019-03-25 06:30 groupcount/output/part-r-00000
+		// 2019-03-25 06:30 groupcount/output/part-r-00001
 
 		// bin/hdfs dfs -cat groupcount/output/*
-//		Order_000002	522.8
-//		Order_000004	716.2
-//		Order_000001	222.8
-//		Order_000003	612.1
+		// Order_000002 522.8
+		// Order_000004 716.2
+		// Order_000001 222.8
+		// Order_000003 612.1
 
 		logger.info("GroupSort mapreduce is started.");
 
@@ -110,14 +110,12 @@ public class GroupSortMapReduce {
 		job.setPartitionerClass(ItemIdPartitioner.class);
 		job.setNumReduceTasks(2);
 
-		for (String arg : args) {
-			logger.info("argument: " + arg);
-		}
-		FileInputFormat.setInputPaths(job, new Path(args[1]));
-		FileOutputFormat.setOutputPath(job, new Path(args[2]));
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		if (!job.waitForCompletion(true)) {
 			logger.info("GroupSort mapreduce is failed.");
+			System.exit(1);
 		}
 	}
 

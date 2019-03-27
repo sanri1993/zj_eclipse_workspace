@@ -58,20 +58,20 @@ public class WordCount {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-//		Hello World Bye World
-//		Hello Hadoop Goodbye Hadoop
+		// Hello World Bye World
+		// Hello Hadoop Goodbye Hadoop
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCount input output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCount wordcount/input wordcount/output
 
 		// output:
-//		< Bye, 1>
-//		< Goodbye, 1>
-//		< Hadoop, 2>
-//		< Hello, 2>
-//		< World, 2>
+		// < Bye, 1>
+		// < Goodbye, 1>
+		// < Hadoop, 2>
+		// < Hello, 2>
+		// < World, 2>
 
-		logger.info("hadoop WordCount is started.");
+		logger.info("WordCount mapreduce is started.");
 
 		JobConf conf = new JobConf(WordCount.class);
 		conf.setJobName("wordcount");
@@ -86,11 +86,8 @@ public class WordCount {
 		conf.setInputFormat(TextInputFormat.class);
 		conf.setOutputFormat(TextOutputFormat.class);
 
-		for (String arg : args) {
-			logger.info("argument: " + arg);
-		}
-		FileInputFormat.setInputPaths(conf, new Path(args[1]));
-		FileOutputFormat.setOutputPath(conf, new Path(args[2]));
+		FileInputFormat.setInputPaths(conf, new Path(args[0]));
+		FileOutputFormat.setOutputPath(conf, new Path(args[1]));
 
 		JobClient.runJob(conf);
 	}

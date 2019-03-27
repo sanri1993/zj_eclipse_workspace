@@ -127,7 +127,7 @@ public class InfoBean implements Writable {
 
 	@Override
 	public String toString() {
-		return String.format("order_id=%d, dataString=%s, p_id=%s, amount=%d, pname=%s, category_id=%d, price=%.2f",
+		return String.format("order_id=%d,dataString=%s,p_id=%s,amount=%d,pname=%s,category_id=%d,price=%.2f",
 				this.order_id, this.dateString, this.p_id, this.amount, this.pname, this.category_id, this.price);
 	}
 

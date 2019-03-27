@@ -75,7 +75,7 @@ public class StepFirstMapReduce {
 		// M  F,E,
 		// O  F,H,A,
 
-		logger.info("StepFirstMapReduce mapreduce is started.");
+		logger.info("StepFirstMapReduce task is started.");
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
@@ -87,11 +87,11 @@ public class StepFirstMapReduce {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 
-		FileInputFormat.setInputPaths(job, new Path(args[1]));
-		FileOutputFormat.setOutputPath(job, new Path(args[2]));
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		if (!job.waitForCompletion(true)) {
-			logger.info("StepFirstMapReduce mapreduce is failed.");
+			logger.info("StepFirstMapReduce task is failed.");
 			System.exit(1);
 		}
 	}

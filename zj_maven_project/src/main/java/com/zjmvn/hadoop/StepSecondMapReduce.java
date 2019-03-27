@@ -80,7 +80,7 @@ public class StepSecondMapReduce {
 		// B-D  E A
 		// ...
 
-		logger.info("StepSecondMapReduce mapreduce is started.");
+		logger.info("StepSecondMapReduce task is started.");
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
@@ -92,11 +92,11 @@ public class StepSecondMapReduce {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 
-		FileInputFormat.setInputPaths(job, new Path(args[1]));
-		FileOutputFormat.setOutputPath(job, new Path(args[2]));
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		if (!job.waitForCompletion(true)) {
-			logger.info("StepSecondMapReduce mapreduce is failed.");
+			logger.info("StepSecondMapReduce task is failed.");
 			System.exit(1);
 		}
 	}

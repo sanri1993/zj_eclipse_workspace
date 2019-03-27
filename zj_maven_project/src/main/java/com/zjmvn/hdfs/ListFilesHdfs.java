@@ -13,8 +13,13 @@ public class ListFilesHdfs {
 	private static final Logger logger = Logger.getLogger(ListFilesHdfs.class);
 
 	public static void main(String[] args) throws Exception {
-
+		// run: bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hdfs.ListFilesHdfs
+		
 		String path = "/user/root";
+
+		for (String arg : args) {
+			logger.info("argument: " + arg);
+		}
 
 		final FileSystem fs = BaseHdfs.getFileSystem();
 		try {

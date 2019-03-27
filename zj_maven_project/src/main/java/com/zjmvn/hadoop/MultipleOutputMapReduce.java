@@ -56,23 +56,23 @@ public class MultipleOutputMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-//		Order_000004,Pdt_06,102.8
-//		Order_000001,Pdt_01,222.8
-//		Order_000002,Pdt_03,522.8
-//		Order_000003,Pdt_01,282.8
-//		Order_000002,Pdt_04,122.4
-//		Order_000001,Pdt_05,25.8
-//		Order_000003,Pdt_01,322.1
-//		Order_000004,Pdt_07,716.2
+		// Order_000004,Pdt_06,102.8
+		// Order_000001,Pdt_01,222.8
+		// Order_000002,Pdt_03,522.8
+		// Order_000003,Pdt_01,282.8
+		// Order_000002,Pdt_04,122.4
+		// Order_000001,Pdt_05,25.8
+		// Order_000003,Pdt_01,322.1
+		// Order_000004,Pdt_07,716.2
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.MultipleOutput muloutput/input muloutput/output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.MultipleOutputMapReduce multiple/input multiple/output
 
 		// output:
-//		-rw-r--r--   1 root supergroup         51 2019-03-26 04:05 muloutput/output/Order_000001-r-00000
-//		-rw-r--r--   1 root supergroup         52 2019-03-26 04:05 muloutput/output/Order_000002-r-00000
-//		-rw-r--r--   1 root supergroup         52 2019-03-26 04:05 muloutput/output/Order_000003-r-00000
-//		-rw-r--r--   1 root supergroup         52 2019-03-26 04:05 muloutput/output/Order_000004-r-00000
+		// muloutput/output/Order_000001-r-00000
+		// muloutput/output/Order_000002-r-00000
+		// muloutput/output/Order_000003-r-00000
+		// muloutput/output/Order_000004-r-00000
 
 		logger.info("MultipleOutput mapreduce is started.");
 
@@ -89,11 +89,12 @@ public class MultipleOutputMapReduce {
 		job.setOutputKeyClass(NullWritable.class);
 		job.setOutputValueClass(Text.class);
 
-		FileInputFormat.setInputPaths(job, new Path(args[1]));
-		FileOutputFormat.setOutputPath(job, new Path(args[2]));
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		if (!job.waitForCompletion(true)) {
 			logger.info("MultipleOutput mapreduce is failed.");
+			System.exit(1);
 		}
 	}
 
