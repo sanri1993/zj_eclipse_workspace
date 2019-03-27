@@ -14,21 +14,24 @@ public class BaseHdfs {
 	// config.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
 
 	// #2
-	// run cmd:
-	// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.MkdirHdfs
+	// run cmd: bin/hadoop jar src/zj-mvn-demo.jar
 
-	public static FileSystem fs;
+	private static FileSystem fs;
 
-	static {
-		String uri = "hdfs://3446e9827713:9000";
-		Configuration config = new Configuration();
-		config.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
-		try {
+	public static FileSystem getFileSystem() throws IOException, InterruptedException {
+		if (fs == null) {
+			String uri = "hdfs://3446e9827713:9000";
+			Configuration config = new Configuration();
+			config.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
 			fs = FileSystem.get(URI.create(uri), config, "root");
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			System.exit(1);
+		}
+		return fs;
+	}
+
+	public static void fsClose() throws IOException {
+		if (fs != null) {
+			fs.close();
 		}
 	}
-	
+
 }

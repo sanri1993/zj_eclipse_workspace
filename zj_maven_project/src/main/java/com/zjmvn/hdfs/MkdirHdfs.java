@@ -10,11 +10,17 @@ public class MkdirHdfs {
 
 	public static void main(String[] args) throws Exception {
 
-		final FileSystem fs = BaseHdfs.fs;
+		final FileSystem fs = BaseHdfs.getFileSystem();
 
 		String path = "/user/root/mkdir/a/b";
-		boolean res = fs.mkdirs(new Path(path));
-		logger.info(String.format("mkdir %s: %s", path, res));
+		try {
+			if (!fs.exists(new Path(path))) {
+				boolean res = fs.mkdirs(new Path(path));
+				logger.info(String.format("mkdir %s: %s", path, res));
+			}
+		} finally {
+			BaseHdfs.fsClose();
+		}
 	}
 
 }
