@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.zjmvn.demo</groupId>
-  <artifactId>maven-project</artifactId>
+  <artifactId>foo</artifactId>
   <name>maven-demo</name>
   <version>0.0.1-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
@@ -10,7 +10,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -25,20 +25,18 @@
                     <exclude>META-INF/*.SF</exclude>
                     <exclude>META-INF/*.DSA</exclude>
                     <exclude>META-INF/*.RSA</exclude>
-                    <exclude>src/main/java/com/zjmvn/rtidb/**</exclude>
-                    <exclude>src/test/java/com/zjmvn/rtidb/**</exclude>
+                    <exclude>com/zjmvn/rtidb/**</exclude>
                   </excludes>
                 </filter>
               </filters>
               <artifactSet>
                 <excludes>
-                  <exclude>com._4paradigm:rtidb-client</exclude>
+                  <exclude>com._4paradigm:*</exclude>
                 </excludes>
               </artifactSet>
+              <shadedArtifactId>foo</shadedArtifactId>
               <transformers>
-                <transformer>
-                  <mainClass>com.zjmvn.demo.App</mainClass>
-                </transformer>
+                <transformer />
               </transformers>
             </configuration>
           </execution>
@@ -73,6 +71,226 @@
           <artifactId>slf4j-log4j12</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>jorphan</artifactId>
+          <groupId>org.apache.jmeter</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>org.ow2.asm</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>accessors-smart</artifactId>
+          <groupId>net.minidev</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bsf</artifactId>
+          <groupId>bsf</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bsh</artifactId>
+          <groupId>org.apache-extras.beanshell</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcmail-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcprov-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcpkix-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>dec</artifactId>
+          <groupId>org.brotli</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>caffeine</artifactId>
+          <groupId>com.github.ben-manes.caffeine</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-dbcp2</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-jexl</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-jexl3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-pool2</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>dnsjava</artifactId>
+          <groupId>dnsjava</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>groovy-all</artifactId>
+          <groupId>org.codehaus.groovy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpasyncclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpmime</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpcore-nio</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>oro</artifactId>
+          <groupId>oro</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcharts</artifactId>
+          <groupId>jcharts</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>rhino</artifactId>
+          <groupId>org.mozilla</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jtidy</artifactId>
+          <groupId>net.sf.jtidy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tika-core</artifactId>
+          <groupId>org.apache.tika</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tika-parsers</artifactId>
+          <groupId>org.apache.tika</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xstream</artifactId>
+          <groupId>com.thoughtworks.xstream</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xmlpull</artifactId>
+          <groupId>xmlpull</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xpp3_min</artifactId>
+          <groupId>xpp3</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xalan</artifactId>
+          <groupId>xalan</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>serializer</artifactId>
+          <groupId>xalan</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>Saxon-HE</artifactId>
+          <groupId>net.sf.saxon</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xmlgraphics-commons</artifactId>
+          <groupId>org.apache.xmlgraphics</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.activation-api</artifactId>
+          <groupId>javax.activation</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.activation</artifactId>
+          <groupId>com.sun.activation</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>mail</artifactId>
+          <groupId>javax.mail</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>geronimo-jms_1.1_spec</artifactId>
+          <groupId>org.apache.geronimo.specs</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-path</artifactId>
+          <groupId>com.jayway.jsonpath</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-smart</artifactId>
+          <groupId>net.minidev</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsoup</artifactId>
+          <groupId>org.jsoup</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-core</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-lagarto</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-log</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-props</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>mongo-java-driver</artifactId>
+          <groupId>org.mongodb</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ph-css</artifactId>
+          <groupId>com.helger</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ph-commons</artifactId>
+          <groupId>com.helger</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>rsyntaxtextarea</artifactId>
+          <groupId>com.fifesoft</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-ext</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcl-over-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-api</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-core</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-1.2-api</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>freemarker</artifactId>
+          <groupId>org.freemarker</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -85,6 +303,226 @@
           <artifactId>ApacheJMeter_components</artifactId>
           <groupId>org.apache.jmeter</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>jorphan</artifactId>
+          <groupId>org.apache.jmeter</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>org.ow2.asm</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>accessors-smart</artifactId>
+          <groupId>net.minidev</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bsf</artifactId>
+          <groupId>bsf</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bsh</artifactId>
+          <groupId>org.apache-extras.beanshell</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcmail-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcprov-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcpkix-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>dec</artifactId>
+          <groupId>org.brotli</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>caffeine</artifactId>
+          <groupId>com.github.ben-manes.caffeine</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-dbcp2</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-jexl</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-jexl3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-pool2</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>dnsjava</artifactId>
+          <groupId>dnsjava</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>groovy-all</artifactId>
+          <groupId>org.codehaus.groovy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpasyncclient</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpmime</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>httpcore-nio</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>oro</artifactId>
+          <groupId>oro</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcharts</artifactId>
+          <groupId>jcharts</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>rhino</artifactId>
+          <groupId>org.mozilla</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jtidy</artifactId>
+          <groupId>net.sf.jtidy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tika-core</artifactId>
+          <groupId>org.apache.tika</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tika-parsers</artifactId>
+          <groupId>org.apache.tika</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xstream</artifactId>
+          <groupId>com.thoughtworks.xstream</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xmlpull</artifactId>
+          <groupId>xmlpull</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xpp3_min</artifactId>
+          <groupId>xpp3</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xalan</artifactId>
+          <groupId>xalan</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>serializer</artifactId>
+          <groupId>xalan</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>Saxon-HE</artifactId>
+          <groupId>net.sf.saxon</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xmlgraphics-commons</artifactId>
+          <groupId>org.apache.xmlgraphics</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.activation-api</artifactId>
+          <groupId>javax.activation</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.activation</artifactId>
+          <groupId>com.sun.activation</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>mail</artifactId>
+          <groupId>javax.mail</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>geronimo-jms_1.1_spec</artifactId>
+          <groupId>org.apache.geronimo.specs</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-path</artifactId>
+          <groupId>com.jayway.jsonpath</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-smart</artifactId>
+          <groupId>net.minidev</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsoup</artifactId>
+          <groupId>org.jsoup</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-core</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-lagarto</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-log</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jodd-props</artifactId>
+          <groupId>org.jodd</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>mongo-java-driver</artifactId>
+          <groupId>org.mongodb</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ph-css</artifactId>
+          <groupId>com.helger</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ph-commons</artifactId>
+          <groupId>com.helger</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>rsyntaxtextarea</artifactId>
+          <groupId>com.fifesoft</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-ext</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcl-over-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-api</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-core</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j-1.2-api</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>freemarker</artifactId>
+          <groupId>org.freemarker</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -95,10 +533,10 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <hadoop.version>2.7.0</hadoop.version>
+    <maven.compiler.source>1.7</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.target>1.7</maven.compiler.target>
     <jmeter.version>5.0</jmeter.version>
   </properties>
 </project>
-

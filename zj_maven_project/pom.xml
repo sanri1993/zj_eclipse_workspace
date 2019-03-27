@@ -109,6 +109,7 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- https://maven.apache.org/plugins/maven-shade-plugin/shade-mojo.html -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.1</version>
@@ -137,9 +138,11 @@
 								</excludes>
 							</artifactSet>
 							<finalName>zj-mvn-demo</finalName>
+							<!-- <finalName>zj-${project.artifactId}-${project.version}</finalName> -->
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<!-- run jar by "java -cp [archive.jar] [mainClass]" instead of set default main entry -->
 									<!-- <mainClass>com.zjmvn.demo.App</mainClass> -->
 								</transformer>
 							</transformers>
