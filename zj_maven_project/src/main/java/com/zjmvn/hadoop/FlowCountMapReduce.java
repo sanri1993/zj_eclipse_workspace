@@ -3,6 +3,7 @@ package com.zjmvn.hadoop;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -10,6 +11,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
@@ -19,9 +21,19 @@ public class FlowCountMapReduce {
 
 	private static class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> {
 
+		private int myCounter = 0;
+		
+		@Override
+		public void setup(Context context) throws IOException, InterruptedException {
+			logger.info("FlowCountMapper.setup() is invoked: " + this.hashCode());
+			FileSplit split = (FileSplit) context.getInputSplit();
+			logger.info("FlowCountMapper.setup() get file: " + split.getPath().getName());
+		}
+
 		@Override
 		public void map(LongWritable key, Text value, Mapper<LongWritable, Text, Text, FlowBean>.Context context)
 				throws IOException, InterruptedException {
+			logger.info("FlowCountMapper.map() is invoked: " + (++this.myCounter));
 			String line = value.toString();
 			String[] fields = line.split("\t");
 			String phoneNum = fields[0];
@@ -30,12 +42,26 @@ public class FlowCountMapReduce {
 
 			context.write(new Text(phoneNum), new FlowBean(upFlow, dFlow));
 		}
+
+		@Override
+		public void cleanup(Context context) throws IOException, InterruptedException {
+			logger.info("FlowCountMapper.clearup() is invoked: " + this.hashCode());
+		}
 	}
 
 	private static class FlowCountReducer extends Reducer<Text, FlowBean, Text, FlowBean> {
+
+		private int myCounter = 0;
+
+		@Override
+		public void setup(Context context) throws IOException, InterruptedException {
+			logger.info("FlowCountReducer.setup() is invoked: " + this.hashCode());
+		}
+
 		@Override
 		public void reduce(Text key, Iterable<FlowBean> values, Reducer<Text, FlowBean, Text, FlowBean>.Context context)
 				throws IOException, InterruptedException {
+			logger.info("FlowCountReducer.reduce() is invoked: " + (++this.myCounter));
 			long sumUpFlow = 0;
 			long sumdFlow = 0;
 
@@ -45,6 +71,11 @@ public class FlowCountMapReduce {
 			}
 			FlowBean resultBean = new FlowBean(sumUpFlow, sumdFlow);
 			context.write(key, resultBean);
+		}
+
+		@Override
+		public void cleanup(Context context) throws IOException, InterruptedException {
+			logger.info("FlowCountReducer.clearup() is invoked: " + this.hashCode());
 		}
 	}
 
@@ -102,7 +133,13 @@ public class FlowCountMapReduce {
 		// 指定job输入目录
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
 		// 指定job输出目录
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		Path outDir = new Path(args[1]);
+		FileOutputFormat.setOutputPath(job, outDir);
+
+		FileSystem fs = FileSystem.get(conf);
+		if (fs.exists(outDir)) {
+			fs.delete(outDir, true);
+		}
 
 		boolean res = job.waitForCompletion(true);
 		System.exit(res ? 0 : 1);

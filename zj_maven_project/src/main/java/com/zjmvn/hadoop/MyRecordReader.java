@@ -33,6 +33,7 @@ public class MyRecordReader extends RecordReader<NullWritable, BytesWritable> {
 	@Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
 		if (!this.processed) {
+			// MyInputFormat.isSplitable=false, handle for each input file here
 			byte[] contents = new byte[(int) this.fileSplit.getLength()];
 			Path file = this.fileSplit.getPath();
 			FileSystem fs = file.getFileSystem(this.conf);
@@ -42,7 +43,8 @@ public class MyRecordReader extends RecordReader<NullWritable, BytesWritable> {
 				in = fs.open(file);
 				IOUtils.readFully(in, contents, 0, contents.length);
 				this.value.set(contents, 0, contents.length);
-				logger.info(String.format("reader for: %s, content: %s", file.toString(), new String(contents)));
+				logger.info("MyRecordReader for file: " + file.toString());
+				logger.info("MyRecordReader, file text: " + new String(contents));
 			} finally {
 				if (in != null) {
 					IOUtils.closeStream(in);
