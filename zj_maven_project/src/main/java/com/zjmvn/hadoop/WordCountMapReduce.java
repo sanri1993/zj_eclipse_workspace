@@ -3,6 +3,7 @@ package com.zjmvn.hadoop;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -18,6 +19,24 @@ public class WordCountMapReduce {
 
 	private static final Logger logger = Logger.getLogger(WordCountMapReduce.class);
 
+	private static class WordCountCombiner extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+		@Override
+		protected void reduce(Text key, java.lang.Iterable<IntWritable> values,
+				Reducer<Text, IntWritable, Text, IntWritable>.Context context)
+				throws java.io.IOException, InterruptedException {
+			logger.info(String.format("WordCountCombiner input <%s,N(N>=1)>", key));
+
+			int count = 0;
+			for (IntWritable value : values) {
+				count += value.get();
+				logger.info(String.format("WordCountCombiner input kv <%s,%d>", key.toString(), value.get()));
+			}
+			context.write(key, new IntWritable(count));
+			logger.info(String.format("WordCountCombiner output kv <%s,%d>", key.toString(), count));
+		}
+	}
+
 	private static class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
 		@Override
@@ -26,6 +45,7 @@ public class WordCountMapReduce {
 			String[] words = line.split(" ");
 			for (String word : words) {
 				context.write(new Text(word), new IntWritable(1));
+				logger.info(String.format("WordCountMapper output <%s,1>", word));
 			}
 		}
 	}
@@ -35,9 +55,12 @@ public class WordCountMapReduce {
 		@Override
 		public void reduce(Text key, Iterable<IntWritable> values, Context context)
 				throws IOException, InterruptedException {
-			Integer count = 0;
+			logger.info(String.format("WordCountReducer input <%s,N(N>=1)>", key));
+
+			int count = 0;
 			for (IntWritable value : values) {
 				count += value.get();
+				logger.info(String.format("WordCountReducer input kv <%s,%d>", key.toString(), value.get()));
 			}
 			context.write(key, new IntWritable(count));
 		}
@@ -46,19 +69,26 @@ public class WordCountMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-		// Text1: the weather is good
-		// Text2: today is good
-		// Text3: good weather is good
-		// Text4: today has good weather
+		// good weather is good
+		// good today is good
+		// good weather is good
+		// good today has good weather good
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce wordcount/input wordcount/output
-
+		// run cmd (4 mapper tasks, and each for a input file):
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce wordcount/input wordcount/output true
+		
 		// output:
-		// good 5
+		// bin/hdfs dfs -cat /user/root/wordcount/output/*
+		
+		// WordCountReducer input <good,N(N>=1)>
+		// WordCountReducer input kv <good,2>
+		// WordCountReducer input kv <good,2>
+		// WordCountReducer input kv <good,3>
+		// WordCountReducer input kv <good,2>
+
+		// good 9
 		// has 1
 		// is 3
-		// the 1
 		// today 2
 		// weather 3
 
@@ -75,6 +105,10 @@ public class WordCountMapReduce {
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(IntWritable.class);
 
+		if (Boolean.parseBoolean(args[2])) {
+			job.setCombinerClass(WordCountCombiner.class);
+		}
+
 		// set reduce output key value
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
@@ -83,7 +117,13 @@ public class WordCountMapReduce {
 			logger.info("argument: " + arg);
 		}
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		Path outDir = new Path(args[1]);
+		FileOutputFormat.setOutputPath(job, outDir);
+
+		FileSystem fs = FileSystem.get(conf);
+		if (fs.exists(outDir)) {
+			fs.delete(outDir, true);
+		}
 
 		if (!job.waitForCompletion(true)) {
 			logger.info("WordCount mapreduce is failed.");
