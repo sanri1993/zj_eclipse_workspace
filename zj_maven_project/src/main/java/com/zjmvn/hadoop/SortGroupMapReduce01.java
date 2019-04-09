@@ -17,9 +17,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class GroupSortMapReduce {
+public class SortGroupMapReduce01 {
 
-	private static final Logger logger = Logger.getLogger(GroupSortMapReduce.class);
+	private static final Logger logger = Logger.getLogger(SortGroupMapReduce01.class);
 
 	private static class MyGroupingComparator extends WritableComparator {
 
@@ -77,7 +77,7 @@ public class GroupSortMapReduce {
 		// Order_000004,Pdt_07,716.2
 
 		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.GroupSortMapReduce groupcount/input groupcount/output
+		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.GroupSortMapReduce01 groupcount/input groupcount/output
 
 		// output:
 		// bin/hdfs dfs -ls groupcount/output
@@ -96,7 +96,7 @@ public class GroupSortMapReduce {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(GroupSortMapReduce.class);
+		job.setJarByClass(SortGroupMapReduce01.class);
 		job.setMapperClass(SortMapper.class);
 		job.setReducerClass(SortReducer.class);
 
