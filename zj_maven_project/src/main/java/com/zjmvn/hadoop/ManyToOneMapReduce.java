@@ -49,8 +49,7 @@ public class ManyToOneMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input, create files:
-		// for i in {1..10}; do echo "file$i for mapreduce ManyToOne test" > file$i.txt;
-		// done
+		// for i in {1..10}; do echo "file$i for mapreduce ManyToOne test" > file$i.txt; done
 
 		// input on hdfs:
 		// bin/hdfs dfs -put src/file* ManyToOne/input
