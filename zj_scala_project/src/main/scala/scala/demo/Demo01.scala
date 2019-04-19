@@ -1,7 +1,10 @@
 package scala.demo
 
+import java.io.File
+
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.ListBuffer
+import scala.io.Source
 import scala.util.Random
 
 /**
@@ -103,6 +106,17 @@ class MyPerson(val name: String) extends AMyLogger {
     println("Hi ,i'm " + name)
     log("sayHello is invoked!")
   }
+}
+
+/**
+ * 隐式转换
+ */
+class RichFile(val file: File) {
+  def read(): String = Source.fromFile(file.getPath).mkString
+}
+
+object RichFile {
+  implicit def file2RichFile(file: File) = new RichFile(file)
 }
 
 object demo01 {
@@ -331,11 +345,31 @@ object demo01 {
   }
 
   /**
+   * 柯里化
+   */
+  def mysum(x: Int)(y: Int): Int = x + y
+
+  def testDemo09: Unit = {
+    val f = mysum _
+    val f1 = f(1)
+    println(f1(2))
+  }
+
+  /**
+   * 隐式转换
+   */
+  def testDemo10: Unit = {
+    var file = new File("/Users/zhengjin/Downloads/tmp_files/test.file")
+    import RichFile._
+    println(file.read())
+  }
+
+  /**
    * main
    */
   def main(args: Array[String]): Unit = {
 
-    testDemo08
+    testDemo10
     println("scala demo01 done.")
   }
 
