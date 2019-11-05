@@ -13,6 +13,13 @@ public class App {
 			logger.info(TAG + "argument: " + arg);
 		}
 		logger.info(TAG + "First maven app.");
+
+		// guava utils test
+		try {
+			System.out.println("guava utils getValue() results:" + GuavaUtils.getValueWithPrecondition(6));
+		} catch (IndexOutOfBoundsException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 }
