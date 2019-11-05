@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE module PUBLIC 
+	"-//Puppy Crawl//DTD Check Configuration 1.2//EN" 
+	"http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<!-- Refer: https://blog.csdn.net/wangchaox123/article/details/87865116 -->
+<module name="Checker">
+
+	<property name="charset" value="UTF-8" />
+	<property name="severity" value="warning" />
+
+	<module name="FileLength">
+		<property name="max" value="2500" />
+	</module>
+
+	<!-- Checks that property files contain the same keys. -->
+
+	<module name="TreeWalker">
+
+		<module name="AvoidStarImport" />
+		<module name="IllegalImport" /> <!-- defaults to sun.* packages -->
+		<module name="RedundantImport" />
+		<module name="UnusedImports" />
+
+		<!-- Checks for whitespace <module name="EmptyForIteratorPad"/> <module 
+			name="MethodParamPad"/> <module name="NoWhitespaceAfter"/> <module name="NoWhitespaceBefore"/> 
+			<module name="OperatorWrap"/> <module name="ParenPad"/> <module name="TypecastParenPad"/> 
+			<module name="WhitespaceAfter"/> <module name="WhitespaceAround"/> -->
+
+		<!-- 检查类和接口的javadoc -->
+		<module name="JavadocType">
+			<property name="authorFormat" value="\S" />
+			<property name="scope" value="protected" />
+			<property name="tokens" value="CLASS_DEF,INTERFACE_DEF" />
+		</module>
+
+		<!-- 检查方法的javadoc的注释 -->
+		<module name="JavadocMethod">
+			<property name="scope" value="private" />
+			<property name="allowMissingParamTags" value="false" />
+			<property name="allowMissingThrowsTags" value="false" />
+			<property name="allowMissingReturnTag" value="false" />
+			<property name="tokens" value="METHOD_DEF" />
+			<property name="allowUndeclaredRTE" value="true" />
+			<property name="allowThrowsTagsForSubclasses" value="true" />
+			<property name="allowMissingPropertyJavadoc" value="true" />
+		</module>
+
+		<!-- 检查类变量的注释 -->
+		<module name="JavadocVariable">
+			<property name="scope" value="private" />
+		</module>
+
+		<!-- <module name="LeftCurly"> <property name="option" value="nl" /> </module> -->
+
+		<module name="NeedBraces" />
+		<module name="RightCurly">
+			<property name="option" value="alone" />
+		</module>
+
+		<module name="EqualsHashCode" />
+
+		<module name="IllegalInstantiation">
+			<property name="classes" value="java.lang.Boolean" />
+		</module>
+
+		<!-- Checks for Naming Conventions. 命名规范 -->
+		<module name="LocalFinalVariableName" />
+		<module name="LocalVariableName" />
+		<module name="StaticVariableName">
+			<property name="format" value="(^[A-Z0-9_]{0,19}$)" />
+		</module>
+		<module name="PackageName">
+			<property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$" />
+		</module>
+		<module name="TypeName">
+			<property name="format" value="(^[A-Z][a-zA-Z0-9]{0,19}$)" />
+		</module>
+		<module name="MethodName">
+			<property name="format" value="(^[a-z][a-zA-Z0-9]{0,19}$)" />
+		</module>
+		<module name="MemberName">
+			<property name="format"
+				value="(^[a-z][a-z0-9][a-zA-Z0-9]{0,19}$)" />
+		</module>
+		<module name="ParameterName">
+			<property name="format" value="(^[a-z][a-zA-Z0-9_]{0,19}$)" />
+		</module>
+		<module name="ConstantName">
+			<property name="format" value="(^[A-Z0-9_]{0,19}$)" />
+		</module>
+
+		<!-- 代码缩进 -->
+		<!-- <module name="Indentation" /> -->
+
+		<!-- Checks for redundant exceptions declared in throws clause such as 
+			duplicates, unchecked exceptions or subclasses of another declared exception. 
+			检查是否抛出了多余的异常 <module name="RedundantThrows"> <property name="logLoadErrors" 
+			value="true"/> <property name="suppressLoadErrors" value="true"/> </module> -->
+
+		<module name="SimplifyBooleanExpression" />
+		<module name="SimplifyBooleanReturn" />
+
+		<module name="FinalClass" />
+		<module name="VisibilityModifier" />
+		<module name="MultipleVariableDeclarations">
+		</module>
+		<module name="ArrayTypeStyle">
+		</module>
+
+		<!-- Checks that there are no "magic numbers", where a magic number is 
+			a numeric literal that is not defined as a constant. By default, -1, 0, 1, 
+			and 2 are not considered to be magic numbers. <module name="MagicNumber"> 
+			</module> -->
+
+		<module name="TodoComment" />
+		<module name="UpperEll" />
+		<module name="MissingSwitchDefault" />
+		<module name="FallThrough" />
+
+		<module name="ParameterNumber">
+			<property name="max" value="5" />
+		</module>
+
+		<module name="LineLength">
+			<property name="max" value="200" />
+		</module>
+
+		<module name="MethodLength">
+			<property name="max" value="300" />
+		</module>
+
+		<module name="ModifierOrder">
+		</module>
+
+		<module name="RedundantModifier">
+		</module>
+
+		<module name="StringLiteralEquality">
+		</module>
+
+		<module name="NestedIfDepth">
+			<property name="max" value="3" />
+		</module>
+
+		<module name="NestedTryDepth">
+			<property name="max" value="2" />
+		</module>
+
+		<module name="ReturnCount">
+			<property name="max" value="5" />
+			<property name="format" value="^$" />
+		</module>
+	</module>
+
+</module>

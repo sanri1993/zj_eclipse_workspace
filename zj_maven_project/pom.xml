@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.zjmvn.demo</groupId>
@@ -17,8 +18,18 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<jmeter.version>5.0</jmeter.version>
+
 		<!-- match hadoop-docker version 2.7.0 -->
 		<hadoop.version>2.7.0</hadoop.version>
+
+		<!-- checkstyle -->
+		<checkstyle.version>3.1.0</checkstyle.version>
+		<checkstyle.config.location>checkstyle/checkstyle.xml</checkstyle.config.location>
+		<checkstyle.suppressions.location>checkstyle/checkstyle-suppressions.xml</checkstyle.suppressions.location>
+		<!-- project info report site -->
+		<maven.jxr.version>3.0.0</maven.jxr.version>
+		<maven.site.version>3.7.1</maven.site.version>
+		<maven.project.info.rpt.version>3.0.0</maven.project.info.rpt.version>
 	</properties>
 
 	<dependencies>
@@ -150,7 +161,40 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- project info report site -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>${maven.site.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${maven.project.info.rpt.version}</version>
+			</plugin>
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<!-- checkstyle -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle.version}</version>
+				<configuration>
+					<configLocation>${checkstyle.config.location}</configLocation>
+					<suppressionsLocation>${checkstyle.suppressions.location}</suppressionsLocation>
+				</configuration>
+			</plugin>
+			<!-- project info report site -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${maven.jxr.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
 
 </project>
