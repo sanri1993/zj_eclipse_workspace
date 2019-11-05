@@ -1,7 +1,10 @@
 package com.zjmvn.demo;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Range;
+import com.google.common.primitives.Ints;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,6 +80,34 @@ public class TestGuavaUtils {
 
 		Assert.assertEquals(new Integer(2), ordering.min(numbers));
 		Assert.assertEquals(new Integer(53), ordering.max(numbers));
+	}
+
+	@Test
+	public void test06GuavaRange() {
+		logger.info(TAG + "Test guava utils Range.");
+		Range<Integer> range1 = GuavaUtils.createClosedRange(0, 9);
+		System.out.print("[0,9] : ");
+		GuavaUtils.printRange(range1);
+
+		Assert.assertTrue(range1.contains(5));
+		Assert.assertTrue(range1.containsAll(Ints.asList(1, 2, 3)));
+		Assert.assertEquals(new Integer(0), range1.lowerEndpoint());
+		Assert.assertEquals(new Integer(9), range1.upperEndpoint());
+
+		Range<Integer> range2 = GuavaUtils.createOpenedRange(0, 9);
+		System.out.print("\n(0,9) : ");
+		GuavaUtils.printRange(range2);
+	}
+
+	@Test
+	public void test11GuavaStringUtils() {
+		Assert.assertTrue(Strings.isNullOrEmpty(""));
+		Assert.assertTrue(Strings.isNullOrEmpty(null));
+
+		String base = "com.jd.coo.";
+		Assert.assertEquals(base, Strings.commonPrefix(base + "hello", base + "Hi"));
+
+		Assert.assertEquals("0123", Strings.padStart("123", 4, '0'));
 	}
 
 }

@@ -4,7 +4,10 @@ import java.util.List;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Range;
 
 public class GuavaUtils {
 
@@ -42,6 +45,22 @@ public class GuavaUtils {
 	public static boolean collectionIsOrder(Ordering<Integer> ordering, List<Integer> numbers) {
 		System.out.println("Input Numbers: " + numbers);
 		return ordering.isOrdered(numbers);
+	}
+
+	public static Range<Integer> createOpenedRange(int start, int end) {
+		return Range.open(start, end);
+	}
+
+	public static Range<Integer> createClosedRange(int start, int end) {
+		return Range.closed(start, end);
+	}
+
+	public static void printRange(Range<Integer> range) {
+		System.out.print("[ ");
+		for (int grade : ContiguousSet.create(range, DiscreteDomain.integers())) {
+			System.out.print(grade + " ");
+		}
+		System.out.print(" ]");
 	}
 
 }
