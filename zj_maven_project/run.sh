@@ -14,14 +14,20 @@ if [[ $1 == "check" ]]; then
   mvn checkstyle:checkstyle
 fi
 
-if [[ $1 == "cover" ]]; then
-  echo "run code coverage."
+if [[ $1 == "cober" ]]; then
+  echo "run cobertura code coverage."
   mvn clean cobertura:cobertura
+fi
+
+if [[ $1 == "jacoco"  ]]; then
+  echo "run jacoco code coverage."
+  # mvn help:describe -Dplugin=org.jacoco:jacoco-maven-plugin -Ddetail
+  mvn clean test org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true
 fi
 
 if [[ $1 == "checkall" ]]; then
   echo "run checkstyle and coverage."
-  mvn clean checkstyle:checkstyle cobertura:cobertura
+  mvn clean checkstyle:checkstyle org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true
 fi
 
 if [[ $1 == "site" ]]; then
