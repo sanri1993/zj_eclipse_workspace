@@ -6,15 +6,16 @@
 
 	<groupId>com.zjmvn.demo</groupId>
 	<artifactId>zhengjin-maven-project</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>java-maven-demo</name>
+	<name>zhengjin Java Maven Demo</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
 		<!-- basic -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- match hadoop-docker java env 1.7 -->
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
@@ -41,6 +42,7 @@
 		<maven.project.info.rpt.version>3.0.0</maven.project.info.rpt.version>
 
 		<!-- sonar -->
+		<sonar.scanner.version>3.7.0.1746</sonar.scanner.version>
 		<sonar.sources>src/main</sonar.sources>
     	<sonar.tests>src/test</sonar.tests>
 		<sonar.language>java</sonar.language>
@@ -49,9 +51,7 @@
 		<sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
 		<sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
 		<sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
-		<!-- duplicated with sonar.jacoco.reportPath
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-		-->
 	</properties>
 
 	<dependencies>
@@ -323,6 +323,13 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- sonar -->
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar.scanner.version}</version>
 			</plugin>
 
 			<!-- project info reports site -->
