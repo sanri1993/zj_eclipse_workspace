@@ -25,6 +25,7 @@
 		<hadoop.version>2.7.0</hadoop.version>
 
 		<!-- junit -->
+		<junit.version>4.11</junit.version>
 		<maven.surefire.version>2.12.4</maven.surefire.version>
 		<runSuite>**/Test*.class</runSuite>
 		<!-- checkstyle -->
@@ -59,7 +60,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -171,6 +172,7 @@
 				<version>3.2.1</version>
 				<executions>
 					<execution>
+						<id>spade-package</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
@@ -233,7 +235,6 @@
 
 			<!-- cobertura, use jacoco instead -->
 			<!-- Refer: http://www.mojohaus.org/cobertura-maven-plugin/usage.html -->
-			<!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -259,16 +260,14 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>clean</goal>
 							<goal>check</goal>
-							<goal>cobertura</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-			-->
 
 			<!-- jacoco -->
+			<!-- Refer: https://www.mkyong.com/maven/maven-jacoco-code-coverage-example/ -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -303,23 +302,20 @@
 					</rules>
 				</configuration>
 				<executions>
+					<!-- this will overwrite default "prepare-agent"
 					<execution>
 						<id>pre-test</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
+					-->
+					<!-- external goal bind to "test" phase -->
 					<execution>
 						<id>post-test</id>
 						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>default-check</id>
-						<goals>
-							<goal>check</goal>
 						</goals>
 					</execution>
 				</executions>
