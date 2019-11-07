@@ -40,7 +40,7 @@ if [[ $1 == "sonar" ]]; then
   echo "run junit, checkstyle and code coverage, and push project data to sonarqube."
   mvn clean checkstyle:checkstyle \
   org.jacoco:jacoco-maven-plugin:prepare-agent package -Dmaven.test.failure.ignore=true \
-  sonar:sonar -Dsonar.host.url=http://localhost:9000
+  sonar:sonar -Dsonar.host.url=http://sonar:9000
 fi
 
 echo "Java project ci DONE."

@@ -6,7 +6,6 @@
 
 <!-- Refer: https://blog.csdn.net/wangchaox123/article/details/87865116 -->
 <module name="Checker">
-
 	<property name="charset" value="UTF-8" />
 	<property name="severity" value="warning" />
 
@@ -17,7 +16,6 @@
 	<!-- Checks that property files contain the same keys. -->
 
 	<module name="TreeWalker">
-
 		<module name="AvoidStarImport" />
 		<module name="IllegalImport" /> <!-- defaults to sun.* packages -->
 		<module name="RedundantImport" />
@@ -48,16 +46,21 @@
 		</module>
 
 		<!-- 检查类变量的注释 -->
+		<!--
 		<module name="JavadocVariable">
 			<property name="scope" value="private" />
 		</module>
-
-		<!-- <module name="LeftCurly"> <property name="option" value="nl" /> </module> -->
+		-->
 
 		<module name="NeedBraces" />
+		<!--
+		<module name="LeftCurly">
+			<property name="option" value="nl" />
+		</module>
 		<module name="RightCurly">
 			<property name="option" value="alone" />
 		</module>
+		-->
 
 		<module name="EqualsHashCode" />
 
@@ -81,8 +84,7 @@
 			<property name="format" value="(^[a-z][a-zA-Z0-9]{0,19}$)" />
 		</module>
 		<module name="MemberName">
-			<property name="format"
-				value="(^[a-z][a-z0-9][a-zA-Z0-9]{0,19}$)" />
+			<property name="format" value="(^[a-z][a-z0-9][a-zA-Z0-9]{0,19}$)" />
 		</module>
 		<module name="ParameterName">
 			<property name="format" value="(^[a-z][a-zA-Z0-9_]{0,19}$)" />
@@ -104,10 +106,8 @@
 
 		<module name="FinalClass" />
 		<module name="VisibilityModifier" />
-		<module name="MultipleVariableDeclarations">
-		</module>
-		<module name="ArrayTypeStyle">
-		</module>
+		<module name="MultipleVariableDeclarations" />
+		<module name="ArrayTypeStyle" />
 
 		<!-- Checks that there are no "magic numbers", where a magic number is 
 			a numeric literal that is not defined as a constant. By default, -1, 0, 1, 
