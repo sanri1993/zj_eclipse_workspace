@@ -2,10 +2,14 @@ package com.zjmvn.demo;
 
 import java.util.List;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 
@@ -61,6 +65,22 @@ public class GuavaUtils {
 			System.out.print(grade + " ");
 		}
 		System.out.print(" ]");
+	}
+
+	public static boolean AllStartWithChar(List<String> list, final String c) {
+		Predicate<String> predicate = new Predicate<String>() {
+			@Override
+			public boolean apply(@Nullable String input) {
+				return input.startsWith(c);
+			}
+
+			@Override
+			public boolean test(@Nullable String input) {
+				return input.startsWith(c);
+			}
+		};
+
+		return Iterators.all(list.iterator(), predicate);
 	}
 
 }

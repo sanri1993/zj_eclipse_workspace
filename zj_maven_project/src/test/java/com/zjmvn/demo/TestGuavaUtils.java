@@ -1,16 +1,26 @@
 package com.zjmvn.demo;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
+import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.primitives.Ints;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -19,8 +29,8 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestGuavaUtils {
 
-	private final static String TAG = TestDemo.class.getSimpleName() + " => ";
-	private final static Logger logger = Logger.getLogger(TestDemo.class);
+	private final static String TAG = TestGuavaUtils.class.getSimpleName() + " => ";
+	private final static Logger logger = Logger.getLogger(TestGuavaUtils.class);
 
 	@Test
 	public void test01GuavaSumWithOptional() {
@@ -100,7 +110,45 @@ public class TestGuavaUtils {
 	}
 
 	@Test
+	public void test07GuavaIterators() {
+		logger.info(TAG + "Test guava utils Iterators.");
+		List<String> list = Lists.newArrayList("Apple", "Pear", "Peach", "Banana");
+		Assert.assertFalse(GuavaUtils.AllStartWithChar(list, "P"));
+
+		// filter
+		UnmodifiableIterator<String> iter1 = Iterators.filter(list.iterator(), new Predicate<String>() {
+			@Override
+			public boolean apply(@Nullable String input) {
+				return input.startsWith("P");
+			}
+
+			@Override
+			public boolean test(@Nullable String input) {
+				return input.startsWith("P");
+			}
+		});
+
+		System.out.println("\nItems start with 'P':");
+		while (iter1.hasNext()) {
+			System.out.println(iter1.next());
+		}
+
+		// transform
+		Iterator<Integer> iter2 = Iterators.transform(list.iterator(), new Function<String, Integer>() {
+			@Override
+			public @Nullable Integer apply(@Nullable String input) {
+				return input.length();
+			}
+		});
+		System.out.println("\nMapped items:");
+		while (iter2.hasNext()) {
+			System.out.println(iter2.next());
+		}
+	}
+
+	@Test
 	public void test11GuavaStringUtils() {
+		logger.info(TAG + "Test guava string utils.");
 		Assert.assertTrue(Strings.isNullOrEmpty(""));
 		Assert.assertTrue(Strings.isNullOrEmpty(null));
 
@@ -108,6 +156,19 @@ public class TestGuavaUtils {
 		Assert.assertEquals(base, Strings.commonPrefix(base + "hello", base + "Hi"));
 
 		Assert.assertEquals("0123", Strings.padStart("123", 4, '0'));
+		Assert.assertEquals("12300", Strings.padEnd("123", 5, '0'));
+
+		// split
+		String testStr = " a=b;c=d,e=f ";
+		Map<String, String> entries = Splitter.onPattern("[,;]{1,}").trimResults().omitEmptyStrings()
+				.withKeyValueSeparator("=").split(testStr);
+		for (Map.Entry<String, String> entry : entries.entrySet()) {
+			System.out.println(String.format("%s:%s", entry.getKey(), entry.getValue()));
+		}
+
+		// join
+		String content = Joiner.on("|").join(new String[] { "hello", "world" });
+		System.out.println("Join results: " + content);
 	}
 
 }
