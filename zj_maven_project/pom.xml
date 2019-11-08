@@ -42,17 +42,22 @@
 		<maven.site.version>3.7.1</maven.site.version>
 		<maven.project.info.rpt.version>3.0.0</maven.project.info.rpt.version>
 
-		<!-- sonar -->
+		<!-- sonar scanner -->
 		<sonar.scanner.version>3.7.0.1746</sonar.scanner.version>
 		<sonar.sources>src/main</sonar.sources>
     	<sonar.tests>src/test</sonar.tests>
 		<sonar.language>java</sonar.language>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
 		<sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
 		<sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.exclusions>
+			src/main/java/com/zjmvn/hadoop/**,src/main/java/com/zjmvn/hdfs/**,
+			src/main/java/com/zjmvn/zookeeper/**/*.java,src/main/java/com/zjmvn/rtidb/*.java
+		</sonar.coverage.exclusions>
 	</properties>
 
 	<dependencies>
@@ -321,7 +326,7 @@
 				</executions>
 			</plugin>
 
-			<!-- sonar -->
+			<!-- sonar scanner -->
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
