@@ -45,7 +45,7 @@
 		<!-- sonar scanner -->
 		<sonar.scanner.version>3.7.0.1746</sonar.scanner.version>
 		<sonar.sources>src/main</sonar.sources>
-    	<sonar.tests>src/test</sonar.tests>
+		<sonar.tests>src/test</sonar.tests>
 		<sonar.language>java</sonar.language>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
