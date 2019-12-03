@@ -1,5 +1,6 @@
 package com.zjmvn.demo;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -11,6 +12,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import com.google.common.collect.UnmodifiableIterator;
+import com.google.common.hash.BloomFilter;
+import com.google.common.hash.Funnels;
 import com.google.common.primitives.Ints;
 
 import java.util.ArrayList;
@@ -169,6 +172,25 @@ public class TestGuavaUtils {
 		// join
 		String content = Joiner.on("|").join(new String[] { "hello", "world" });
 		System.out.println("Join results: " + content);
+	}
+
+	@Test
+	public void test12GuavaBloomFilter() {
+		final int count = 1000000;
+
+		// 默认误判率 fpp 0.03
+		BloomFilter<CharSequence> bf = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_8), count, 0.002);
+		for (Integer i = 0; i < count; i++) {
+			bf.put(i.toString());
+		}
+
+		int foundCount = 0;
+		for (Integer i = 0; i < count + 10000; i++) {
+			if (bf.mightContain(i.toString())) {
+				foundCount++;
+			}
+		}
+		System.out.println("match count: " + foundCount);
 	}
 
 }
