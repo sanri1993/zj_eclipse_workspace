@@ -15,9 +15,9 @@ import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FlinkSocketWordCount {
+public class SocketWordCount {
 
-	private static Logger LOG = LoggerFactory.getLogger(FlinkSocketWordCount.class);
+	private static Logger LOG = LoggerFactory.getLogger(SocketWordCount.class);
 
 	public static void main(String[] args) throws Exception {
 		final String hostname;
