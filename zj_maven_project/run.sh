@@ -2,11 +2,13 @@
 set -uex
 
 if [[ $1 == "jar" ]]; then
-  # build hadoop jar package
-  # before check maven.compiler.source=1.7
+  # build jar package for hadoop, flink
+  # if hadoop, check maven.compiler.source=1.7
   echo "run clean and package."
-  mvn clean package
-  mv target/zj-mvn-demo.jar /tmp/hadoop_test
+  mvn clean package -Dmaven.test.skip=true
+
+  jar_file="zj-mvn-demo.jar"
+  mv target/${jar_file} /tmp/target_jars/${jar_file}
 fi
 
 if [[ $1 == "check" ]]; then
