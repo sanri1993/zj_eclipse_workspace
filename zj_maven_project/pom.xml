@@ -192,6 +192,11 @@
 			<artifactId>flink-connector-wikiedits_2.12</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-kafka_2.12</artifactId>
+			<version>${flink.version}</version>
+		</dependency>
 
 		<!-- 4paradigm -->
 		<dependency>
