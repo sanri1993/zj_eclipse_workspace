@@ -68,8 +68,8 @@ public class SocketWordCount {
 				});
 
 		LOG.info("WordCountDemo flink job sink operator.");
-//		windowCounts.print();
-		windowCounts.writeAsText("/tmp/flink_socket_out.txt", FileSystem.WriteMode.OVERWRITE);
+//		windowCounts.print().setParallelism(1);
+		windowCounts.writeAsText("/tmp/flink_socket_out.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 
 		env.execute("Socket Window WordCount");
 	}

@@ -80,10 +80,10 @@ public class KafkaWordCount {
 			public String map(Tuple2<String, Integer> tp2) throws Exception {
 				return tp2.f0 + "-" + tp2.f1;
 			}
-		}).addSink(producer);
+		}).addSink(producer).setParallelism(1);
 
-		endResult.print();
-//		endResult.writeAsText("/tmp/flink_kafka_out.txt", FileSystem.WriteMode.OVERWRITE);
+		endResult.print().setParallelism(1);
+//		endResult.writeAsText("/tmp/flink_kafka_out.txt", FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 
 		env.execute("Kafka WordCount");
 	}
