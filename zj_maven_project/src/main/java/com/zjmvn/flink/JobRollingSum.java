@@ -7,7 +7,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 /**
  * Program demonstrating a rolling sum.
  */
-public class MainRollingSum {
+public class JobRollingSum {
 
 	public static void main(String[] args) throws Exception {
 

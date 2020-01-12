@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
-public class MainAverageSensorReadings {
+public class JobAverageSensorReadings {
 
 	/**
 	 * main() defines and executes the DataStream program.

@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 
 public class MyRecordReader extends RecordReader<NullWritable, BytesWritable> {
 
-	private static final Logger logger = Logger.getLogger(ManyToOneMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRManyToOne.class);
 
 	private Configuration conf;
 	private FileSplit fileSplit;

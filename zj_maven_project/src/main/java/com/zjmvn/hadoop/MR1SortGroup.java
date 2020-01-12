@@ -107,7 +107,7 @@ public class MR1SortGroup {
 		job.setOutputKeyClass(OrderBean.class);
 		job.setOutputValueClass(NullWritable.class);
 
-		job.setGroupingComparatorClass(MyGroupingComparator.class); // map side Comparator
+		job.setGroupingComparatorClass(MyGroupingComparator.class); // reduce side Comparator
 		job.setPartitionerClass(ItemIdPartitioner.class);
 		job.setNumReduceTasks(2);
 

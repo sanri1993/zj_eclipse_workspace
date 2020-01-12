@@ -16,9 +16,9 @@ import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MainSocketWordCount {
+public class JobSocketWordCount {
 
-	private static Logger LOG = LoggerFactory.getLogger(MainSocketWordCount.class);
+	private static Logger LOG = LoggerFactory.getLogger(JobSocketWordCount.class);
 
 	public static void main(String[] args) throws Exception {
 

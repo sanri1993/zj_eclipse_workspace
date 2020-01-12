@@ -11,7 +11,7 @@ import org.apache.flink.util.Collector;
  * Example program to demonstrate simple transformation functions: filter, map,
  * and flatMap.
  */
-public class MainBasicTransformations {
+public class JobBasicTransformations {
 
 	public static void main(String[] args) throws Exception {
 

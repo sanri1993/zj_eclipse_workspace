@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 /**
  * Example program to demonstrate keyed transformation functions: keyBy, reduce.
  */
-public class MainKeyedTransformations {
+public class JobKeyedTransformations {
 
 	public static void main(String[] args) throws Exception {
 

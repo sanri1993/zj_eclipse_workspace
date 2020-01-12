@@ -15,10 +15,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.log4j.Logger;
 
-public class MultipleOutputMapReduce {
+public class MRMultipleOutput {
 
-	private static final Logger logger = Logger.getLogger(MultipleOutputMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRMultipleOutput.class);
 
+	/** Mapper */
 	private static class MultipleOutputMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 		@Override
@@ -29,6 +30,7 @@ public class MultipleOutputMapReduce {
 		}
 	}
 
+	/** Reducer */
 	private static class MultipleOutputReducer extends Reducer<Text, Text, NullWritable, Text> {
 
 		private MultipleOutputs<NullWritable, Text> multipleOutputs;
@@ -65,21 +67,21 @@ public class MultipleOutputMapReduce {
 		// Order_000003,Pdt_01,322.1
 		// Order_000004,Pdt_07,716.2
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.MultipleOutputMapReduce multiple/input multiple/output
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRMultipleOutput \
+		// multiple/input multiple/output
 
 		// output:
-		// muloutput/output/Order_000001-r-00000
-		// muloutput/output/Order_000002-r-00000
-		// muloutput/output/Order_000003-r-00000
-		// muloutput/output/Order_000004-r-00000
+		// multiple/output/Order_000001-r-00000
+		// multiple/output/Order_000002-r-00000
+		// multiple/output/Order_000003-r-00000
+		// multiple/output/Order_000004-r-00000
 
 		logger.info("MultipleOutput mapreduce is started.");
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(MultipleOutputMapReduce.class);
+		job.setJarByClass(MRMultipleOutput.class);
 		job.setMapperClass(MultipleOutputMapper.class);
 		job.setReducerClass(MultipleOutputReducer.class);
 

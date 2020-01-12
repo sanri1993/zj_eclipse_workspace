@@ -19,10 +19,11 @@ import org.apache.log4j.Logger;
 /**
  * 合并多个小文件
  */
-public class ManyToOneMapReduce {
+public class MRManyToOne {
 
-	private static final Logger logger = Logger.getLogger(ManyToOneMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRManyToOne.class);
 
+	/** Mapper */
 	private static class FileMapper extends Mapper<NullWritable, BytesWritable, Text, BytesWritable> {
 
 		private int myCounter = 0;
@@ -31,7 +32,7 @@ public class ManyToOneMapReduce {
 		public void setup(Context context) throws IOException, InterruptedException {
 			logger.info("FileMapper.setup() is invoked: " + this.hashCode());
 		}
-		
+
 		@Override
 		public void map(NullWritable key, BytesWritable value, Context context)
 				throws IOException, InterruptedException {
@@ -39,7 +40,7 @@ public class ManyToOneMapReduce {
 			String filename = ((FileSplit) context.getInputSplit()).getPath().getName();
 			context.write(new Text(filename), value);
 		}
-		
+
 		@Override
 		public void cleanup(Context context) throws IOException, InterruptedException {
 			logger.info("FileMapper.clearup() is invoked: " + this.hashCode());
@@ -48,23 +49,24 @@ public class ManyToOneMapReduce {
 
 	public static void main(String[] args) throws Exception {
 
-		// input, create files:
-		// for i in {1..10}; do echo "file$i for mapreduce ManyToOne test" > file$i.txt; done
+		// input script:
+		// for i in {1..10}; do echo "file$i for mapreduce ManyToOne test" > file$i.txt;
+		// done
 
 		// input on hdfs:
-		// bin/hdfs dfs -put src/file* ManyToOne/input
-		// bin/hdfs dfs -ls ManyToOne/input
+		// hdfs dfs -put src/file* ManyToOne/input
+		// hdfs dfs -ls ManyToOne/input
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.ManyToOneMapReduce ManyToOne/input ManyToOne/output
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRManyToOne \
+		// ManyToOne/input ManyToOne/output
 
-		// create 5 map tasks, and each task for one input file
+		// create map task for each input file
 		logger.info("ManyToOne mapreduce is started.");
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(ManyToOneMapReduce.class);
+		job.setJarByClass(MRManyToOne.class);
 		job.setMapperClass(FileMapper.class);
 
 		job.setMapOutputKeyClass(Text.class);
@@ -73,7 +75,7 @@ public class ManyToOneMapReduce {
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(BytesWritable.class);
 
-		job.setInputFormatClass(MyInputFormat.class);
+		job.setInputFormatClass(MyInputFormat.class); // custom input format
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
 		FileInputFormat.setInputPaths(job, new Path(args[0]));

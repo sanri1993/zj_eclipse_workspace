@@ -13,7 +13,7 @@ import org.apache.flink.util.Collector;
  * a stream of smoke level measurements. When the temperature is over a given
  * threshold and the smoke level is high, we emit a fire alert.
  */
-public class MainMultiStreamTransformations {
+public class JobMultiStreamTransformations {
 
 	public static void main(String[] args) throws Exception {
 

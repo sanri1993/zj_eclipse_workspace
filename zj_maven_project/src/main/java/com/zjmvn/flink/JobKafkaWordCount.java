@@ -20,9 +20,9 @@ import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MainKafkaWordCount {
+public class JobKafkaWordCount {
 
-	private static Logger LOG = LoggerFactory.getLogger(MainKafkaWordCount.class);
+	private static Logger LOG = LoggerFactory.getLogger(JobKafkaWordCount.class);
 	private static final String prefix = "KafkaWordCountDemo: ";
 
 	public static void main(String[] args) throws Exception {

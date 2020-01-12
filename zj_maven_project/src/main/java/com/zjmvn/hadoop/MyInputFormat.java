@@ -15,6 +15,7 @@ public class MyInputFormat extends FileInputFormat<NullWritable, BytesWritable> 
 
 	@Override
 	protected boolean isSplitable(JobContext context, Path filename) {
+		// 设置每个小文件不可分片，保证一个小文件生成一个key-value键值对
 		return false;
 	}
 
