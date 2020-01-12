@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
-public class AverageSensorReadings {
+public class MainAverageSensorReadings {
 
 	/**
 	 * main() defines and executes the DataStream program.
@@ -44,7 +44,7 @@ public class AverageSensorReadings {
 				.apply(new TemperatureAverager());
 
 		// print result stream to standard out
-		avgTemp.print();
+		avgTemp.print().setParallelism(1);
 
 		// execute application
 		env.execute("Compute average sensor temperature");

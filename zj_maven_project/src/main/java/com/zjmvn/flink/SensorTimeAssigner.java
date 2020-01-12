@@ -5,7 +5,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 /**
  * Assigns timestamps to SensorReadings based on their internal timestamp and
- * emits watermarks with five seconds slack.
+ * emits watermarks with 5 seconds slack.
  */
 public class SensorTimeAssigner extends BoundedOutOfOrdernessTimestampExtractor<SensorReading> {
 

@@ -16,11 +16,12 @@ import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SocketWordCount {
+public class MainSocketWordCount {
 
-	private static Logger LOG = LoggerFactory.getLogger(SocketWordCount.class);
+	private static Logger LOG = LoggerFactory.getLogger(MainSocketWordCount.class);
 
 	public static void main(String[] args) throws Exception {
+
 		final String hostname;
 		final int port;
 		try {
@@ -28,8 +29,7 @@ public class SocketWordCount {
 			hostname = params.get("host");
 			port = params.getInt("port");
 		} catch (Exception e) {
-			System.err.println(
-					"No host or port specified. Please run 'FlinkSocketWordCount --host <hostname> --port <port>'");
+			LOG.error("No host or port specified. Please run 'FlinkSocketWordCount --host <hostname> --port <port>'");
 			return;
 		}
 
@@ -53,8 +53,8 @@ public class SocketWordCount {
 
 		LOG.info("WordCountDemo flink job keyby and window operator.");
 		KeyedStream<WordWithCount, Tuple> keyedInfos = wordWithCountInfos.keyBy("word");
-		WindowedStream<WordWithCount, Tuple, TimeWindow> windowedInfo = keyedInfos.timeWindow(Time.seconds(5),
-				Time.seconds(1));
+		WindowedStream<WordWithCount, Tuple, TimeWindow> windowedInfo = keyedInfos.timeWindow(Time.seconds(5L),
+				Time.seconds(1L));
 
 		LOG.info("WordCountDemo flink job reduce operator.");
 		SingleOutputStreamOperator<WordWithCount> windowCounts = windowedInfo

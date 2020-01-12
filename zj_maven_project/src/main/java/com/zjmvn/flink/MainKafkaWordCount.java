@@ -20,16 +20,17 @@ import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KafkaWordCount {
+public class MainKafkaWordCount {
 
-	private static Logger LOG = LoggerFactory.getLogger(KafkaWordCount.class);
+	private static Logger LOG = LoggerFactory.getLogger(MainKafkaWordCount.class);
 	private static final String prefix = "KafkaWordCountDemo: ";
 
 	public static void main(String[] args) throws Exception {
+
 		LOG.info(prefix + "get stream exec env.");
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-		LOG.info(prefix + "flink job source operator from kafka.");
+		LOG.info(prefix + "flink job source operator by kafka.");
 		Properties props = new Properties();
 		props.setProperty("bootstrap.servers", "kafka:9092");
 		props.setProperty("group.id", "flink-group");
@@ -63,7 +64,7 @@ public class KafkaWordCount {
 		LOG.info(prefix + "flink job keyby and window operator.");
 		KeyedStream<Tuple2<String, Integer>, Tuple> keyByResult = map.keyBy(0);
 		WindowedStream<Tuple2<String, Integer>, Tuple, TimeWindow> windowResult = keyByResult
-				.timeWindow(Time.seconds(5));
+				.timeWindow(Time.seconds(5L));
 
 		LOG.info(prefix + "flink job sum operator.");
 		SingleOutputStreamOperator<Tuple2<String, Integer>> endResult = windowResult.sum(1);

@@ -20,9 +20,9 @@ public class SensorSource extends RichParallelSourceFunction<SensorReading> {
 	public void run(SourceContext<SensorReading> srcCtx) throws Exception {
 		final int size = 10;
 		Random rand = new Random();
+
 		// look up index of this parallel task
 		int taskIdx = this.getRuntimeContext().getIndexOfThisSubtask();
-
 		// initialize sensor ids and temperatures
 		String[] sensorIds = new String[size];
 		double[] curFTemp = new double[size];
@@ -40,7 +40,7 @@ public class SensorSource extends RichParallelSourceFunction<SensorReading> {
 				// emit reading
 				srcCtx.collect(new SensorReading(sensorIds[i], curTime, curFTemp[i]));
 			}
-			TimeUnit.MILLISECONDS.sleep(100L);
+			TimeUnit.MILLISECONDS.sleep(200L);
 		}
 	}
 
