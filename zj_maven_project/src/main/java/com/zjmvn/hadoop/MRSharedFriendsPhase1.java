@@ -13,10 +13,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class StepFirstMapReduce {
+public class MRSharedFriendsPhase1 {
 
-	private static final Logger logger = Logger.getLogger(StepFirstMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRSharedFriendsPhase1.class);
 
+	/** Mapper */
 	private static class FirstMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 		@Override
@@ -33,12 +34,14 @@ public class StepFirstMapReduce {
 		}
 	}
 
+	/** Reducer */
 	private static class FirstReducer extends Reducer<Text, Text, Text, Text> {
 
 		@Override
 		protected void reduce(Text friend, Iterable<Text> users, Context context)
 				throws IOException, InterruptedException {
 			StringBuffer buf = new StringBuffer();
+			// TODO: sort users?
 			for (Text user : users) {
 				buf.append(user).append(",");
 			}
@@ -59,28 +62,28 @@ public class StepFirstMapReduce {
 		// G:A,C,D,E,F
 		// H:A,C,D,E,O
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.StepFirstMapReduce first/input first/output
-		
-		// output:
-		// A  G,F,B,H,D,C,
-		// B  F,E,A,
-		// C  E,H,G,F,B,A,
-		// D  A,E,G,C,H,F,
-		// E  F,B,D,G,A,H,
-		// F  A,D,G,C,
-		// I  C,
-		// K  B,
-		// L  E,D,
-		// M  F,E,
-		// O  F,H,A,
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRSharedFriendsPhase1 \
+		// first/input first/output
+
+		// output (get all friends of one user):
+		// A G,F,B,H,D,C,
+		// B F,E,A,
+		// C E,H,G,F,B,A,
+		// D A,E,G,C,H,F,
+		// E F,B,D,G,A,H,
+		// F A,D,G,C,
+		// I C,
+		// K B,
+		// L E,D,
+		// M F,E,
+		// O F,H,A,
 
 		logger.info("StepFirstMapReduce task is started.");
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(StepFirstMapReduce.class);
+		job.setJarByClass(MRSharedFriendsPhase1.class);
 		job.setMapperClass(FirstMapper.class);
 		job.setReducerClass(FirstReducer.class);
 

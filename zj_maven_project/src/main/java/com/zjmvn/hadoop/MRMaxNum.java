@@ -15,8 +15,9 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class MaxNumMapReduce extends Configured implements Tool {
+public class MRMaxNum extends Configured implements Tool {
 
+	/** Mapper */
 	private static class MaxNumMapper extends Mapper<LongWritable, Text, LongWritable, NullWritable> {
 
 		private long max = Long.MIN_VALUE;
@@ -39,9 +40,11 @@ public class MaxNumMapReduce extends Configured implements Tool {
 		}
 	}
 
+	/** Reducer */
 	private static class MaxNumReducer extends Reducer<LongWritable, NullWritable, LongWritable, NullWritable> {
 		long max = Long.MIN_VALUE;
 
+		@Override
 		protected void reduce(LongWritable key, java.lang.Iterable<NullWritable> values,
 				Reducer<LongWritable, NullWritable, LongWritable, NullWritable>.Context context)
 				throws java.io.IOException, InterruptedException {
@@ -51,34 +54,37 @@ public class MaxNumMapReduce extends Configured implements Tool {
 			}
 		}
 
+		@Override
 		protected void cleanup(Reducer<LongWritable, NullWritable, LongWritable, NullWritable>.Context context)
 				throws java.io.IOException, InterruptedException {
+			// write final results in cleanup (as compare to MRTopKNums)
 			context.write(new LongWritable(this.max), NullWritable.get());
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
+
 		// input:
 		// for i in {1..10000}; do echo $(($RANDOM + $RANDOM)) >> file_nums.txt; done
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.MaxNumMapReduce maxnum/input maxnum/output
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRMaxNum \
+		// maxnum/input maxnum/output
 
 		// output:
-		// bin/hdfs dfs -cat /user/root/maxnum/output/*
+		// hdfs dfs -text /user/root/maxnum/output/*
 
 		// verify:
 		// sort -n file_nums.txt | tail -1
 
 		Configuration conf = new Configuration();
-		int res = ToolRunner.run(conf, new MaxNumMapReduce(), args);
+		int res = ToolRunner.run(conf, new MRMaxNum(), args);
 		System.exit(res);
 	}
 
 	@Override
 	public int run(String[] args) throws Exception {
 		Job job = Job.getInstance(getConf(), "MaxNumMapReduce");
-		job.setJarByClass(TopKNumMapReduce.class);
+		job.setJarByClass(MRTopKNums.class);
 
 		// 设置自定义Mapper
 		job.setMapperClass(MaxNumMapper.class);
@@ -89,6 +95,8 @@ public class MaxNumMapReduce extends Configured implements Tool {
 		job.setReducerClass(MaxNumReducer.class);
 		job.setOutputKeyClass(LongWritable.class);
 		job.setOutputValueClass(NullWritable.class);
+
+		job.setNumReduceTasks(1);
 
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
 		Path outDir = new Path(args[1]);

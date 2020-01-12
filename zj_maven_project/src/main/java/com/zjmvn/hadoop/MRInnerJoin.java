@@ -18,10 +18,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class JoinMapReduce {
+public class MRInnerJoin {
 
-	private static final Logger logger = Logger.getLogger(JoinMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRInnerJoin.class);
 
+	/** Mapper */
 	private static class JoinMapper extends Mapper<LongWritable, Text, Text, InfoBean> {
 
 		InfoBean bean = new InfoBean();
@@ -45,6 +46,7 @@ public class JoinMapReduce {
 		}
 	}
 
+	/** Reducer */
 	private static class JoinReducer extends Reducer<Text, InfoBean, InfoBean, NullWritable> {
 
 		@Override
@@ -74,7 +76,6 @@ public class JoinMapReduce {
 				bean.setPName(pdBean.getPName());
 				bean.setCategory_id(pdBean.getCategory_id());
 				bean.setPrice(pdBean.getPrice());
-
 				context.write(bean, NullWritable.get());
 			}
 		}
@@ -82,20 +83,19 @@ public class JoinMapReduce {
 
 	public static void main(String[] args) throws Exception {
 
-		// input
-		// order:
+		// input of orders:
 		// 1001,20150710,P0001,12
 		// 1002,20150810,P0001,13
 		// 1003,20150910,P0002,13
 		// 1004,20150915,P0003,3
-		// product:
+		// input of products:
 		// P0001,小米5,1,1999.0
 		// P0002,锤子T1,2,1599.0
 		// P0003,锤子T2,3,1999.0
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.JoinMapReduce joinmr/input joinmr/output
-		
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRInnerJoin \
+		// joinmr/input joinmr/output
+
 		// output:
 		// order_id=1002,dataString=20150810,p_id=P0001,amount=13,pname=小米5,category_id=1,price=1999.00
 		// order_id=1001,dataString=20150710,p_id=P0001,amount=12,pname=小米5,category_id=1,price=1999.00
@@ -107,7 +107,7 @@ public class JoinMapReduce {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(JoinMapReduce.class);
+		job.setJarByClass(MRInnerJoin.class);
 		job.setMapperClass(JoinMapper.class);
 		job.setReducerClass(JoinReducer.class);
 

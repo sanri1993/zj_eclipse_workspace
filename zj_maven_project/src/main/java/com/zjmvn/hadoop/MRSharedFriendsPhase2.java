@@ -14,10 +14,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class StepSecondMapReduce {
+public class MRSharedFriendsPhase2 {
 
-	private static final Logger logger = Logger.getLogger(StepSecondMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRSharedFriendsPhase2.class);
 
+	/** Mapper */
 	private static class SecondMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 		@Override
@@ -37,6 +38,7 @@ public class StepSecondMapReduce {
 		}
 	}
 
+	/** Reducer */
 	private static class SecondReducer extends Reducer<Text, Text, Text, Text> {
 
 		@Override
@@ -53,31 +55,31 @@ public class StepSecondMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-		// A  G,F,B,H,D,C,
-		// B  F,E,A,
-		// C  E,H,G,F,B,A,
-		// D  A,E,G,C,H,F,
-		// E  F,B,D,G,A,H,
-		// F  A,D,G,C,
-		// I  C,
-		// K  B,
-		// L  E,D,
-		// M  F,E,
-		// O  F,H,A,
+		// A G,F,B,H,D,C,
+		// B F,E,A,
+		// C E,H,G,F,B,A,
+		// D A,E,G,C,H,F,
+		// E F,B,D,G,A,H,
+		// F A,D,G,C,
+		// I C,
+		// K B,
+		// L E,D,
+		// M F,E,
+		// O F,H,A,
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.StepSecondMapReduce first/output/part-r-0* second/output
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRSharedFriendsPhase2 \
+		// first/output/part-r-0* second/output
 
 		// output:
-		// A-B  E C
-		// A-C  D F
-		// A-D  E F
-		// A-E  D B C
-		// A-F  E B O D C
-		// A-G  E F C D
-		// A-H  D C O E
-		// B-C  A
-		// B-D  E A
+		// A-B E C
+		// A-C D F
+		// A-D E F
+		// A-E D B C
+		// A-F E B O D C
+		// A-G E F C D
+		// A-H D C O E
+		// B-C A
+		// B-D E A
 		// ...
 
 		logger.info("StepSecondMapReduce task is started.");
@@ -85,7 +87,7 @@ public class StepSecondMapReduce {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(StepSecondMapReduce.class);
+		job.setJarByClass(MRSharedFriendsPhase2.class);
 		job.setMapperClass(SecondMapper.class);
 		job.setReducerClass(SecondReducer.class);
 
