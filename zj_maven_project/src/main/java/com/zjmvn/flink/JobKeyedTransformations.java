@@ -24,6 +24,7 @@ public class JobKeyedTransformations {
 				.assignTimestampsAndWatermarks(new SensorTimeAssigner());
 
 		KeyedStream<SensorReading, String> keyed = readings.keyBy(r -> r.id);
+		// TODO: default time window?
 		WindowedStream<SensorReading, String, TimeWindow> windowed = keyed.timeWindow(Time.seconds(1L));
 
 		// a rolling reduce that computes the highest temperature of each sensor and the

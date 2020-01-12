@@ -17,6 +17,7 @@ public class JobBasicTransformations {
 
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
+		// the timeCharacteristic was set to ProcessingTime by default
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 		env.getConfig().setAutoWatermarkInterval(1000L);
 
