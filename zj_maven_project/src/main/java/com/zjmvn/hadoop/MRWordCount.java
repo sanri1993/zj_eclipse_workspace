@@ -34,10 +34,11 @@ import org.apache.hadoop.util.ToolRunner;
 import org.apache.log4j.Logger;
 
 @SuppressWarnings("deprecation")
-public class WordCount extends Configured implements Tool {
+public class MRWordCount extends Configured implements Tool {
 
-	private static final Logger logger = Logger.getLogger(WordCount.class);
+	private static final Logger logger = Logger.getLogger(MRWordCount.class);
 
+	/** Mapper */
 	private static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
 
 		static enum Counters {
@@ -118,6 +119,7 @@ public class WordCount extends Configured implements Tool {
 		}
 	}
 
+	/** Reducer */
 	private static class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
 
 		@Override
@@ -135,14 +137,14 @@ public class WordCount extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		logger.info("WordCount mapreduce is started.");
 
-		JobConf conf = new JobConf(this.getConf(), WordCount.class);
+		JobConf conf = new JobConf(this.getConf(), MRWordCount.class);
 		conf.setJobName("wordcount");
 
 		conf.setOutputKeyClass(Text.class);
 		conf.setOutputValueClass(IntWritable.class);
 
-		conf.setMapperClass(Map.class);
 		conf.setCombinerClass(Reduce.class);
+		conf.setMapperClass(Map.class);
 		conf.setReducerClass(Reduce.class);
 
 		conf.setInputFormat(TextInputFormat.class);
@@ -167,12 +169,12 @@ public class WordCount extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
 
-		// input:
+		// #1 input of 2 files:
 		// Hello World, Bye World!
 		// Hello Hadoop, Goodbye to hadoop.
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCount wordcount/input/file* wordcount/output
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MainWordCount \
+		// wordcount/input/file* wordcount/output
 
 		// output:
 		// Bye 1
@@ -184,14 +186,14 @@ public class WordCount extends Configured implements Tool {
 		// hadoop. 1
 		// to 1
 
-		// input pattern:
+		// #2 input pattern:
 		// ,
 		// !
 		// \.
 		// to
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCount -Dwordcount.case.sensitive=false
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRWordCount \
+		// -Dwordcount.case.sensitive=false \
 		// wordcount/input/file* wordcount/output -skip wordcount/input/patterns.txt
 
 		// output:
@@ -201,7 +203,7 @@ public class WordCount extends Configured implements Tool {
 		// hello 2
 		// world 2
 
-		int res = ToolRunner.run(new Configuration(), new WordCount(), args);
+		int res = ToolRunner.run(new Configuration(), new MRWordCount(), args);
 		System.exit(res);
 	}
 

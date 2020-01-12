@@ -17,10 +17,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class SortGroupMapReduce01 {
+public class MR1SortGroup {
 
-	private static final Logger logger = Logger.getLogger(SortGroupMapReduce01.class);
+	private static final Logger logger = Logger.getLogger(MR1SortGroup.class);
 
+	/** Comparator */
 	private static class MyGroupingComparator extends WritableComparator {
 
 		@SuppressWarnings("unused")
@@ -42,6 +43,7 @@ public class SortGroupMapReduce01 {
 		}
 	}
 
+	/** Mapper */
 	private static class SortMapper extends Mapper<LongWritable, Text, OrderBean, NullWritable> {
 
 		OrderBean order = new OrderBean();
@@ -51,16 +53,17 @@ public class SortGroupMapReduce01 {
 			String line = value.toString();
 			String[] fields = line.split(",");
 			order.set(new Text(fields[0]), new DoubleWritable(Double.parseDouble(fields[2])));
-			context.write(order, NullWritable.get());
+			context.write(order, NullWritable.get()); // only key
 		}
 	}
 
+	/** Reducer */
 	private static class SortReducer extends Reducer<OrderBean, NullWritable, OrderBean, NullWritable> {
 
 		@Override
 		public void reduce(OrderBean key, Iterable<NullWritable> values, Context context)
 				throws IOException, InterruptedException {
-			context.write(key, NullWritable.get());
+			context.write(key, NullWritable.get()); // only key
 		}
 	}
 
@@ -76,16 +79,14 @@ public class SortGroupMapReduce01 {
 		// Order_000003,Pdt_01,612.1
 		// Order_000004,Pdt_07,716.2
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.GroupSortMapReduce01 groupcount/input groupcount/output
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MR1SortGroup \
+		// groupcount/input groupcount/output
 
-		// output:
-		// bin/hdfs dfs -ls groupcount/output
-		// 2019-03-25 06:30 groupcount/output/_SUCCESS
+		// output files (hdfs dfs -ls groupcount/output):
 		// 2019-03-25 06:30 groupcount/output/part-r-00000
 		// 2019-03-25 06:30 groupcount/output/part-r-00001
 
-		// bin/hdfs dfs -cat groupcount/output/*
+		// output text (hdfs dfs -text groupcount/output/*):
 		// Order_000002 522.8
 		// Order_000004 716.2
 		// Order_000001 222.8
@@ -96,7 +97,7 @@ public class SortGroupMapReduce01 {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(SortGroupMapReduce01.class);
+		job.setJarByClass(MR1SortGroup.class);
 		job.setMapperClass(SortMapper.class);
 		job.setReducerClass(SortReducer.class);
 
@@ -106,7 +107,7 @@ public class SortGroupMapReduce01 {
 		job.setOutputKeyClass(OrderBean.class);
 		job.setOutputValueClass(NullWritable.class);
 
-		job.setGroupingComparatorClass(MyGroupingComparator.class);
+		job.setGroupingComparatorClass(MyGroupingComparator.class); // map side Comparator
 		job.setPartitionerClass(ItemIdPartitioner.class);
 		job.setNumReduceTasks(2);
 

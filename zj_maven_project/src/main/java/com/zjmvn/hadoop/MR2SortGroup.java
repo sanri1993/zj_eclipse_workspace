@@ -24,7 +24,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class SortGroupMapReduce02 extends Configured implements Tool {
+public class MR2SortGroup extends Configured implements Tool {
 
 	private static class MyNewKey implements WritableComparable<MyNewKey> {
 
@@ -59,6 +59,7 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 		}
 	}
 
+	/** Comparator */
 	private static class MyGroupingComparator implements RawComparator<MyNewKey> {
 
 		@Override
@@ -71,7 +72,8 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 			return WritableComparator.compareBytes(b1, s1, 8, b2, s2, 8);
 		}
 	}
-	
+
+	/** Mapper */
 	private static class SortGroupMapper extends Mapper<LongWritable, Text, MyNewKey, NullWritable> {
 
 		@Override
@@ -81,10 +83,11 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 			String[] spilted = value.toString().split(" ");
 			long firstNum = Long.parseLong(spilted[0]);
 			long secondNum = Long.parseLong(spilted[1]);
-			context.write(new MyNewKey(firstNum, secondNum), NullWritable.get());
+			context.write(new MyNewKey(firstNum, secondNum), NullWritable.get()); // only key
 		}
 	}
 
+	/** Reducer */
 	private static class SortGroupReducer extends Reducer<MyNewKey, NullWritable, LongWritable, LongWritable> {
 
 		@Override
@@ -96,6 +99,7 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 	}
 
 	public static void main(String[] args) {
+
 		// input:
 		// 3 2
 		// 3 3
@@ -104,11 +108,10 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 		// 2 1
 		// 1 1
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.SortGroupMapReduce02 sortgroup/input sortgroup/output false
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MR2SortGroup \
+		// sortgroup/input sortgroup/output false
 
-		// output:
-		// bin/hdfs dfs -cat /user/root/sortgroup/output/*
+		// output (bin/hdfs dfs -cat /user/root/sortgroup/output/*):
 		// 1 1
 		// 2 2
 		// 2 1
@@ -116,7 +119,7 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 		// 3 2
 		// 3 1
 
-		// set MyGroupingComparator, output:
+		// output by set MyGroupingComparator:
 		// 1 1
 		// 2 2
 		// 3 3
@@ -127,7 +130,7 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 //		conf.setClass("mapred.output.compression.codec", GzipCodec.class, CompressionCodec.class);
 
 		try {
-			int res = ToolRunner.run(conf, new SortGroupMapReduce02(), args);
+			int res = ToolRunner.run(conf, new MR2SortGroup(), args);
 			System.exit(res);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,12 +139,11 @@ public class SortGroupMapReduce02 extends Configured implements Tool {
 
 	@Override
 	public int run(String[] args) throws Exception {
-
 		Job job = Job.getInstance(this.getConf(), "SortGroupMapReduce02");
 
 		// if not set, java.lang.ClassNotFoundException:
-		// Class com.zjmvn.hadoop.SortGroupMapReduce$SortGroupMapper not found
-		job.setJarByClass(SortGroupMapReduce02.class);
+		// Class com.zjmvn.hadoop.MR2SortGroup$SortGroupMapper not found
+		job.setJarByClass(MR2SortGroup.class);
 		job.setMapperClass(SortGroupMapper.class);
 		job.setReducerClass(SortGroupReducer.class);
 

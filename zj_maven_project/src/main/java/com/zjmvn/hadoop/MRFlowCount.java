@@ -15,14 +15,15 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class FlowCountMapReduce {
+public class MRFlowCount {
 
-	private static final Logger logger = Logger.getLogger(FlowCountMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRFlowCount.class);
 
+	/** Mapper */
 	private static class FlowCountMapper extends Mapper<LongWritable, Text, Text, FlowBean> {
 
 		private int myCounter = 0;
-		
+
 		@Override
 		public void setup(Context context) throws IOException, InterruptedException {
 			logger.info("FlowCountMapper.setup() is invoked: " + this.hashCode());
@@ -49,6 +50,7 @@ public class FlowCountMapReduce {
 		}
 	}
 
+	/** Reducer */
 	private static class FlowCountReducer extends Reducer<Text, FlowBean, Text, FlowBean> {
 
 		private int myCounter = 0;
@@ -82,45 +84,42 @@ public class FlowCountMapReduce {
 	public static void main(String[] args) throws Exception {
 
 		// input:
-		// 13726230501  200 1100
-		// 13396230502  300 1200
-		// 13897230503  400 1300
-		// 13897230503  100 300
-		// 13597230534  500 1400
-		// 13597230534  300 1200
+		// 13726230501 200 1100
+		// 13396230502 300 1200
+		// 13897230503 400 1300
+		// 13897230503 100 300
+		// 13597230534 500 1400
+		// 13597230534 300 1200
 
-		// run cmd:
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.FlowCountMapReduce flowcount/input flowcount/output
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRFlowCount \
+		// flowcount/input flowcount/output
 
-		// output:
-		// 5 partition
-		// bin/hdfs dfs -ls flowcount/output
-		// 2019-03-25 05:13 flowcount/output/_SUCCESS
+		// output of 5 partitions (hdfs dfs -ls flowcount/output):
 		// 2019-03-25 05:13 flowcount/output/part-r-00000
 		// 2019-03-25 05:13 flowcount/output/part-r-00001
 		// 2019-03-25 05:13 flowcount/output/part-r-00002
 		// 2019-03-25 05:13 flowcount/output/part-r-00003
 		// 2019-03-25 05:13 flowcount/output/part-r-00004
 
-		// bin/hdfs dfs -cat flowcount/output/*
-		// 13726230501  200 1100 1300
-		// 13396230502  300 1200 1500
-		// 13897230503  500 1600 2100
-		// 13597230534  800 2600 3400
+		// output text (hdfs dfs -cat flowcount/output/*):
+		// 13726230501 200 1100 1300
+		// 13396230502 300 1200 1500
+		// 13897230503 500 1600 2100
+		// 13597230534 800 2600 3400
 
 		logger.info("FlowCount mapreduce is started.");
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf);
 
-		job.setJarByClass(FlowCountMapReduce.class);
+		job.setJarByClass(MRFlowCount.class);
 		job.setMapperClass(FlowCountMapper.class);
 		job.setReducerClass(FlowCountReducer.class);
 
-		// 指定自定义分区器
-		job.setPartitionerClass(ProvincePartitioner.class);
 		// 指定分区数量的reducetask
 		job.setNumReduceTasks(5);
+		// 指定自定义分区器
+		job.setPartitionerClass(ProvincePartitioner.class);
 
 		// 指定map输出数据的kv类型
 		job.setMapOutputKeyClass(Text.class);

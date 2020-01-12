@@ -58,7 +58,7 @@ public class OrderBean implements WritableComparable<OrderBean> {
 		int ret = this.itemid.compareTo(o.getItemid());
 		if (ret == 0) {
 //			ret = this.amount.compareTo(o.getAmount());  // amount升序
-			ret = -this.amount.compareTo(o.getAmount());  // amount降序
+			ret = -this.amount.compareTo(o.getAmount()); // amount降序
 		}
 		return ret;
 	}

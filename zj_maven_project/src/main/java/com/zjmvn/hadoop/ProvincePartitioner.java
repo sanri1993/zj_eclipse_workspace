@@ -18,8 +18,7 @@ public class ProvincePartitioner extends Partitioner<Text, FlowBean> {
 
 	public int getPartition(Text key, FlowBean value, int numPartitions) {
 		String prefix = key.toString().substring(0, 3);
-		int provinceId = provinceDict.get(prefix);
-		return provinceId == 4 ? null : provinceId;
+		return provinceDict.getOrDefault(prefix, 4);
 	}
 
 }

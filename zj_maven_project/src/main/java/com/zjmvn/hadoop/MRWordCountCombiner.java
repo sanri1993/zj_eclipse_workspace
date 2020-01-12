@@ -15,10 +15,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
-public class WordCountMapReduce {
+public class MRWordCountCombiner {
 
-	private static final Logger logger = Logger.getLogger(WordCountMapReduce.class);
+	private static final Logger logger = Logger.getLogger(MRWordCountCombiner.class);
 
+	/** Combiner */
 	private static class WordCountCombiner extends Reducer<Text, IntWritable, Text, IntWritable> {
 
 		@Override
@@ -37,6 +38,7 @@ public class WordCountMapReduce {
 		}
 	}
 
+	/** Mapper */
 	private static class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
 		@Override
@@ -50,6 +52,7 @@ public class WordCountMapReduce {
 		}
 	}
 
+	/** Reducer */
 	private static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 
 		@Override
@@ -68,18 +71,17 @@ public class WordCountMapReduce {
 
 	public static void main(String[] args) throws Exception {
 
-		// input:
+		// input of 4 files:
 		// good weather is good
 		// good today is good
 		// good weather is good
 		// good today has good weather good
 
 		// run cmd (4 mapper tasks, and each for a input file):
-		// bin/hadoop jar src/zj-mvn-demo.jar com.zjmvn.hadoop.WordCountMapReduce wordcount/input wordcount/output true
-		
-		// output:
-		// bin/hdfs dfs -cat /user/root/wordcount/output/*
-		
+		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRWordCountCombiner \
+		// wordcount/input wordcount/output true
+
+		// output (hdfs dfs -cat /user/root/wordcount/output/*):
 		// WordCountReducer input <good,N(N>=1)>
 		// WordCountReducer input kv <good,2>
 		// WordCountReducer input kv <good,2>
@@ -97,18 +99,17 @@ public class WordCountMapReduce {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf, "wordcount");
 
-		job.setJarByClass(WordCountMapReduce.class);
+		job.setJarByClass(MRWordCountCombiner.class);
 		job.setMapperClass(WordCountMapper.class);
 		job.setReducerClass(WordCountReducer.class);
+
+		if (Boolean.parseBoolean(args[2])) {
+			job.setCombinerClass(WordCountCombiner.class); // map side Combiner
+		}
 
 		// set map output key value
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(IntWritable.class);
-
-		if (Boolean.parseBoolean(args[2])) {
-			job.setCombinerClass(WordCountCombiner.class);
-		}
-
 		// set reduce output key value
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
@@ -126,7 +127,7 @@ public class WordCountMapReduce {
 		}
 
 		if (!job.waitForCompletion(true)) {
-			logger.info("WordCount mapreduce is failed.");
+			logger.warn("WordCount mapreduce is failed.");
 			System.exit(1);
 		}
 	}
