@@ -39,7 +39,7 @@ public class JobAverageSensorReadings {
 				// organize stream by sensor
 				.keyBy(r -> r.id)
 				// group readings in 1 second windows
-				.timeWindow(Time.seconds(1))
+				.timeWindow(Time.seconds(3L))
 				// compute average temperature using a user-defined function
 				.apply(new TemperatureAverager());
 
@@ -48,6 +48,8 @@ public class JobAverageSensorReadings {
 
 		// execute application
 		env.execute("Compute average sensor temperature");
+		// flink run -c com.zjmvn.flink.JobAverageSensorReadings \
+		// /tmp/target_jars/zj-mvn-demo.jar
 	}
 
 	/**

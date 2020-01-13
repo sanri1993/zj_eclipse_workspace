@@ -5,10 +5,14 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SensorSource extends RichParallelSourceFunction<SensorReading> {
 
 	private static final long serialVersionUID = 1L;
+	private static Logger LOG = LoggerFactory.getLogger(SensorSource.class);
+
 	// flag indicating whether source is still running
 	private boolean running = true;
 
@@ -31,6 +35,7 @@ public class SensorSource extends RichParallelSourceFunction<SensorReading> {
 			curFTemp[i] = 65 + (rand.nextGaussian() * 20);
 		}
 
+		SensorReading sensor;
 		while (this.running) {
 			long curTime = Calendar.getInstance().getTimeInMillis();
 			// emit SensorReadings
@@ -38,9 +43,11 @@ public class SensorSource extends RichParallelSourceFunction<SensorReading> {
 				// update current temperature
 				curFTemp[i] += rand.nextGaussian() * 0.5;
 				// emit reading
-				srcCtx.collect(new SensorReading(sensorIds[i], curTime, curFTemp[i]));
+				sensor = new SensorReading(sensorIds[i], curTime, curFTemp[i]);
+				LOG.debug("emit sensor: " + sensor.toString());
+				srcCtx.collect(sensor);
 			}
-			TimeUnit.MILLISECONDS.sleep(200L);
+			TimeUnit.MILLISECONDS.sleep(500L);
 		}
 	}
 

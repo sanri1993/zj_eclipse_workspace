@@ -25,7 +25,7 @@ public class JobKeyedTransformations {
 
 		KeyedStream<SensorReading, String> keyed = readings.keyBy(r -> r.id);
 		// TODO: default time window?
-		WindowedStream<SensorReading, String, TimeWindow> windowed = keyed.timeWindow(Time.seconds(1L));
+		WindowedStream<SensorReading, String, TimeWindow> windowed = keyed.timeWindow(Time.seconds(3L));
 
 		// a rolling reduce that computes the highest temperature of each sensor and the
 		// corresponding timestamp
@@ -37,9 +37,11 @@ public class JobKeyedTransformations {
 			}
 		});
 
-		maxTempPerSensor.print();
+		maxTempPerSensor.print().setParallelism(1);
 
 		env.execute("Keyed Transformations Example");
+		// flink run -c com.zjmvn.flink.JobKeyedTransformations \
+		// /tmp/target_jars/zj-mvn-demo.jar
 	}
 
 }

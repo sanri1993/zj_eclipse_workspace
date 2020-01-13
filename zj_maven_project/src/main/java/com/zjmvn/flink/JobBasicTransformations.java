@@ -24,7 +24,7 @@ public class JobBasicTransformations {
 		DataStream<SensorReading> readings = env.addSource(new SensorSource())
 				.assignTimestampsAndWatermarks(new SensorTimeAssigner());
 
-		DataStream<SensorReading> filteredReadings = readings.filter(r -> r.temperature >= 25);
+		DataStream<SensorReading> filteredReadings = readings.filter(r -> r.temperature >= 70);
 		DataStream<String> sensorIds = filteredReadings.map(r -> r.id);
 
 		DataStream<String> splitIds = sensorIds.flatMap((FlatMapFunction<String, String>) (id, out) -> {
@@ -37,6 +37,8 @@ public class JobBasicTransformations {
 		splitIds.print().setParallelism(1);
 
 		env.execute("Basic Transformations Example");
+		// flink run -c com.zjmvn.flink.JobBasicTransformations \
+		// /tmp/target_jars/zj-mvn-demo.jar
 	}
 
 	/**

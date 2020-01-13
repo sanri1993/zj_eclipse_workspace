@@ -10,11 +10,15 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
 import org.apache.flink.util.Collector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This example shows how to use a CoProcessFunction and Timers.
  */
 public class CoProcessFunctionTimers {
+
+	private static Logger LOG = LoggerFactory.getLogger(CoProcessFunctionTimers.class);
 
 	public static void main(String[] args) throws Exception {
 
@@ -26,9 +30,9 @@ public class CoProcessFunctionTimers {
 		// time
 		DataStream<Tuple2<String, Long>> filterSwitches = env.fromElements(
 				// forward readings of sensor_2 for 10 seconds
-				Tuple2.of("sensor_2", 10_000L),
+				Tuple2.of("sensor_2", 3_000L),
 				// forward readings of sensor_7 for 1 minute
-				Tuple2.of("sensor_7", 60_000L));
+				Tuple2.of("sensor_7", 10_000L));
 
 		// ingest sensor stream
 		DataStream<SensorReading> readings = env
@@ -80,14 +84,14 @@ public class CoProcessFunctionTimers {
 			this.forwardingEnabled.update(true);
 			// set timer to disable switch
 			long timerTimestamp = ctx.timerService().currentProcessingTime() + s.f1;
-			Long curTimerTimestamp = disableTimer.value();
 
+			Long curTimerTimestamp = disableTimer.value();
 			if (curTimerTimestamp == null || timerTimestamp > curTimerTimestamp) {
-				// remove current timer
 				if (curTimerTimestamp != null) {
+					LOG.info("remove current timer: " + curTimerTimestamp);
 					ctx.timerService().deleteProcessingTimeTimer(curTimerTimestamp);
 				}
-				// register new timer
+				LOG.info("register new timer: " + timerTimestamp);
 				ctx.timerService().registerProcessingTimeTimer(timerTimestamp);
 				this.disableTimer.update(timerTimestamp);
 			}
@@ -95,7 +99,7 @@ public class CoProcessFunctionTimers {
 
 		@Override
 		public void onTimer(long ts, OnTimerContext ctx, Collector<SensorReading> out) throws Exception {
-			// remove all state
+			LOG.info("remove all state");
 			this.forwardingEnabled.clear();
 			this.disableTimer.clear();
 		}
