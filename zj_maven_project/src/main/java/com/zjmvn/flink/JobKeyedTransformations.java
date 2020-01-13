@@ -7,11 +7,15 @@ import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Example program to demonstrate keyed transformation functions: keyBy, reduce.
  */
 public class JobKeyedTransformations {
+
+	private static Logger LOG = LoggerFactory.getLogger(JobKeyedTransformations.class);
 
 	public static void main(String[] args) throws Exception {
 
@@ -24,12 +28,13 @@ public class JobKeyedTransformations {
 				.assignTimestampsAndWatermarks(new SensorTimeAssigner());
 
 		KeyedStream<SensorReading, String> keyed = readings.keyBy(r -> r.id);
-		// TODO: default time window?
+		// if no timeWindow, handle by each event
 		WindowedStream<SensorReading, String, TimeWindow> windowed = keyed.timeWindow(Time.seconds(3L));
 
 		// a rolling reduce that computes the highest temperature of each sensor and the
 		// corresponding timestamp
 		DataStream<SensorReading> maxTempPerSensor = windowed.reduce((r1, r2) -> {
+			LOG.debug(String.format("r1 ts:%d, r2 ts:%d", r1.timestamp, r2.timestamp));
 			if (r1.temperature > r2.temperature) {
 				return r1;
 			} else {

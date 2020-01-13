@@ -24,7 +24,12 @@ public class JobCountAvgByKeyedState {
 		ds.keyBy(0).flatMap(new CountWindowAverage()).print();
 
 		env.execute("Count Average by Keyed State Example");
-		// output: (1,4) and (1,5)
+		// flink run -c com.zjmvn.flink.JobCountAvgByKeyedState \
+		// /tmp/target_jars/zj-mvn-demo.jar
+
+		// output:
+		// (1,4)
+		// (1,5)
 	}
 
 	private static class CountWindowAverage extends RichFlatMapFunction<Tuple2<Long, Long>, Tuple2<Long, Long>> {
@@ -37,12 +42,16 @@ public class JobCountAvgByKeyedState {
 		@Override
 		public void flatMap(Tuple2<Long, Long> input, Collector<Tuple2<Long, Long>> out) throws Exception {
 			Tuple2<Long, Long> currentSum = sum.value();
+			if (currentSum == null) {
+				currentSum = Tuple2.of(0L, 0L);
+			}
+
 			currentSum.f0 += 1L;
 			currentSum.f1 += input.f1;
 			sum.update(currentSum);
 
 			// 如果count >=2 清空状态值, 重新计算
-			if (currentSum.f0 >= 0) {
+			if (currentSum.f0 >= 2) {
 				out.collect(new Tuple2<>(input.f0, currentSum.f1 / currentSum.f0));
 				sum.clear();
 			}
@@ -50,12 +59,10 @@ public class JobCountAvgByKeyedState {
 
 		@Override
 		public void open(Configuration config) {
-			@SuppressWarnings("deprecation")
 			ValueStateDescriptor<Tuple2<Long, Long>> descriptor = new ValueStateDescriptor<>(
 					"average", // 状态名称
 					TypeInformation.of(new TypeHint<Tuple2<Long, Long>>() {
-					}), // 状态类型
-					Tuple2.of(0L, 0L)); // 状态默认值
+					})); // 状态类型
 			sum = this.getRuntimeContext().getState(descriptor);
 		}
 	}

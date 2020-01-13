@@ -55,7 +55,7 @@ public class JobBasicTransformations {
 			for (String split : splits) {
 				out.collect(split);
 			}
-
 		}
 	}
+
 }

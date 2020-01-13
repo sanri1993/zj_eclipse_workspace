@@ -32,7 +32,9 @@ public class CoProcessFunctionTimers {
 				// forward readings of sensor_2 for 10 seconds
 				Tuple2.of("sensor_2", 3_000L),
 				// forward readings of sensor_7 for 1 minute
-				Tuple2.of("sensor_7", 10_000L));
+				Tuple2.of("sensor_7", 10_000L),
+				// update forward readings of sensor_2
+				Tuple2.of("sensor_2", 5_000L));
 
 		// ingest sensor stream
 		DataStream<SensorReading> readings = env
@@ -50,6 +52,17 @@ public class CoProcessFunctionTimers {
 		forwardedReadings.print();
 
 		env.execute("Filter sensor readings");
+		// flink run -c com.zjmvn.flink.CoProcessFunctionTimers \
+		// /tmp/target_jars/zj-mvn-demo.jar
+
+		// output:
+		// (sensor_2, 1578929799882, 120.19745490123705)
+		// (sensor_7, 1578929799882, 60.46768340488465)
+		// (sensor_2, 1578929800388, 120.83026453956776)
+		// (sensor_7, 1578929800388, 60.69115460017668)
+		// ...
+		// (sensor_7, 1578929808903, 57.7631544864944)
+		// (sensor_7, 1578929809404, 57.835212750396835)
 	}
 
 	public static class ReadingFilter extends CoProcessFunction<SensorReading, Tuple2<String, Long>, SensorReading> {
@@ -88,18 +101,18 @@ public class CoProcessFunctionTimers {
 			Long curTimerTimestamp = disableTimer.value();
 			if (curTimerTimestamp == null || timerTimestamp > curTimerTimestamp) {
 				if (curTimerTimestamp != null) {
-					LOG.info("remove current timer: " + curTimerTimestamp);
+					LOG.debug("key:{}, remove current timer: {}", s.f0, curTimerTimestamp);
 					ctx.timerService().deleteProcessingTimeTimer(curTimerTimestamp);
 				}
-				LOG.info("register new timer: " + timerTimestamp);
-				ctx.timerService().registerProcessingTimeTimer(timerTimestamp);
+				LOG.debug("key:{}, register new timer: {}", s.f0, timerTimestamp);
+				ctx.timerService().registerProcessingTimeTimer(timerTimestamp); // callback onTimer()
 				this.disableTimer.update(timerTimestamp);
 			}
 		}
 
 		@Override
 		public void onTimer(long ts, OnTimerContext ctx, Collector<SensorReading> out) throws Exception {
-			LOG.info("remove all state");
+			LOG.debug("remove all state of timer: {}", ts);
 			this.forwardingEnabled.clear();
 			this.disableTimer.clear();
 		}

@@ -6,6 +6,8 @@ import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.CoFlatMapFunction;
 import org.apache.flink.util.Collector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple application that outputs an alert whenever there is a high risk of
@@ -14,6 +16,8 @@ import org.apache.flink.util.Collector;
  * threshold and the smoke level is high, we emit a fire alert.
  */
 public class JobMultiStreamTransformations {
+
+	private static Logger LOG = LoggerFactory.getLogger(JobMultiStreamTransformations.class);
 
 	public static void main(String[] args) throws Exception {
 
@@ -34,6 +38,8 @@ public class JobMultiStreamTransformations {
 		alerts.print().setParallelism(1);
 
 		env.execute("Multi-Stream Transformations Example");
+		// flink run -c com.zjmvn.flink.JobMultiStreamTransformations \
+		// /tmp/target_jars/zj-mvn-demo.jar
 	}
 
 	/**
@@ -52,7 +58,8 @@ public class JobMultiStreamTransformations {
 		@Override
 		public void flatMap1(SensorReading tempReading, Collector<Alert> out) throws Exception {
 			// high chance of fire => true
-			if (this.smokeLevel == SmokeLevel.HIGH && tempReading.temperature > 100) {
+			LOG.debug(String.format("smoke level:%s, temperature:%s", this.smokeLevel, tempReading.temperature));
+			if (this.smokeLevel == SmokeLevel.HIGH && tempReading.temperature > 80) {
 				out.collect(new Alert("Risk of fire! " + tempReading, tempReading.timestamp));
 			}
 		}
