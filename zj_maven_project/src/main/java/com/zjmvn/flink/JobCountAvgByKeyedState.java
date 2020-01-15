@@ -17,8 +17,7 @@ public class JobCountAvgByKeyedState {
 
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-		DataStream<Tuple2<Long, Long>> ds = env.fromElements(
-				Tuple2.of(1L, 3L), Tuple2.of(1L, 5L), Tuple2.of(1L, 7L),
+		DataStream<Tuple2<Long, Long>> ds = env.fromElements(Tuple2.of(1L, 3L), Tuple2.of(1L, 5L), Tuple2.of(1L, 7L),
 				Tuple2.of(1L, 4L), Tuple2.of(1L, 2L));
 
 		ds.keyBy(0).flatMap(new CountWindowAverage()).print();
@@ -36,11 +35,15 @@ public class JobCountAvgByKeyedState {
 
 		private static final long serialVersionUID = 1L;
 
-		// ValueState状态句柄. 第一个值为count, 第二个值为sum
+		/**
+		 * The ValueState handle. The first field is the count, the second field a
+		 * running sum.
+		 */
 		private transient ValueState<Tuple2<Long, Long>> sum;
 
 		@Override
 		public void flatMap(Tuple2<Long, Long> input, Collector<Tuple2<Long, Long>> out) throws Exception {
+			// access the state value
 			Tuple2<Long, Long> currentSum = sum.value();
 			if (currentSum == null) {
 				currentSum = Tuple2.of(0L, 0L);
@@ -50,7 +53,7 @@ public class JobCountAvgByKeyedState {
 			currentSum.f1 += input.f1;
 			sum.update(currentSum);
 
-			// 如果count >=2 清空状态值, 重新计算
+			// if the count reaches 2, emit the average and clear the state
 			if (currentSum.f0 >= 2) {
 				out.collect(new Tuple2<>(input.f0, currentSum.f1 / currentSum.f0));
 				sum.clear();
@@ -60,9 +63,11 @@ public class JobCountAvgByKeyedState {
 		@Override
 		public void open(Configuration config) {
 			ValueStateDescriptor<Tuple2<Long, Long>> descriptor = new ValueStateDescriptor<>(
-					"average", // 状态名称
+					// the state name
+					"average",
+					// type information
 					TypeInformation.of(new TypeHint<Tuple2<Long, Long>>() {
-					})); // 状态类型
+					}));
 			sum = this.getRuntimeContext().getState(descriptor);
 		}
 	}

@@ -127,7 +127,7 @@ public class JobIterateFibNumber {
 	 * preserving the original input tuple. A counter is attached to the tuple and
 	 * incremented in every iteration step.
 	 */
-	public static class InputMap
+	private static class InputMap
 			implements MapFunction<Tuple2<Integer, Integer>, Tuple5<Integer, Integer, Integer, Integer, Integer>> {
 
 		private static final long serialVersionUID = 1L;
@@ -142,7 +142,7 @@ public class JobIterateFibNumber {
 	/**
 	 * Iteration step function that calculates the next Fibonacci number.
 	 */
-	public static class Step implements
+	private static class Step implements
 			MapFunction<Tuple5<Integer, Integer, Integer, Integer, Integer>, Tuple5<Integer, Integer, Integer, Integer, Integer>> {
 
 		private static final long serialVersionUID = 1L;
@@ -157,7 +157,7 @@ public class JobIterateFibNumber {
 	/**
 	 * OutputSelector testing which tuple needs to be iterated again.
 	 */
-	public static class MySelector implements OutputSelector<Tuple5<Integer, Integer, Integer, Integer, Integer>> {
+	private static class MySelector implements OutputSelector<Tuple5<Integer, Integer, Integer, Integer, Integer>> {
 
 		private static final long serialVersionUID = 1L;
 
@@ -176,7 +176,7 @@ public class JobIterateFibNumber {
 	/**
 	 * Giving back the input pair and the counter.
 	 */
-	public static class OutputMap implements
+	private static class OutputMap implements
 			MapFunction<Tuple5<Integer, Integer, Integer, Integer, Integer>, Tuple2<Tuple2<Integer, Integer>, Integer>> {
 
 		private static final long serialVersionUID = 1L;
