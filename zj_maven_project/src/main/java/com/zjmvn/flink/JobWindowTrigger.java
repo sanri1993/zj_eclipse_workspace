@@ -66,7 +66,7 @@ public class JobWindowTrigger {
 					double temperature = Double.parseDouble(fields[2]);
 					return new SensorReading(id, timestamp, temperature);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					LOG.error("invalid sensor data, ArrayIndexOutOfBoundsException: " + e.getMessage());
+					LOG.error("invalid source sensor data, ArrayIndexOutOfBoundsException: " + e.getMessage());
 					return new SensorReading("sensor_default", 1579078770000L, new Random().nextInt(100));
 				}
 			}

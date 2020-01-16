@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 /**
  * This example shows how to use a CoProcessFunction and Timers.
  */
-public class CoProcessFunctionTimers {
+public class JobCoProcessFunctionTimers {
 
-	private static Logger LOG = LoggerFactory.getLogger(CoProcessFunctionTimers.class);
+	private static Logger LOG = LoggerFactory.getLogger(JobCoProcessFunctionTimers.class);
 
 	public static void main(String[] args) throws Exception {
 
