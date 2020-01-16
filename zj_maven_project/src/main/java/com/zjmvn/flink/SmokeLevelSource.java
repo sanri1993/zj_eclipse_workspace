@@ -23,8 +23,8 @@ public class SmokeLevelSource implements SourceFunction<SmokeLevel> {
 			} else {
 				ctx.collect(SmokeLevel.LOW);
 			}
+			TimeUnit.SECONDS.wait(1L);
 		}
-		TimeUnit.SECONDS.wait(1L);
 	}
 
 	@Override

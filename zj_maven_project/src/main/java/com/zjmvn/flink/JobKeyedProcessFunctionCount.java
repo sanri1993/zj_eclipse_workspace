@@ -54,6 +54,8 @@ public class JobKeyedProcessFunctionCount {
 		result.print("Results:").setParallelism(1);
 
 		env.execute("Keyed Process Function Example");
+		// flink run -c com.zjmvn.flink.JobKeyedProcessFunctionCount \
+		// /tmp/target_jars/zj-mvn-demo.jar
 	}
 
 	/**
@@ -64,7 +66,7 @@ public class JobKeyedProcessFunctionCount {
 			extends KeyedProcessFunction<Tuple, Tuple2<String, String>, Tuple2<String, Long>> {
 
 		private static final long serialVersionUID = 1L;
-		private static final long interval = 10_000L;
+		private static final long interval = 5_000L;
 
 		/** The state that is maintained by this process function */
 		private ValueState<CountWithTimestamp> state;
@@ -116,4 +118,5 @@ public class JobKeyedProcessFunctionCount {
 		public long count;
 		public long lastModified;
 	}
+
 }

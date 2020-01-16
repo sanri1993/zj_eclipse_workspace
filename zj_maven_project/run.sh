@@ -7,8 +7,12 @@ if [[ $1 == "jar" ]]; then
   echo "run clean and package."
   mvn clean package -Dmaven.test.skip=true
 
+  jar_dir="/tmp/target_jars"
   jar_file="zj-mvn-demo.jar"
-  mv target/${jar_file} /tmp/target_jars/${jar_file}
+  if [[ ! -d ${jar_dir} ]]; then
+    mkdir ${jar_dir}
+  fi
+  mv target/${jar_file} ${jar_dir}/${jar_file}
 fi
 
 if [[ $1 == "check" ]]; then
