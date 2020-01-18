@@ -37,9 +37,7 @@ public class JobCoProcessFunctionTimers {
 				Tuple2.of("sensor_2", 5_000L));
 
 		// ingest sensor stream
-		DataStream<SensorReading> readings = env
-				// SensorSource generates random temperature readings
-				.addSource(new SensorSource());
+		DataStream<SensorReading> readings = env.addSource(new SensorSource());
 
 		DataStream<SensorReading> forwardedReadings = readings
 				// connect readings and switches
@@ -52,7 +50,7 @@ public class JobCoProcessFunctionTimers {
 		forwardedReadings.print();
 
 		env.execute("Filter sensor readings");
-		// flink run -c com.zjmvn.flink.CoProcessFunctionTimers \
+		// flink run -c com.zjmvn.flink.JobCoProcessFunctionTimers \
 		// /tmp/target_jars/zj-mvn-demo.jar
 
 		// output:
@@ -65,7 +63,7 @@ public class JobCoProcessFunctionTimers {
 		// (sensor_7, 1578929809404, 57.835212750396835)
 	}
 
-	public static class ReadingFilter extends CoProcessFunction<SensorReading, Tuple2<String, Long>, SensorReading> {
+	private static class ReadingFilter extends CoProcessFunction<SensorReading, Tuple2<String, Long>, SensorReading> {
 
 		private static final long serialVersionUID = 1L;
 
@@ -101,10 +99,10 @@ public class JobCoProcessFunctionTimers {
 			Long curTimerTimestamp = disableTimer.value();
 			if (curTimerTimestamp == null || timerTimestamp > curTimerTimestamp) {
 				if (curTimerTimestamp != null) {
-					LOG.debug("key:{}, remove current timer: {}", s.f0, curTimerTimestamp);
+					LOG.info("key:{}, remove current timer: {}", s.f0, curTimerTimestamp);
 					ctx.timerService().deleteProcessingTimeTimer(curTimerTimestamp);
 				}
-				LOG.debug("key:{}, register new timer: {}", s.f0, timerTimestamp);
+				LOG.info("key:{}, register new timer: {}", s.f0, timerTimestamp);
 				ctx.timerService().registerProcessingTimeTimer(timerTimestamp); // callback onTimer()
 				this.disableTimer.update(timerTimestamp);
 			}
@@ -112,7 +110,7 @@ public class JobCoProcessFunctionTimers {
 
 		@Override
 		public void onTimer(long ts, OnTimerContext ctx, Collector<SensorReading> out) throws Exception {
-			LOG.debug("remove all state of timer: {}", ts);
+			LOG.info("remove all state of timer: {}", ts);
 			this.forwardingEnabled.clear();
 			this.disableTimer.clear();
 		}

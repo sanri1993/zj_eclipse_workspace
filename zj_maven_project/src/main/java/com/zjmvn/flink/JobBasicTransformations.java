@@ -45,7 +45,8 @@ public class JobBasicTransformations {
 	 * User-defined FlatMapFunction that splits a sensor's id String into a prefix
 	 * and a number.
 	 */
-	public static class IdSplitter implements FlatMapFunction<String, String> {
+	@SuppressWarnings("unused")
+	private static class IdSplitter implements FlatMapFunction<String, String> {
 
 		private static final long serialVersionUID = 1L;
 

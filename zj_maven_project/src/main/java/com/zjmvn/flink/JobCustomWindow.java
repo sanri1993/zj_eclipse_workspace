@@ -2,6 +2,7 @@ package com.zjmvn.flink;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -46,7 +47,7 @@ public class JobCustomWindow {
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
 		// checkpoint every 10 seconds
-		// env.getCheckpointConfig().setCheckpointInterval(10_000L);
+		env.getCheckpointConfig().setCheckpointInterval(30_000L);
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 		env.getConfig().setAutoWatermarkInterval(1000L);
 
@@ -64,9 +65,17 @@ public class JobCustomWindow {
 
 		countsPerThirtySecs.print("WindowStateBySec:");
 
-		env.execute("Run custom window example");
+		LOG.info("Run custom window example");
+		env.execute("Custom Window Example");
+		// flink run -c com.zjmvn.flink.JobCustomWindow \
+		// /tmp/target_jars/zj-mvn-demo.jar --host ncsocket --port 9000
+
 		// input:
-		// output:
+		// sensor_1,1579078771000,30.1
+		// sensor_1,1579078773000,30.3
+		// sensor_1,1579078773500,30.3
+		// sensor_1,1579078780000,31.1
+		// sensor_1,1579078795000,31.5
 	}
 
 	private static class MySensorReadingMap implements MapFunction<String, SensorReading> {
@@ -99,7 +108,7 @@ public class JobCustomWindow {
 
 		@Override
 		public Collection<TimeWindow> assignWindows(Object element, long timestamp, WindowAssignerContext context) {
-			LOG.info("assign tumbling windows of 30 seconds");
+			LOG.info("assignWindows");
 
 			// rounding down by 30 seconds
 			long startTime = timestamp - (timestamp % windowSize);
@@ -130,22 +139,22 @@ public class JobCustomWindow {
 	private static class OneSecondIntervalTrigger extends Trigger<SensorReading, TimeWindow> {
 
 		private static final long serialVersionUID = 1L;
+		private static final long interval = 1000L;
 
 		@Override
 		public TriggerResult onElement(SensorReading element, long timestamp, TimeWindow window, TriggerContext ctx)
 				throws Exception {
-			LOG.info("every second trigger of onElement");
+			LOG.info("trigger onElement => watermark:[{}], window:[{},{})", ctx.getCurrentWatermark(),
+					window.getStart(), window.getEnd());
 
 			// firstSeen will be false if not set yet
 			ValueState<Boolean> firstSeen = ctx
 					.getPartitionedState(new ValueStateDescriptor<>("firstSeen", Types.BOOLEAN));
-
 			// register initial timer only for first element
 			if (firstSeen.value() == null) {
 				// compute time for next early firing by rounding watermark to second
-				long t = ctx.getCurrentWatermark() + (1000L - (ctx.getCurrentWatermark() % 1000L));
-				LOG.info("onFirstElement, register event timer:[{}] for window:[{},{})", t, window.getStart(),
-						window.getEnd());
+				long t = ctx.getCurrentWatermark() + (interval - (ctx.getCurrentWatermark() % interval));
+				LOG.info("firstSeen, register event timer:[{}]", t);
 				ctx.registerEventTimeTimer(t);
 				// register timer for the end of the window
 				ctx.registerEventTimeTimer(window.getEnd());
@@ -164,21 +173,23 @@ public class JobCustomWindow {
 
 		@Override
 		public TriggerResult onEventTime(long time, TimeWindow window, TriggerContext ctx) throws Exception {
+			LOG.info("trigger onEventTime => ts:[{}], watermark:[{}], window:[{},{})", time, ctx.getCurrentWatermark(),
+					window.getStart(), window.getEnd());
+
 			if (time == window.getEnd()) {
 				// final evaluation and purge window state
-				LOG.info("onEventTime purge window:[{},{})", window.getStart(), window.getEnd());
+				LOG.info("fire and purge window:[{},{})", window.getStart(), window.getEnd());
 				return TriggerResult.FIRE_AND_PURGE;
-			} else {
-				// register next early firing timer
-				long t = ctx.getCurrentWatermark() + (1000 - (ctx.getCurrentWatermark() % 1000));
-				if (t < window.getEnd()) {
-					LOG.info("onEventTime, register every second event timer:[{}] for window:[{},{})", t,
-							window.getStart(), window.getEnd());
-					ctx.registerEventTimeTimer(t);
-				}
-				// fire trigger to early evaluate window
-				return TriggerResult.FIRE;
 			}
+
+			// register next early firing timer
+			long t = ctx.getCurrentWatermark() + (interval - (ctx.getCurrentWatermark() % interval));
+			if (t > 0 && t < window.getEnd()) {
+				LOG.info("register every second event timer:[{}]", t);
+				ctx.registerEventTimeTimer(t);
+			}
+			// fire trigger to early evaluate window
+			return TriggerResult.FIRE;
 		}
 
 		@Override
@@ -205,7 +216,9 @@ public class JobCustomWindow {
 				Collector<Tuple4<String, Long, Long, Integer>> out) throws Exception {
 			// count readings
 			int cnt = 0;
-			while (readings.iterator().hasNext()) {
+			Iterator<SensorReading> iter = readings.iterator();
+			while (iter.hasNext()) {
+				iter.next();
 				cnt++;
 			}
 

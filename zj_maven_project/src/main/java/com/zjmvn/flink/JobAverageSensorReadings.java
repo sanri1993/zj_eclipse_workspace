@@ -50,13 +50,19 @@ public class JobAverageSensorReadings {
 		env.execute("Compute average sensor temperature");
 		// flink run -c com.zjmvn.flink.JobAverageSensorReadings \
 		// /tmp/target_jars/zj-mvn-demo.jar
+
+		// output:
+		// (sensor_0, 1579314489000, 7.199051208191264)
+		// (sensor_1, 1579314489000, 10.682817313540586)
+		// (sensor_3, 1579314489000, 31.24430175045708)
+		// ...
 	}
 
 	/**
 	 * User-defined WindowFunction to compute the average temperature of
 	 * SensorReadings
 	 */
-	public static class TemperatureAverager
+	private static class TemperatureAverager
 			implements WindowFunction<SensorReading, SensorReading, String, TimeWindow> {
 
 		private static final long serialVersionUID = 1L;

@@ -83,6 +83,8 @@ public class JobWindowTrigger {
 		test.print("WindowState:").setParallelism(1);
 
 		env.execute("Window TimeEvent Trigger Example");
+		// flink run -c com.zjmvn.flink.JobWindowTrigger \
+		// /tmp/target_jars/zj-mvn-demo.jar --host ncsocket --port 9000
 	}
 
 	private static class MyTimestampsAndWatermarks implements AssignerWithPeriodicWatermarks<SensorReading> {

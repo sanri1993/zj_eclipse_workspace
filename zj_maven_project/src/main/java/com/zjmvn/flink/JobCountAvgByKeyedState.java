@@ -17,8 +17,8 @@ public class JobCountAvgByKeyedState {
 
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-		DataStream<Tuple2<Long, Long>> ds = env.fromElements(Tuple2.of(1L, 3L), Tuple2.of(1L, 5L), Tuple2.of(1L, 7L),
-				Tuple2.of(1L, 4L), Tuple2.of(1L, 2L));
+		DataStream<Tuple2<Long, Long>> ds = env.fromElements(Tuple2.of(1L, 3L), Tuple2.of(2L, 2L), Tuple2.of(1L, 5L),
+				Tuple2.of(2L, 12L), Tuple2.of(1L, 7L), Tuple2.of(1L, 4L));
 
 		ds.keyBy(0).flatMap(new CountWindowAverage()).print();
 
@@ -28,6 +28,7 @@ public class JobCountAvgByKeyedState {
 
 		// output:
 		// (1,4)
+		// (2,7)
 		// (1,5)
 	}
 
