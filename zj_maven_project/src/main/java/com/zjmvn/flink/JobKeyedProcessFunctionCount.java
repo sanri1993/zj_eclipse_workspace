@@ -5,14 +5,16 @@ import java.io.IOException;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
+import org.apache.flink.streaming.api.watermark.Watermark;
 import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,34 +38,69 @@ public class JobKeyedProcessFunctionCount {
 
 		LOG.info("WordCountDemo flink job source operator.");
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+		env.getConfig().setAutoWatermarkInterval(1000L);
+
 		DataStreamSource<String> text = env.socketTextStream(hostname, port);
 
-		DataStream<Tuple2<String, String>> input = text.map(new MapFunction<String, Tuple2<String, String>>() {
+		DataStream<MyValue> input = text.map(new MapFunction<String, MyValue>() {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public Tuple2<String, String> map(String value) throws Exception {
-				String[] fields = value.split(",");
-				return new Tuple2<>(fields[0], fields[1]);
+			public MyValue map(String value) {
+				try {
+					String[] fields = value.split(",");
+					return new MyValue(fields[0], Long.parseLong(fields[1]));
+				} catch (ArrayIndexOutOfBoundsException e) {
+					LOG.error("build MyValue failed, ArrayIndexOutOfBoundsException: " + e.getMessage());
+					return new MyValue("test1", 1579078750000L);
+				}
 			}
-		});
+		}).assignTimestampsAndWatermarks(new MyTimestampsAndWatermarks());
 
-		DataStream<Tuple2<String, Long>> result = input.keyBy(0).process(new CountWithTimeoutFunction());
+		DataStream<Tuple2<String, Long>> result = input.keyBy(r -> r.value).process(new CountWithTimeoutFunction());
 
-		result.print("Results:").setParallelism(1);
+		result.print("CountResults:").setParallelism(1);
 
 		env.execute("Keyed Process Function Example");
 		// flink run -c com.zjmvn.flink.JobKeyedProcessFunctionCount \
-		// /tmp/target_jars/zj-mvn-demo.jar
+		// /tmp/target_jars/zj-mvn-demo.jar --host ncsocket --port 9000
+
+		// input:
+		// test1,1579078760000
+		// test1,1579078762000
+		// test1,1579078767000
+		// test2,1579078772000
+		// test3,1579078780000
+	}
+
+	private static class MyTimestampsAndWatermarks implements AssignerWithPeriodicWatermarks<MyValue> {
+
+		private static final long serialVersionUID = 1L;
+
+		private final long maxOutofOrderness = 0L;
+		private long currentMaxTimestamp;
+
+		@Override
+		public long extractTimestamp(MyValue element, long previousElementTimestamp) {
+			long timestamp = element.timestamp;
+			this.currentMaxTimestamp = Math.max(timestamp, this.currentMaxTimestamp);
+			return timestamp;
+		}
+
+		@Override
+		public Watermark getCurrentWatermark() {
+			return new Watermark(this.currentMaxTimestamp - this.maxOutofOrderness);
+		}
 	}
 
 	/**
 	 * The implementation of the ProcessFunction that maintains the count and
 	 * timeouts
 	 */
-	private static class CountWithTimeoutFunction
-			extends KeyedProcessFunction<Tuple, Tuple2<String, String>, Tuple2<String, Long>> {
+	private static class CountWithTimeoutFunction extends KeyedProcessFunction<String, MyValue, Tuple2<String, Long>> {
 
 		private static final long serialVersionUID = 1L;
 		private static final long interval = 5_000L;
@@ -78,18 +115,20 @@ public class JobKeyedProcessFunctionCount {
 		}
 
 		@Override
-		public void processElement(Tuple2<String, String> value,
-				KeyedProcessFunction<Tuple, Tuple2<String, String>, Tuple2<String, Long>>.Context ctx,
+		public void processElement(MyValue val, KeyedProcessFunction<String, MyValue, Tuple2<String, Long>>.Context ctx,
 				Collector<Tuple2<String, Long>> out) throws Exception {
+			LOG.info("processElement: " + val);
+
 			CountWithTimestamp current = this.state.value();
 			if (current == null) {
-				LOG.info("Set state for key:{}", value.f0);
+				LOG.info("processElement, key:{} init state", val.value);
 				current = new CountWithTimestamp();
-				current.key = value.f0;
+				current.key = val.value;
 			}
+
 			current.count++;
 			// set the state's timestamp to the record's assigned event time timestamp
-			current.lastModified = ctx.timestamp();
+			current.lastModified = val.timestamp;
 			this.state.update(current);
 
 			// schedule the next timer 60 seconds from the current event time
@@ -99,13 +138,31 @@ public class JobKeyedProcessFunctionCount {
 		@Override
 		public void onTimer(long timestamp, OnTimerContext ctx, Collector<Tuple2<String, Long>> out)
 				throws IOException {
-			LOG.info("onTimer callback for ts:{}", timestamp);
-
 			CountWithTimestamp result = this.state.value();
+			LOG.info("onTimer callback, key:{}, ts:{}", result.key, timestamp);
 			if (timestamp == result.lastModified + interval) {
-				LOG.info("onTimer callback, ontput for ts:{}", timestamp);
+				LOG.info("onTimer callback, output");
 				out.collect(new Tuple2<String, Long>(result.key, result.count));
 			}
+		}
+	}
+
+	public static class MyValue {
+
+		public String value;
+		public long timestamp;
+
+		public MyValue() {
+		}
+
+		public MyValue(String val, long ts) {
+			this.value = val;
+			this.timestamp = ts;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("(%s,%d)", this.value, this.timestamp);
 		}
 	}
 

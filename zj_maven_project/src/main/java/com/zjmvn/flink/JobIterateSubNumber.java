@@ -12,7 +12,7 @@ public class JobIterateSubNumber {
 
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-		DataStream<Long> someIntegers = env.generateSequence(1, 1000);
+		DataStream<Long> someIntegers = env.generateSequence(1L, 100L);
 
 		IterativeStream<Long> iteration = someIntegers.iterate();
 
@@ -37,7 +37,7 @@ public class JobIterateSubNumber {
 		// continuously subtracts 1 from a series of integers until they reach zero
 		iteration.closeWith(stillGreaterThanZero);
 
-		DataStream<Long> lessThanZero = iteration.filter(new FilterFunction<Long>() {
+		DataStream<Long> lessThanZero = minusOne.filter(new FilterFunction<Long>() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -46,9 +46,11 @@ public class JobIterateSubNumber {
 			}
 		});
 
-		lessThanZero.print();
+		lessThanZero.print("IteratorValue:");
 
 		env.execute("Streaming Iteration Sub Number Example");
+		// flink run -c com.zjmvn.flink.JobIterateSubNumber \
+		// /tmp/target_jars/zj-mvn-demo.jar
 	}
 
 }

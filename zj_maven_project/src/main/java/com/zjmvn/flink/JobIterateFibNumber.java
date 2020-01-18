@@ -26,7 +26,7 @@ public class JobIterateFibNumber {
 
 	public static void main(String[] args) throws Exception {
 
-		// Checking input parameters
+		// checking input parameters
 		final ParameterTool params = ParameterTool.fromArgs(args);
 
 		// obtain execution environment and set setBufferTimeout to 1 to enable
@@ -69,10 +69,18 @@ public class JobIterateFibNumber {
 			numbers.writeAsText(params.get("output"));
 		} else {
 			LOG.info("Printing result to stdout. Use --output to specify output path.");
-			numbers.print();
+			numbers.print("FibResults:");
 		}
 
 		env.execute("Streaming Iteration Fib Number Example");
+		// flink run -c com.zjmvn.flink.JobIterateFibNumber \
+		// /tmp/target_jars/zj-mvn-demo.jar
+
+		// output:
+		// (7,14,5)
+		// (18,37,3)
+		// (3,46,3)
+		// (23,32,3)
 	}
 
 	/**
@@ -94,7 +102,7 @@ public class JobIterateFibNumber {
 				int first = rnd.nextInt(BOUND / 2 - 1) + 1;
 				int second = rnd.nextInt(BOUND / 2 - 1) + 1;
 
-				LOG.info("create source: ({},{})", first, second);
+				LOG.debug("create source:({},{})", first, second);
 				ctx.collect(new Tuple2<>(first, second));
 				counter++;
 				TimeUnit.SECONDS.sleep(1L);

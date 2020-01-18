@@ -114,8 +114,8 @@ public class JobWindowTrigger {
 		@Override
 		public TriggerResult onElement(SensorReading element, long timestamp, TimeWindow window, TriggerContext ctx)
 				throws Exception {
-			LOG.info("trigger onElement, element ts:{}, window maxTimestamp:{}, last watermark:{}", element.timestamp,
-					window.maxTimestamp(), ctx.getCurrentWatermark());
+			LOG.info("trigger onElement, element ts:[{}], window maxTimestamp:[{}], last watermark:[{}]",
+					element.timestamp, window.maxTimestamp(), ctx.getCurrentWatermark());
 
 			if (window.maxTimestamp() <= ctx.getCurrentWatermark()) {
 				// for lateness event
@@ -136,6 +136,7 @@ public class JobWindowTrigger {
 
 		@Override
 		public TriggerResult onEventTime(long time, TimeWindow window, TriggerContext ctx) throws Exception {
+			LOG.info("trigger onEventTime: ts:[{}], window:[{},{})", time, window.getStart(), window.getEnd());
 			if (time == window.maxTimestamp()) {
 				LOG.info("trigger onEventTime: FIRE");
 				return TriggerResult.FIRE;

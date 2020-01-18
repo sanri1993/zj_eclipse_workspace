@@ -157,7 +157,8 @@ public class JobCustomWindow {
 				LOG.info("firstSeen, register event timer:[{}]", t);
 				ctx.registerEventTimeTimer(t);
 				// register timer for the end of the window
-				ctx.registerEventTimeTimer(window.getEnd());
+				// NOTE: use window.maxTimestamp() instead of window.getEnd()
+				ctx.registerEventTimeTimer(window.maxTimestamp());
 				firstSeen.update(true);
 			}
 
@@ -176,7 +177,7 @@ public class JobCustomWindow {
 			LOG.info("trigger onEventTime => ts:[{}], watermark:[{}], window:[{},{})", time, ctx.getCurrentWatermark(),
 					window.getStart(), window.getEnd());
 
-			if (time == window.getEnd()) {
+			if (time == window.maxTimestamp()) {
 				// final evaluation and purge window state
 				LOG.info("fire and purge window:[{},{})", window.getStart(), window.getEnd());
 				return TriggerResult.FIRE_AND_PURGE;
