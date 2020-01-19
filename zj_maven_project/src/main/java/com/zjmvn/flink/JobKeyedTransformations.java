@@ -34,7 +34,7 @@ public class JobKeyedTransformations {
 		// a rolling reduce that computes the highest temperature of each sensor and the
 		// corresponding timestamp
 		DataStream<SensorReading> maxTempPerSensor = windowed.reduce((r1, r2) -> {
-			LOG.debug("r1 ts:{}, r2 ts:{}", r1.timestamp, r2.timestamp);
+			LOG.debug("reducer, r1 ts:{}, r2 ts:{}", r1.timestamp, r2.timestamp);
 			if (r1.temperature > r2.temperature) {
 				return r1;
 			} else {
