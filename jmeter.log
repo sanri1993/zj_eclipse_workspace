@@ -1,0 +1,19 @@
+2020-01-20 17:39:12,186 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2020-01-20 17:39:12,217 INFO o.a.j.JMeter: Loading user properties from: /usr/local/Cellar/jmeter/5.0/libexec/bin/user.properties
+2020-01-20 17:39:12,218 INFO o.a.j.JMeter: Loading system properties from: /usr/local/Cellar/jmeter/5.0/libexec/bin/system.properties
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: Copyright (c) 1998-2018 The Apache Software Foundation
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: Version 5.0 r1840935
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: java.version=1.8.0_144
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: os.name=Mac OS X
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: os.arch=x86_64
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: os.version=10.13.6
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: file.encoding=UTF-8
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: Max memory     =1073741824
+2020-01-20 17:39:12,225 INFO o.a.j.JMeter: Available Processors =4
+2020-01-20 17:39:12,232 INFO o.a.j.JMeter: Default Locale=English (EN)
+2020-01-20 17:39:12,232 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2020-01-20 17:39:12,232 INFO o.a.j.JMeter: JMeterHome=/usr/local/Cellar/jmeter/5.0/libexec
+2020-01-20 17:39:12,232 INFO o.a.j.JMeter: user.dir  =/Users/zhengjin/Workspaces/eclipse_workspace
+2020-01-20 17:39:12,232 INFO o.a.j.JMeter: PWD       =/Users/zhengjin/Workspaces/eclipse_workspace
+2020-01-20 17:39:17,240 INFO o.a.j.JMeter: IP: 127.0.0.1 Name: zjmbp FullName: localhost
