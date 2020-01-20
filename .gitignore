@@ -4,9 +4,6 @@
 .metadata/
 .recommenders/
 
-zj_maven_project/logs/
-zj_maven_project/target/
-
 zj_scala_project/.cache*
 zj_scala_project/target/
 zj_scala_project/logs/
