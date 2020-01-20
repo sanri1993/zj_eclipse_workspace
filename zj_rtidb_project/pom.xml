@@ -10,6 +10,7 @@
 
 	<name>ZhengJin Rtidb App</name>
 	<url>http://maven.apache.org</url>
+	<!-- use configs: /usr/local/Cellar/maven/3.6.0/libexec/conf/settings_4pd.xml -->
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,6 +23,7 @@
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
 
+		<!-- 4paradigm -->
 		<protobuf.version>3.6.1</protobuf.version>
 		<rtidb-version>1.4.3.0-RELEASE</rtidb-version>
 	</properties>
@@ -99,5 +101,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

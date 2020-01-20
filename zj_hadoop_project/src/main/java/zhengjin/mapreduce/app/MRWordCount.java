@@ -169,15 +169,19 @@ public class MRWordCount extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
 
-		// #1: input of 2 files:
+		// Example1, 2 files input:
 		// Hello World, Bye World!
 		// Hello Hadoop, Goodbye to hadoop.
 
-		// bin/hadoop jar /usr/local/hadoop/src/zj-hadoop-app.jar \
-		// zhengjin.mapreduce.app.MRWordCount \
+		// put files:
+		// hdfs dfs -mkdir -p /user/root/wordcount/input
+		// hdfs dfs -put *.txt /user/root/wordcount/input
+
+		// run mapreduce:
+		// hadoop jar zj-hadoop-app.jar zhengjin.mapreduce.app.MRWordCount \
 		// /user/root/wordcount/input/* /user/root/wordcount/output
 
-		// output (bin/hdfs dfs -text /user/root/wordcount/output/*):
+		// output (hdfs dfs -text /user/root/wordcount/output/*):
 		// Bye 1
 		// Goodbye 1
 		// Hadoop, 1
@@ -187,13 +191,13 @@ public class MRWordCount extends Configured implements Tool {
 		// hadoop. 1
 		// to 1
 
-		// #2: input pattern:
+		// Example2, input pattern:
 		// ,
 		// !
 		// \.
 		// to
 
-		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRWordCount \
+		// hadoop jar zj-mvn-demo.jar zhengjin.mapreduce.app.MRWordCount \
 		// -Dwordcount.case.sensitive=false \
 		// wordcount/input/file* wordcount/output -skip wordcount/input/patterns.txt
 

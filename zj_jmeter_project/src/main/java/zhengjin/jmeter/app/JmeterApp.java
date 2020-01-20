@@ -10,7 +10,7 @@ public class JmeterApp {
 
 	public static void main(String[] args) {
 
-		LOG.info(TAG + "Hello World!");
+		LOG.info(TAG + "JMeter App");
 	}
 
 }

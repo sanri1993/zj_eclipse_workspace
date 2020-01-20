@@ -25,8 +25,8 @@ public class JobRollingSum {
 		resultStream.print().setParallelism(1);
 
 		env.execute("Rolling Sum Example");
-		// flink run -c com.zjmvn.flink.JobRollingSum \
-		// /tmp/target_jars/zj-mvn-demo.jar
+		// flink run -c zhengjin.flink.app.JobRollingSum \
+		// /tmp/flink_test/zj-bigdata-app.jar
 
 		// output:
 		// (1,2,2)

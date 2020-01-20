@@ -48,8 +48,8 @@ public class JobAverageSensorReadings {
 
 		// execute application
 		env.execute("Compute average sensor temperature");
-		// flink run -c com.zjmvn.flink.JobAverageSensorReadings \
-		// /tmp/target_jars/zj-mvn-demo.jar
+		// flink run -c zhengjin.flink.app.JobAverageSensorReadings \
+		// /tmp/flink_test/zj-bigdata-app.jar
 
 		// output:
 		// (sensor_0, 1579314489000, 7.199051208191264)

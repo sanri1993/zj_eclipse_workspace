@@ -77,7 +77,7 @@ public class MRWordCountCombiner {
 		// good weather is good
 		// good today has good weather good
 
-		// run cmd (4 mapper tasks, and each for a input file):
+		// run mapreduce (4 mapper tasks, and each for a input file):
 		// hadoop jar zj-mvn-demo.jar com.zjmvn.hadoop.MRWordCountCombiner \
 		// wordcount/input wordcount/output true
 

@@ -7,7 +7,7 @@ if [[ $1 == "jar" ]]; then
   echo "run clean and package."
   mvn clean package -Dmaven.test.skip=true
 
-  jar_dir="/tmp/target_jars"
+  jar_dir="/tmp/flink_test"
   jar_file="zj-bigdata-app.jar"
   if [[ ! -d ${jar_dir} ]]; then
     mkdir ${jar_dir}
