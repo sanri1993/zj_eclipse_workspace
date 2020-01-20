@@ -16,7 +16,7 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.google.common.primitives.Ints;
 
-import zheng.app.demo.GuavaUtils;
+import zhengjin.app.demo.GuavaUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
