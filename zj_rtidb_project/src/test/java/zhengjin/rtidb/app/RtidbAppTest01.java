@@ -52,7 +52,7 @@ public class RtidbAppTest01 {
 	}
 
 	@Test
-	public void test02PutAndScanKVTable() throws Exception {
+	public void test03PutAndScanKVTable() throws Exception {
 		String key = "key2";
 		long ts = System.currentTimeMillis();
 		rtidb.syncPutKVTable(tname, key, ts, "value0");
