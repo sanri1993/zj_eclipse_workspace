@@ -24,14 +24,14 @@ public final class RtidbClient {
 	static {
 		try {
 			LOG.info(TAG + "init ritdb");
-			String leaderPath = RtidbConstants.zkRootPath + "/leader";
+			String leaderPath = RtidbEnv.zkRootPath + "/leader";
 			// NameServerClientImpl要么做成单例, 要么⽤完之后就调⽤close, 否则会导致fd泄露
-			nsc = new NameServerClientImpl(RtidbConstants.zkEndpoints, leaderPath);
+			nsc = new NameServerClientImpl(RtidbEnv.zkEndpoints, leaderPath);
 			nsc.init();
 
 			RTIDBClientConfig config = new RTIDBClientConfig();
-			config.setZkEndpoints(RtidbConstants.zkEndpoints);
-			config.setZkRootPath(RtidbConstants.zkRootPath);
+			config.setZkEndpoints(RtidbEnv.zkEndpoints);
+			config.setZkRootPath(RtidbEnv.zkRootPath);
 
 			clusterClient = new RTIDBClusterClient(config);
 			clusterClient.init();
