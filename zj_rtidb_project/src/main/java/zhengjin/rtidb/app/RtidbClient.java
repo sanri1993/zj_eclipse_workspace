@@ -43,9 +43,6 @@ public final class RtidbClient {
 		}
 	}
 
-	private RtidbClient() {
-	}
-
 	public static void close() {
 		if (clusterClient != null) {
 			clusterClient.close();
