@@ -10,7 +10,7 @@ public final class RtidbDemo {
 
 	private static final RtidbUtils rtidb = RtidbUtils.getInstance();
 
-	public void schemaTablePutPerfTest(int count) throws Exception {
+	public void schemaTablePutPerfTest01(int count) throws Exception {
 		long ts = System.currentTimeMillis();
 		long start;
 		Random rand = new Random();
@@ -29,7 +29,7 @@ public final class RtidbDemo {
 			row.put("money", rand.nextFloat() * 100F);
 
 			start = System.currentTimeMillis();
-			rtidb.syncPutSchemaTable(tbname, ts, row);
+			rtidb.syncPutSchemaTable(tbname, ts + i, row);
 			timestamps.add(System.currentTimeMillis() - start);
 			row.clear();
 		}
@@ -41,6 +41,10 @@ public final class RtidbDemo {
 			sum += t;
 		}
 		System.out.println(String.format("put total time: %d(ms), avg time: %d(ms)", sum, sum / count));
+	}
+
+	public void schemaTablePutPerfTest02(int count) throws Exception {
+		// TODO:
 	}
 
 }

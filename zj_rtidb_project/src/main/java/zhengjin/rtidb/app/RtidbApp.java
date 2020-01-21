@@ -26,7 +26,7 @@ public final class RtidbApp {
 		}
 
 		RtidbDemo demo = new RtidbDemo();
-		demo.schemaTablePutPerfTest(count);
+		demo.schemaTablePutPerfTest01(count);
 
 		LOG.info(TAG + "Rtidb App");
 	}

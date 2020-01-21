@@ -150,7 +150,7 @@ public class RtidbAppTest01 {
 			row.put("money", rand.nextFloat() * 100F);
 
 			start = System.currentTimeMillis();
-			rtidb.syncPutSchemaTable(schemaTbName01, ts, row);
+			rtidb.syncPutSchemaTable(schemaTbName01, ts + i, row);
 			timestamps.add(System.currentTimeMillis() - start);
 			row.clear();
 		}
