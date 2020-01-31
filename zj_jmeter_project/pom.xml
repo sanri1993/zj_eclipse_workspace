@@ -20,6 +20,7 @@
 		<junit.version>4.12</junit.version>
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
+		<rest-assured.version>4.1.1</rest-assured.version>
 		<jmeter.version>5.0</jmeter.version>
 	</properties>
 
@@ -28,7 +29,17 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
-			<scope>test</scope>
+			<!-- <scope>test</scope> -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -44,6 +55,25 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${rest-assured.version}</version>
+			<!-- <scope>test</scope> -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.sling</groupId>
+					<artifactId>org.apache.sling.javax.activation</artifactId>
+				</exclusion>
+			</exclusions>
+
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-path</artifactId>
+			<version>${rest-assured.version}</version>
 		</dependency>
 
 		<dependency>
