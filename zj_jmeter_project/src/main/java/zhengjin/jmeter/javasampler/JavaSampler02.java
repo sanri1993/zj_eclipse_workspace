@@ -1,9 +1,8 @@
 package zhengjin.jmeter.javasampler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.protocol.java.sampler.AbstractJavaSamplerClient;
@@ -12,43 +11,53 @@ import org.apache.jmeter.samplers.SampleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONObject;
+
 import okhttp3.Response;
+import zhengjin.jmeter.utils.Common;
 import zhengjin.jmeter.utils.HttpClient;
 
 /**
- * Java sampler for Get method.
+ * Java sampler for Post method.
  * 
  * @author zhengjin
  *
  */
-public final class JavaSampler01 extends AbstractJavaSamplerClient {
+public final class JavaSampler02 extends AbstractJavaSamplerClient {
 
-	private static final Logger LOG = LoggerFactory.getLogger(JavaSampler01.class);
-	private static final String TAG = JavaSampler01.class.getSimpleName();
+	private static final Logger LOG = LoggerFactory.getLogger(JavaSampler02.class);
+	private static final String TAG = JavaSampler02.class.getSimpleName();
 
 	private static final String baseUrl = "http://127.0.0.1:17891";
-	private static final String keyUserID = "userid";
-	private static final String keyUserName = "username";
+	private static final String keyReqBody = "reqBody";
 
-	private String userID;
-	private String userName;
+	private String reqBody;
 
 	@Override
 	public Arguments getDefaultParameters() {
 		LOG.info("{}: getDefaultParameters [pid:{}]", TAG, Thread.currentThread().getId());
+		final String jsonFileName = "data.json";
+
+		String dirPath = Common.getCurrentPath() + File.separator + jsonFileName;
+		String reqBody = "";
+		try {
+			reqBody = Common.readFileContent(dirPath);
+		} catch (IOException e) {
+			LOG.error("File not found ({})", dirPath);
+			e.printStackTrace();
+		}
+		LOG.info("request body:\n{}", reqBody);
+
 		Arguments params = new Arguments();
-		params.addArgument(keyUserID, "xxx");
-		params.addArgument(keyUserName, "xxx");
+		params.addArgument(keyReqBody, reqBody);
 		return params;
 	}
 
 	@Override
 	public void setupTest(JavaSamplerContext context) {
-		// 每个线程执行一次
 		LOG.info("{}: setupTest [pid:{}]", TAG, Thread.currentThread().getId());
 		super.setupTest(context);
-		this.userID = context.getParameter(keyUserID);
-		this.userName = context.getParameter(keyUserName);
+		this.reqBody = context.getParameter(keyReqBody);
 	}
 
 	@Override
@@ -60,20 +69,22 @@ public final class JavaSampler01 extends AbstractJavaSamplerClient {
 	@Override
 	public SampleResult runTest(JavaSamplerContext context) {
 		LOG.info("{}: runTest [pid:{}]", TAG, Thread.currentThread().getId());
-		final String url = baseUrl + "/demo/1";
+		final String url = baseUrl + "/demo/3";
 
 		SampleResult sr = new SampleResult();
 		sr.sampleStart();
-		sr.setDataType(SampleResult.TEXT);
-		sr.setSamplerData(String.format("%s=%s&%s=%s", keyUserID, this.userID, keyUserName, this.userName));
 
-		Map<String, Object> urlParams = new HashMap<>();
-		urlParams.put(keyUserID, this.userID);
-		urlParams.put(keyUserName, this.userName);
+		if (this.reqBody.length() == 0) {
+			errorHandler(sr, "request body is empty!");
+			return sr;
+		}
+		sr.setDataType(SampleResult.TEXT);
+		sr.setSamplerData(this.reqBody);
 
 		Response resp = null;
 		try {
-			resp = HttpClient.getMethod(url, urlParams, Collections.emptyMap());
+			resp = HttpClient.postJsonMethod(url, Collections.emptyMap(), Collections.emptyMap(),
+					JSONObject.parse(this.reqBody));
 		} catch (IOException e) {
 			e.printStackTrace();
 			errorHandler(sr, e.getMessage());
