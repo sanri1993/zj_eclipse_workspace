@@ -63,7 +63,7 @@ public final class HttpClientTest {
 		} catch (IOException e) {
 			LOG.info("read json body default.");
 			try {
-				reqBody = Common.readFileContent(Object.class.getResource("/" + jsonFileName).getPath());
+				reqBody = Common.readResource(File.separator + jsonFileName);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 				Assert.fail(e1.getMessage());

@@ -38,13 +38,19 @@ public final class JavaSampler02 extends AbstractJavaSamplerClient {
 		LOG.info("{}: getDefaultParameters [pid:{}]", TAG, Thread.currentThread().getId());
 		final String jsonFileName = "data.json";
 
-		String dirPath = Common.getCurrentPath() + File.separator + jsonFileName;
+		String filePath = Common.getCurrentPath() + File.separator + jsonFileName;
 		String reqBody = "";
 		try {
-			reqBody = Common.readFileContent(dirPath);
+			reqBody = Common.readFileContent(filePath);
 		} catch (IOException e) {
-			LOG.error("File not found ({})", dirPath);
-			e.printStackTrace();
+			LOG.warn("file not found ({}), and read default", filePath);
+			try {
+				filePath = File.separator + jsonFileName;
+				reqBody = Common.readResource(filePath);
+			} catch (IOException e1) {
+				LOG.warn("read resource ({}) failed, error: {}", filePath, e1.getMessage());
+				e1.printStackTrace();
+			}
 		}
 		LOG.info("request body:\n{}", reqBody);
 
@@ -75,7 +81,7 @@ public final class JavaSampler02 extends AbstractJavaSamplerClient {
 		sr.sampleStart();
 
 		if (this.reqBody.length() == 0) {
-			errorHandler(sr, "request body is empty!");
+			errorHandler(sr, "Request body is empty!");
 			return sr;
 		}
 		sr.setDataType(SampleResult.TEXT);

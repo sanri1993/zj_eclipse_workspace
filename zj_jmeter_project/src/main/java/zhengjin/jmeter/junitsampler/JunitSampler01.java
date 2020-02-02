@@ -64,11 +64,15 @@ public final class JunitSampler01 {
 		try {
 			reqBody = Common.readFileContent(dirPath);
 		} catch (IOException e) {
-			LOG.error("file not found {}", dirPath);
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			LOG.warn("file not found {}, and read default", dirPath);
+			try {
+				reqBody = Common.readResource(File.separator + jsonFileName);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				Assert.fail(e.getMessage());
+			}
 		}
-		Assert.assertTrue(reqBody.length() > 0);
+		Assert.assertTrue("verify request body is not empty", reqBody.length() > 0);
 		LOG.info("request body:\n{}", reqBody);
 
 		Response resp = RestAssured.given().contentType(ContentType.JSON).body(reqBody).when().post(url).andReturn();

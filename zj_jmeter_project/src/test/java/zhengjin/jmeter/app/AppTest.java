@@ -1,38 +1,45 @@
 package zhengjin.jmeter.app;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.io.IOException;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import zhengjin.jmeter.utils.Common;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+public final class AppTest {
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+	private static final Logger LOG = LoggerFactory.getLogger(AppTest.class);
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+	@Before
+	public void setUp() {
+		LOG.info("Test Setup");
+	}
+
+	@Test
+	public void test01CheckResource() {
+		JmeterApp app = new JmeterApp();
+		Assert.assertTrue(app.checkResource("/data.json"));
+	}
+
+	@Test
+	public void test02ReadResource() {
+		String content = "";
+		try {
+			content = Common.readResource("/data.json");
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
+
+		Assert.assertTrue(content.length() > 0);
+		LOG.info("File Content:\n" + content);
+	}
+
 }
