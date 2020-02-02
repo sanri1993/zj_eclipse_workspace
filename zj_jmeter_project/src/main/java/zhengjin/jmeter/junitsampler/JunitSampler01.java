@@ -17,6 +17,12 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import zhengjin.jmeter.utils.Common;
 
+/**
+ * Junit samplers for Get and Post methods.
+ * 
+ * @author zhengjin
+ *
+ */
 public final class JunitSampler01 {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JunitSampler01.class);
@@ -24,13 +30,13 @@ public final class JunitSampler01 {
 	private static final String baseUrl = "http://127.0.0.1:17891";
 
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		LOG.info("{}: setUpBeforeClass [pid:{}]", TAG, Thread.currentThread().getId());
+	public static void oneTimeSetUp() throws Exception {
+		LOG.info("{}: oneTimeSetUp [pid:{}]", TAG, Thread.currentThread().getId());
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		LOG.info("{}: tearDownAfterClass [pid:{}]", TAG, Thread.currentThread().getId());
+	public static void oneTimeTearDown() throws Exception {
+		LOG.info("{}: oneTimeTearDown [pid:{}]", TAG, Thread.currentThread().getId());
 	}
 
 	@Before
