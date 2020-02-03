@@ -23,6 +23,13 @@ public final class JunitSampler02 {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JunitSampler02.class);
 
+	public JunitSampler02() {
+	}
+
+	public JunitSampler02(String label) {
+		LOG.info("Label:" + label);
+	}
+
 	@Test
 	public void test01SetJMeterVariable() {
 		JUnitSampler sampler = new JUnitSampler();

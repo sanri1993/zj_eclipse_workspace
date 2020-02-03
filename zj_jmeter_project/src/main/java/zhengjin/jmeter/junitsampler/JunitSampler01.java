@@ -29,6 +29,13 @@ public final class JunitSampler01 {
 	private static final String TAG = JunitSampler01.class.getSimpleName();
 	private static final String baseUrl = "http://127.0.0.1:17891";
 
+	public JunitSampler01() {
+	}
+
+	public JunitSampler01(String label) {
+		LOG.info("Label:" + label);
+	}
+
 	@BeforeClass
 	public static void oneTimeSetUp() throws Exception {
 		LOG.info("{}: oneTimeSetUp [pid:{}]", TAG, Thread.currentThread().getId());
