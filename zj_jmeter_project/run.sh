@@ -51,8 +51,8 @@ if [[ $1 == "copy" ]]; then
   cp ${target_jar} ${jmeter_lib}/ext
   cp ${target_jar} ${jmeter_lib}/junit
 
-  fast_json_jar="${HOME}/Workspaces/mvn_repository/com/alibaba/fastjson/1.2.62/fastjson-1.2.62.jar"
-  cp ${fast_json_jar} ${jmeter_lib}/ext
+  #fast_json_jar="${HOME}/Workspaces/mvn_repository/com/alibaba/fastjson/1.2.62/fastjson-1.2.62.jar"
+  #cp ${fast_json_jar} ${jmeter_lib}/ext
 
   data_file="src/main/resources/data.json"
   jmeter_run_dir="${HOME}/Downloads/tmp_files/jmeter_tmp"
