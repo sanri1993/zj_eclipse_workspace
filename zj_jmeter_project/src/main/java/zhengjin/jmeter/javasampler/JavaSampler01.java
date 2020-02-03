@@ -18,6 +18,9 @@ import zhengjin.jmeter.utils.HttpClient;
 /**
  * Java sampler for Get method.
  * 
+ * Scenario: CSV Data Set Config (userID,userName) + Java Request
+ * (userid:${userID}, username:${userName})
+ * 
  * @author zhengjin
  *
  */
@@ -47,8 +50,9 @@ public final class JavaSampler01 extends AbstractJavaSamplerClient {
 		// 每个线程执行一次
 		LOG.info("{}: setupTest [pid:{}]", TAG, Thread.currentThread().getId());
 		super.setupTest(context);
-		this.userID = context.getParameter(keyUserID);
-		this.userName = context.getParameter(keyUserName);
+		// if variables are constant, init here
+//		this.userID = context.getParameter(keyUserID);
+//		this.userName = context.getParameter(keyUserName);
 	}
 
 	@Override
@@ -61,6 +65,11 @@ public final class JavaSampler01 extends AbstractJavaSamplerClient {
 	public SampleResult runTest(JavaSamplerContext context) {
 		LOG.info("{}: runTest [pid:{}]", TAG, Thread.currentThread().getId());
 		final String url = baseUrl + "/demo/1";
+
+		this.userID = context.getParameter(keyUserID);
+		this.userName = context.getParameter(keyUserName);
+		LOG.debug("Java Sampler Parameter (userid): " + this.userID);
+		LOG.debug("Jmeter Variable (userID): " + context.getJMeterVariables().get("userID"));
 
 		SampleResult sr = new SampleResult();
 		sr.sampleStart();

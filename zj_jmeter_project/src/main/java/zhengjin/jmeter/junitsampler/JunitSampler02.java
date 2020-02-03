@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
  * 
  * Junit samplers for set and get jmeter variable.
  * 
- * Thread Group: User Parameters + Junit Request01 (test01SetJMeterVariable) +
- * Junit Request02 (test02GetJMeterVariable) + Debug Sampler + View Results Tree
+ * Scenario: User Parameters + Junit Request01 (test01SetJMeterVariable) + Junit
+ * Request02 (test02GetJMeterVariable) + Debug Sampler + View Results Tree
+ * 
+ * CSV Data: CSV Data Set Config (foo,bar)
  * 
  * @author zhengjin
  *
