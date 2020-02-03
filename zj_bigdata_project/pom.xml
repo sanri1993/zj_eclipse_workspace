@@ -117,6 +117,7 @@
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-java</artifactId>
 			<version>${flink.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
@@ -128,16 +129,19 @@
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-clients_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-wikiedits_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -316,15 +320,36 @@
 	</build>
 
 	<!-- project info reports site -->
-	<!-- <reporting> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-checkstyle-plugin</artifactId> <version>${checkstyle.version}</version> 
-		<configuration> <configLocation>${checkstyle.config.location}</configLocation> 
-		<suppressionsLocation>${checkstyle.suppressions.location}</suppressionsLocation> 
-		</configuration> </plugin> <plugin> <groupId>org.codehaus.mojo</groupId> 
-		<artifactId>cobertura-maven-plugin</artifactId> <version>${cobertura.version}</version> 
-		<configuration> <formats> <format>html</format> <format>xml</format> </formats> 
-		</configuration> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-jxr-plugin</artifactId> <version>${maven.jxr.version}</version> 
-		</plugin> </plugins> </reporting> -->
+	<!--
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle.version}</version>
+				<configuration>
+					<configLocation>${checkstyle.config.location}</configLocation>
+					<suppressionsLocation>${checkstyle.suppressions.location}</suppressionsLocation>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>${cobertura.version}</version>
+				<configuration>
+					<formats>
+						<format>html</format>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${maven.jxr.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	-->
 
 </project>
