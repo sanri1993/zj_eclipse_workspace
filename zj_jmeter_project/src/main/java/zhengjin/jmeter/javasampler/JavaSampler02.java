@@ -78,6 +78,7 @@ public final class JavaSampler02 extends AbstractJavaSamplerClient {
 		final String url = baseUrl + "/demo/3";
 
 		SampleResult sr = new SampleResult();
+		sr.setSampleLabel("JavaSamplerForPost");
 		sr.sampleStart();
 
 		if (this.reqBody.length() == 0) {

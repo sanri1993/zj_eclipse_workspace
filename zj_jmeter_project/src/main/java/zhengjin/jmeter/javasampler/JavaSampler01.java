@@ -72,6 +72,8 @@ public final class JavaSampler01 extends AbstractJavaSamplerClient {
 		LOG.debug("Jmeter Variable (userID): " + context.getJMeterVariables().get("userID"));
 
 		SampleResult sr = new SampleResult();
+		sr.setSampleLabel("JavaSamplerForGet");
+
 		sr.sampleStart();
 		sr.setDataType(SampleResult.TEXT);
 		sr.setSamplerData(String.format("%s=%s&%s=%s", keyUserID, this.userID, keyUserName, this.userName));

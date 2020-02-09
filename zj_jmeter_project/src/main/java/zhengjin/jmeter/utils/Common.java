@@ -55,7 +55,6 @@ public final class Common {
 			LOG.warn("getResourceAsStream returns null.");
 			return "";
 		}
-
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
 		StringBuilder sb = new StringBuilder();
