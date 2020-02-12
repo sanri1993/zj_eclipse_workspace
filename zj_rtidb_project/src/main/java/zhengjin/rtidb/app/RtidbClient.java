@@ -16,6 +16,7 @@ public final class RtidbClient {
 	private static final String TAG = RtidbClient.class.getSimpleName() + " => ";
 	private static final Logger LOG = LoggerFactory.getLogger(RtidbClient.class);
 
+	private static boolean isReady = false;
 	private static NameServerClientImpl nsc;
 	private static RTIDBClusterClient clusterClient;
 	private static TableSyncClient tableSyncClient;
@@ -37,6 +38,7 @@ public final class RtidbClient {
 			clusterClient.init();
 			tableSyncClient = new TableSyncClientImpl(clusterClient);
 			tableAsyncClient = new TableAsyncClientImpl(clusterClient);
+			isReady = true;
 		} catch (Exception e) {
 			close();
 			e.printStackTrace();
@@ -50,6 +52,10 @@ public final class RtidbClient {
 		if (nsc != null) {
 			nsc.close();
 		}
+	}
+
+	public static boolean isReady() {
+		return isReady;
 	}
 
 	public static NameServerClientImpl getNameServerClient() {

@@ -116,12 +116,12 @@ public final class RtidbUtils {
 	 */
 	public boolean syncPutKVTable(String name, String key, long ts, String value)
 			throws TimeoutException, TabletException {
-		LOG.info(TAG + "kv table, sync put record");
+		LOG.debug(TAG + "kv table, sync put record");
 		return RtidbClient.getTableSyncClient().put(name, key, ts, value);
 	}
 
 	public String syncGetKVTable(String name, String key) throws TimeoutException, TabletException {
-		LOG.info(TAG + "kv table, sync get record");
+		LOG.debug(TAG + "kv table, sync get record");
 		ByteString bs = RtidbClient.getTableSyncClient().get(name, key);
 		if (bs != null) {
 			return new String(bs.toByteArray());
@@ -180,19 +180,19 @@ public final class RtidbUtils {
 	 * schema表 同步put, scan, get
 	 */
 	public boolean syncPutSchemaTable(String name, long ts, Object[] row) throws TimeoutException, TabletException {
-		LOG.info(TAG + "schema table, sync put record");
+		LOG.debug(TAG + "schema table, sync put record");
 		return RtidbClient.getTableSyncClient().put(name, ts, row);
 	}
 
 	public boolean syncPutSchemaTable(String name, long ts, Map<String, Object> row)
 			throws TimeoutException, TabletException {
-		LOG.info(TAG + "schema table, sync put records");
+		LOG.debug(TAG + "schema table, sync put records");
 		return RtidbClient.getTableSyncClient().put(name, ts, row);
 	}
 
 	public Object[] syncGetSchemaTable(String name, long ts, String key, String idx)
 			throws TimeoutException, TabletException {
-		LOG.info(TAG + "schema table, sync get record");
+		LOG.debug(TAG + "schema table, sync get record");
 		// key是需要查询字段的值, idxName是需要查询的字段名
 		// 查询指定ts的值. 如果ts设置为0, 返回最新插⼊的⼀条数据
 		return RtidbClient.getTableSyncClient().getRow(name, key, idx, ts);

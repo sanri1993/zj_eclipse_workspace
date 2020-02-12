@@ -1,5 +1,6 @@
 package zhengjin.rtidb.app;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,6 +16,12 @@ public final class RtidbDemo {
 	private static final Logger LOG = LoggerFactory.getLogger(RtidbDemo.class);
 	private static final RtidbUtils rtidb = RtidbUtils.getInstance();
 
+	/**
+	 * Verify rtidb put action.
+	 * 
+	 * @param count
+	 * @throws Exception
+	 */
 	public void schemaTablePutPerfTest01(int count) throws Exception {
 		long ts = System.currentTimeMillis();
 		long start;
@@ -22,7 +29,7 @@ public final class RtidbDemo {
 		List<Long> timestamps = new LinkedList<>();
 		Map<String, Object> row = new HashMap<String, Object>();
 
-		String tbname = "zj_schema_test1";
+		final String tbname = "zj_schema_test1";
 		row.put("card", "card1");
 		row.put("mcc", "mcc1");
 		row.put("money", rand.nextFloat() * 100F);
@@ -48,6 +55,12 @@ public final class RtidbDemo {
 		LOG.info(String.format("Put total time: %d(ms), Avg time: %d(ms)", sum, sum / count));
 	}
 
+	/**
+	 * Verify rtidb put action profile.
+	 * 
+	 * @param count
+	 * @throws Exception
+	 */
 	public void schemaTablePutPerfTest02(int count) throws Exception {
 		long ts = System.currentTimeMillis();
 		Random rand = new Random();
@@ -105,6 +118,30 @@ public final class RtidbDemo {
 		LOG.info(String.format("Put samplers: %d, Avg: %.2f(ms), Min: %d(ms), Max: %d(ms)", count, avg,
 				timestamps.get(0), timestamps.get(timestamps.size() - 1)));
 		LOG.info("Line90: {}(ms), Line95: {}(ms), Line99: {}(ms)", line90, line95, line99);
+	}
+
+	/**
+	 * Insert count of records with same key.
+	 * 
+	 * @throws Exception
+	 */
+	public void schemaTablePutDataTest03() throws Exception {
+		final String tbname = "zj_rtidb_abs_mem_test";
+		final int count = 100;
+
+		Random rand = new Random();
+		Map<String, Object> row = new HashMap<String, Object>();
+
+		long ts = System.currentTimeMillis();
+		String userCode = String.valueOf(ts + rand.nextInt(10000));
+		LOG.info("put {} of records in to {} with key {}.", count, tbname, userCode);
+		for (int i = 0; i < count; i++, ts++) {
+			row.put("u_user_code", userCode);
+			row.put("p_biz_date", (int) ts - rand.nextInt(1000));
+			row.put("insert_time", new Timestamp(ts));
+			rtidb.syncPutSchemaTable(tbname, ts, row);
+			row.clear();
+		}
 	}
 
 }
