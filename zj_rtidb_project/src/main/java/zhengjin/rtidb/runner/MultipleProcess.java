@@ -19,11 +19,11 @@ public final class MultipleProcess {
 	private ExecutorService execSvc;
 	private ScheduledExecutorService scheExecSvc;
 	private int threadNum;
-	private int secs;
+	private int runSecs;
 
-	public MultipleProcess(int threadNum, int delayBySecs) {
+	public MultipleProcess(int threadNum, int runSecs) {
 		this.threadNum = threadNum;
-		this.secs = delayBySecs;
+		this.runSecs = runSecs;
 	}
 
 	public static boolean isRunning() {
@@ -36,14 +36,14 @@ public final class MultipleProcess {
 		for (int i = 0; i < this.threadNum; i++) {
 			this.execSvc.submit(r);
 		}
-		this.stopProcessesByDelay(this.secs);
+		this.stopProcessesByDelay(this.runSecs);
 	}
 
 	public void stopProcesses() {
 		running = false;
 	}
 
-	private void stopProcessesByDelay(int secs) {
+	private void stopProcessesByDelay(int delay) {
 		this.scheExecSvc = Executors.newScheduledThreadPool(1);
 		this.scheExecSvc.schedule(new MyProcess() {
 			@Override
@@ -53,7 +53,7 @@ public final class MultipleProcess {
 				MultipleProcess.this.execSvc.shutdown();
 				MultipleProcess.this.scheExecSvc.shutdown();
 			}
-		}, secs, TimeUnit.SECONDS);
+		}, delay, TimeUnit.SECONDS);
 	}
 
 	private static class MyProcess implements Runnable {

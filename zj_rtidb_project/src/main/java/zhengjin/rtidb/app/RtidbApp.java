@@ -33,16 +33,9 @@ public final class RtidbApp {
 			demo.schemaTablePutPerfTest02(count);
 		}
 
-		int threadNum = 1;
-		int delay = 10;
-		if (args.length < 2) {
-			LOG.warn("No intput arguments [threadNum] and [delay] found, and use default 1 and 10.");
-		} else {
-			threadNum = Integer.parseInt(args[0]);
-			delay = Integer.parseInt(args[0]);
-		}
-
-		MultipleProcess p = new MultipleProcess(threadNum, delay);
+		int threadNum = Integer.parseInt(RtidbEnv.threadNum);
+		int secs = Integer.parseInt(RtidbEnv.runSecs);
+		MultipleProcess p = new MultipleProcess(threadNum, secs);
 		while (!RtidbClient.isReady()) {
 			LOG.info("Wait for rtidb client ready");
 			TimeUnit.SECONDS.sleep(3);

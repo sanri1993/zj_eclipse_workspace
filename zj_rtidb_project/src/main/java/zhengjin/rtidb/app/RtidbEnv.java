@@ -20,6 +20,9 @@ public final class RtidbEnv {
 	public static String zkEndpoints;
 	public static String zkRootPath;
 
+	public static String threadNum;
+	public static String runSecs;
+
 	private static Properties properties = new Properties();
 
 	static {
@@ -48,7 +51,18 @@ public final class RtidbEnv {
 		}
 
 		zkEndpoints = properties.getProperty("zk_cluster");
+		if (zkEndpoints == null) {
+			LOG.error("zkEndpoints is not set.");
+			System.exit(99);
+		}
 		zkRootPath = properties.getProperty("zk_root_path");
+		if (zkRootPath == null) {
+			LOG.error("zkRootPath is not set!");
+			System.exit(99);
+		}
+
+		threadNum = properties.getProperty("thread_num", "1");
+		runSecs = properties.getProperty("run_secs", "10");
 	}
 
 }
