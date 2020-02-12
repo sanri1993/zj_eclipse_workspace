@@ -14,20 +14,21 @@ public final class MultipleProcess {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RtidbApp.class);
 
-	private static volatile boolean running = true;
+	private volatile boolean running = true;
+
+	private final int threadNum;
+	private final int runSecs;
 
 	private ExecutorService execSvc;
 	private ScheduledExecutorService scheExecSvc;
-	private int threadNum;
-	private int runSecs;
 
 	public MultipleProcess(int threadNum, int runSecs) {
 		this.threadNum = threadNum;
 		this.runSecs = runSecs;
 	}
 
-	public static boolean isRunning() {
-		return running;
+	public boolean isRunning() {
+		return this.running;
 	}
 
 	public void runProcesses(Runnable r) {
@@ -40,27 +41,33 @@ public final class MultipleProcess {
 	}
 
 	public void stopProcesses() {
-		running = false;
+		this.running = false;
+		this.execSvc.shutdown();
+		this.scheExecSvc.shutdown();
 	}
 
 	private void stopProcessesByDelay(int delay) {
 		this.scheExecSvc = Executors.newScheduledThreadPool(1);
-		this.scheExecSvc.schedule(new MyProcess() {
+		this.scheExecSvc.schedule(new Runnable() {
 			@Override
 			public void run() {
 				LOG.info("Stop Processes");
-				running = false;
-				MultipleProcess.this.execSvc.shutdown();
-				MultipleProcess.this.scheExecSvc.shutdown();
+				MultipleProcess.this.stopProcesses();
 			}
 		}, delay, TimeUnit.SECONDS);
 	}
 
 	private static class MyProcess implements Runnable {
 
+		private MultipleProcess runner;
+
+		public MyProcess(MultipleProcess p) {
+			this.runner = p;
+		}
+
 		@Override
 		public void run() {
-			while (isRunning()) {
+			while (this.runner.isRunning()) {
 				LOG.info("Thread [{}]: running process test...", Thread.currentThread().getId());
 				try {
 					TimeUnit.SECONDS.sleep(3);
@@ -74,7 +81,7 @@ public final class MultipleProcess {
 	public static void main(String[] args) throws Exception {
 
 		MultipleProcess p = new MultipleProcess(3, 10);
-		p.runProcesses(new MyProcess());
+		p.runProcesses(new MyProcess(p));
 		LOG.info("mutliple processes test DONE.");
 	}
 

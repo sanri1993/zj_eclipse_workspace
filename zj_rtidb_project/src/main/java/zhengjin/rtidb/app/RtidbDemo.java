@@ -66,7 +66,7 @@ public final class RtidbDemo {
 		Random rand = new Random();
 		Map<String, Object> row = new HashMap<String, Object>();
 
-		final String tbname = "zj_rtidb_tradeup_user_recall_test";
+		final String tbname = RtidbEnv.tbName;
 		row.put("user_code", "00011");
 		row.put("sell_codes", String.valueOf("00011".hashCode()));
 		row.put("vals", String.valueOf(String.valueOf(ts).hashCode()));
@@ -126,7 +126,7 @@ public final class RtidbDemo {
 	 * @throws Exception
 	 */
 	public void schemaTablePutDataTest03() throws Exception {
-		final String tbname = "zj_rtidb_abs_mem_test";
+		final String tbname = RtidbEnv.tbName;
 		final int count = 100;
 
 		Random rand = new Random();

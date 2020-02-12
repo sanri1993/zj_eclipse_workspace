@@ -22,6 +22,7 @@ public final class RtidbEnv {
 
 	public static String threadNum;
 	public static String runSecs;
+	public static String tbName;
 
 	private static Properties properties = new Properties();
 
@@ -61,8 +62,14 @@ public final class RtidbEnv {
 			System.exit(99);
 		}
 
+		tbName = properties.getProperty("tbname", "zj_ritdb_tb_test");
 		threadNum = properties.getProperty("thread_num", "1");
 		runSecs = properties.getProperty("run_secs", "10");
+	}
+
+	public static void main(String[] args) {
+
+		LOG.info("table:{}, threads number:{}, run seconds:{}", tbName, threadNum, runSecs);
 	}
 
 }
