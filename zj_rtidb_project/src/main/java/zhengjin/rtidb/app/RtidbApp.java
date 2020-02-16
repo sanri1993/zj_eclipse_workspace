@@ -35,14 +35,14 @@ public final class RtidbApp {
 		}
 
 		if ("putdata".equals(runType)) {
-			int threadNum = Integer.parseInt(RtidbEnv.threadNum);
 			int secs = Integer.parseInt(RtidbEnv.runSecs);
-			MultipleProcess p = new MultipleProcess(threadNum, secs);
+			MultipleProcess p = new MultipleProcess(secs);
 			while (!RtidbClient.isReady()) {
 				LOG.info("Wait for rtidb client ready");
 				TimeUnit.SECONDS.sleep(3);
 			}
-			p.runProcesses(new PutDataProcess(demo, p));
+			int threadNum = Integer.parseInt(RtidbEnv.threadNum);
+			p.runProcesses(new PutDataProcess(demo, p), threadNum);
 		}
 
 		LOG.info(TAG + "Rtidb App.");
