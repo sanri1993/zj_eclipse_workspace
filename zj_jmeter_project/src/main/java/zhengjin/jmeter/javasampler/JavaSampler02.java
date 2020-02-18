@@ -75,7 +75,6 @@ public final class JavaSampler02 extends AbstractJavaSamplerClient {
 	@Override
 	public SampleResult runTest(JavaSamplerContext context) {
 		LOG.info("{}: runTest [pid:{}]", TAG, Thread.currentThread().getId());
-		final String url = baseUrl + "/demo/3";
 
 		SampleResult sr = new SampleResult();
 		sr.setSampleLabel("JavaSamplerForPost");
@@ -88,6 +87,7 @@ public final class JavaSampler02 extends AbstractJavaSamplerClient {
 		sr.setDataType(SampleResult.TEXT);
 		sr.setSamplerData(this.reqBody);
 
+		final String url = baseUrl + "/demo/3";
 		Response resp = null;
 		try {
 			resp = HttpClient.postJsonMethod(url, Collections.emptyMap(), Collections.emptyMap(),

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.protocol.java.sampler.AbstractJavaSamplerClient;
@@ -64,7 +65,8 @@ public final class JavaSampler01 extends AbstractJavaSamplerClient {
 	@Override
 	public SampleResult runTest(JavaSamplerContext context) {
 		LOG.info("{}: runTest [pid:{}]", TAG, Thread.currentThread().getId());
-		final String url = baseUrl + "/demo/1";
+		Properties p = context.getJMeterProperties();
+		LOG.info("sampleresult.useNanoTime={}", p.get("sampleresult.useNanoTime"));
 
 		this.userID = context.getParameter(keyUserID);
 		this.userName = context.getParameter(keyUserName);
@@ -82,6 +84,7 @@ public final class JavaSampler01 extends AbstractJavaSamplerClient {
 		urlParams.put(keyUserID, this.userID);
 		urlParams.put(keyUserName, this.userName);
 
+		final String url = baseUrl + "/demo/1";
 		Response resp = null;
 		try {
 			resp = HttpClient.getMethod(url, urlParams, Collections.emptyMap());
