@@ -23,17 +23,19 @@ test_class="zhengjin.jmeter.junitsampler.JunitSampler01"
 test_method="test02PostMethod"
 
 echo "run main test for class:"
-echo "java -cp ${cls_path} org.junit.runner.JUnitCore ${test_class}"
 if [[ $1 == "testc" ]]; then
   create_jar
+  set -x
   java -cp ${cls_path} org.junit.runner.JUnitCore ${test_class} 
+  set +x
 fi
 
 echo "run main test for specified method:"
-echo "java -cp ${cls_path} zhengjin.jmeter.app.SingleJUnitTestRunner ${test_class}#${test_method}"
 if [[ $1 == "testm" ]]; then
   create_jar
+  set -x
   java -cp ${cls_path} zhengjin.jmeter.app.SingleJUnitTestRunner ${test_class}#${test_method}
+  set +x
 fi
 
 
@@ -45,8 +47,8 @@ if [[ $1 == "test" ]]; then
 fi
 
 
+jmeter_lib="/usr/local/Cellar/jmeter/5.0/libexec/lib"
 if [[ $1 == "copy" ]]; then
-  jmeter_lib="/usr/local/Cellar/jmeter/5.0/libexec/lib"
   echo "copy jar to jmeter lib (${jmeter_lib}):"
   cp ${target_jar} ${jmeter_lib}/ext
   cp ${target_jar} ${jmeter_lib}/junit
@@ -59,6 +61,15 @@ if [[ $1 == "copy" ]]; then
   if [[ -f "$(pwd)/${data_file}" ]]; then
     cp ${data_file} ${jmeter_run_dir} 
   fi
+fi
+
+
+if [[ $1 == "jmeter" ]]; then
+   cp_path="${target_jar}:${jmeter_lib}/*:${jmeter_lib}/ext/*"
+   jmeter_main="zhengjin.jmeter.app.JmeterApp2"
+   set -x
+   java -cp ${cp_path} ${jmeter_main}
+   set +x
 fi
 
 
