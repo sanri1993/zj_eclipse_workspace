@@ -66,7 +66,7 @@ public final class JmeterApp2 {
 		baiducomSampler.setPort(80);
 		baiducomSampler.setPath("/");
 		baiducomSampler.setMethod("GET");
-		baiducomSampler.setName("Open baidu.com");
+		baiducomSampler.setName("Open_baidu.com");
 		baiducomSampler.setProperty(TestElement.TEST_CLASS, HTTPSamplerProxy.class.getName());
 		baiducomSampler.setProperty(TestElement.GUI_CLASS, HttpTestSampleGui.class.getName());
 
@@ -80,7 +80,7 @@ public final class JmeterApp2 {
 
 		// Thread Group 线程组
 		ThreadGroup threadGroup = new ThreadGroup();
-		threadGroup.setName("Jmeter ThreadGroup");
+		threadGroup.setName("ZhengJin_ThreadGroup");
 		threadGroup.setNumThreads(1);
 		threadGroup.setRampUp(1);
 		threadGroup.setSamplerController(loopController);
@@ -88,7 +88,7 @@ public final class JmeterApp2 {
 		threadGroup.setProperty(TestElement.GUI_CLASS, ThreadGroupGui.class.getName());
 
 		// Test Plan 测试计划
-		TestPlan testPlan = new TestPlan("JMeter Plan");
+		TestPlan testPlan = new TestPlan("ZhengJin_Plan");
 		testPlan.setSerialized(true);
 		testPlan.setProperty(TestElement.TEST_CLASS, TestPlan.class.getName());
 		testPlan.setProperty(TestElement.GUI_CLASS, TestPlanGui.class.getName());
@@ -111,8 +111,13 @@ public final class JmeterApp2 {
 		Summariser summer = new Summariser(summariserName);
 
 		// 将执行结果存储到.jtl文件中
+		final String jtlFilePath = "/tmp/example.jtl";
+		File jtlFile = new File(jtlFilePath);
+		if (jtlFile.exists()) {
+			jtlFile.delete();
+		}
 		ResultCollector logger = new ResultCollector(summer);
-		logger.setFilename("/tmp/example.jtl");
+		logger.setFilename(jtlFilePath);
 		testPlanTree.add(testPlanTree.getArray()[0], logger);
 
 		// 单机执行测试计划
@@ -121,9 +126,9 @@ public final class JmeterApp2 {
 		jmeter.configure(testPlanTree);
 		jmeter.run();
 
-		LOG.info("Jmeter App Done.");
 		LOG.info("Create jmx file: /tmp/example.jmx");
-		LOG.info("Create jtl file: /tmp/example.jtl");
+		LOG.info("Create jtl file: {}", jtlFilePath);
+		LOG.info("Jmeter App Done.");
 	}
 
 }
