@@ -25,7 +25,7 @@
 		<guava.version>28.1-jre</guava.version>
 
 		<!-- bigdata -->
-		<zookepper.version>3.4.13</zookepper.version>
+		<zookepper.version>3.4.14</zookepper.version>
 		<flink.version>1.9.1</flink.version>
 		<scala.binary.version>2.12</scala.binary.version>
 
