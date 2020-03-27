@@ -13,7 +13,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 
-public class GuavaUtils {
+public final class GuavaUtils {
 
 	public static Integer sumWithOptional(Optional<Integer> a, Optional<Integer> b) {
 		// Optional.isPresent - checks the value is present or not

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
-public class BigdataApp {
+public final class BigdataApp {
 
 	private static final String TAG = BigdataApp.class.getSimpleName() + " => ";
 	private static final Logger logger = LoggerFactory.getLogger(BigdataApp.class);
