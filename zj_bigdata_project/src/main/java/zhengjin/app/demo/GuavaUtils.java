@@ -1,8 +1,13 @@
 package zhengjin.app.demo;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.flink.shaded.guava18.com.google.common.util.concurrent.RateLimiter;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -15,10 +20,32 @@ import com.google.common.collect.Range;
 
 public final class GuavaUtils {
 
+	private static final Logger logger = LoggerFactory.getLogger(GuavaUtils.class);
+
+	public static void main(String[] args) throws InterruptedException {
+
+		final String type = "test";
+
+		if ("util".equals(type)) {
+			try {
+				logger.info("guava utils getValue() results:" + getValueWithPrecondition(6));
+			} catch (IndexOutOfBoundsException e) {
+				logger.error(e.getMessage());
+			}
+		}
+
+		GuavaUtils utils = new GuavaUtils();
+		if ("test".equals(type)) {
+			utils.rateLimitTest();
+		}
+
+		logger.info("Guava utils demo done.");
+	}
+
 	public static Integer sumWithOptional(Optional<Integer> a, Optional<Integer> b) {
 		// Optional.isPresent - checks the value is present or not
-		System.out.println("1st parameter is present: " + a.isPresent());
-		System.out.println("2nd parameter is present: " + b.isPresent());
+		logger.info("1st parameter is present: " + a.isPresent());
+		logger.info("2nd parameter is present: " + b.isPresent());
 
 		// Optional.or - returns the value if present otherwise returns the default
 		// value passed.
@@ -47,7 +74,7 @@ public final class GuavaUtils {
 	}
 
 	public static boolean collectionIsOrder(Ordering<Integer> ordering, List<Integer> numbers) {
-		System.out.println("Input Numbers: " + numbers);
+		logger.info("Input Numbers: " + numbers);
 		return ordering.isOrdered(numbers);
 	}
 
@@ -81,6 +108,36 @@ public final class GuavaUtils {
 		};
 
 		return Iterators.all(list.iterator(), predicate);
+	}
+
+	void rateLimitTest() throws InterruptedException {
+		List<Thread> threads = new ArrayList<Thread>();
+		RateLimiter limit = RateLimiter.create(2.0);
+
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < 10; i++) {
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					String name = Thread.currentThread().getName();
+					logger.info("Thread [{}] is start.", name);
+					try {
+						limit.acquire();
+						TimeUnit.MILLISECONDS.sleep(200L);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					logger.info("Thread [{}] is running ...", name);
+				}
+			});
+			threads.add(t);
+			t.start();
+		}
+
+		for (Thread t : threads) {
+			t.join(8 * 1000L);
+		}
+		logger.info("duration: {} seconds", (System.currentTimeMillis() - start) / 1000);
 	}
 
 }

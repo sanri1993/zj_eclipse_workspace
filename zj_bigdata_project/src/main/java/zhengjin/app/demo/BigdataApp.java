@@ -19,13 +19,6 @@ public final class BigdataApp {
 		}
 		logger.info(TAG + "First maven app.");
 
-		// guava utils test
-		try {
-			logger.info("guava utils getValue() results:" + GuavaUtils.getValueWithPrecondition(6));
-		} catch (IndexOutOfBoundsException e) {
-			logger.error(e.getMessage());
-		}
-
 		// test showcaseThrowables01
 		try {
 			app.showcaseThrowables01();
