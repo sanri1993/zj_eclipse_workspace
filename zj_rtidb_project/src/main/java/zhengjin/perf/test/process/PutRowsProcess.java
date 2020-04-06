@@ -17,27 +17,29 @@ import zhengjin.perf.test.io.DBReadWriter;
  *         key and inserted ts.
  *
  */
-public final class PutProcess implements Runnable {
+public final class PutRowsProcess implements Runnable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PutProcess.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PutRowsProcess.class);
 
-	DBReadWriter rw;
+	private DBReadWriter rw;
 
-	public PutProcess(DBReadWriter rw) {
+	public PutRowsProcess(DBReadWriter rw) {
 		this.rw = rw;
 	}
 
 	@Override
 	public void run() {
 		final String tag = Thread.currentThread().getName();
+		// interval for sync data to matrix process
 		final long interval = PerfTestEnv.matrixInterval * 1000L;
 
 		int failCount = 0;
 		List<Long> elapsedTimes = new LinkedList<Long>();
 		HashMap<String, Object> row = new HashMap<String, Object>();
 
+		LOG.info("[{}]: PUT ROWS started", tag);
 		long pStart = System.currentTimeMillis();
-		LOG.info("[{}]: PUT started", tag);
+		long pEnd = pStart;
 		while (PerfTest.isRunning) {
 			PerfTest.limit.acquire();
 
@@ -55,14 +57,14 @@ public final class PutProcess implements Runnable {
 				LOG.warn(e.getMessage());
 				failCount++;
 			} finally {
-				elapsedTimes.add(this.formatTimeUnit(System.nanoTime() - putStart));
+				elapsedTimes.add(BaseUtils.formatTimeUnit(System.nanoTime() - putStart));
 				row.clear();
 			}
 
-			long pEnd = System.currentTimeMillis();
+			pEnd = System.currentTimeMillis();
 			if ((pEnd - pStart) > interval) {
 				LOG.info("[{}]: sync maxtrix data", tag);
-				syncMatrixData(failCount, elapsedTimes);
+				BaseUtils.syncMatrixData(failCount, elapsedTimes);
 
 				pStart = pEnd;
 				failCount = 0;
@@ -70,18 +72,8 @@ public final class PutProcess implements Runnable {
 			}
 		}
 
-		syncMatrixData(failCount, elapsedTimes);
-		LOG.info("[{}]: PUT end", tag);
-	}
-
-	private void syncMatrixData(int failCount, List<Long> elapsedTimes) {
-		MatrixProcess.matrixFailCounts.addAndGet(failCount);
-		MatrixProcess.matrixElapsed.addAll(elapsedTimes);
-		MatrixProcess.num.incrementAndGet();
-	}
-
-	private long formatTimeUnit(long time) {
-		return "ms".equals(PerfTestEnv.rsTimeUnit) ? time / 1000L / 1000L : time / 1000L;
+		BaseUtils.syncMatrixData(failCount, elapsedTimes);
+		LOG.info("[{}]: PUT ROWS end", tag);
 	}
 
 }

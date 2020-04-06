@@ -17,20 +17,19 @@ import zhengjin.perf.test.io.MockRW;
 
 /**
  * 
- * @author zhengjin Performance test daemon process: 1) Print performance test
- *         summary info matrix at specified interval. 2) Check all active
- *         threads.
+ * @author zhengjin 1) Print performance test summary info matrix at specified
+ *         interval. 2) Check all active threads.
  *
  */
-public class MatrixProcess implements Runnable {
+public final class PerfTestMatrixProcess implements Runnable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MatrixProcess.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PerfTestMatrixProcess.class);
 
+	// number of threads set the matrix data
+	static AtomicInteger num = new AtomicInteger(0);
 	// fields save matrix data from performance test started
 	static AtomicInteger matrixFailCounts = new AtomicInteger(0);
 	static CopyOnWriteArrayList<Long> matrixElapsed = new CopyOnWriteArrayList<Long>();
-	// number of threads set the matrix data
-	static AtomicInteger num = new AtomicInteger(0);
 
 	@Override
 	public void run() {
@@ -64,7 +63,7 @@ public class MatrixProcess implements Runnable {
 
 		while (!PerfTest.svc.isTerminated()) {
 			try {
-				TimeUnit.MILLISECONDS.sleep(200L);
+				TimeUnit.MILLISECONDS.sleep(300L);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

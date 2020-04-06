@@ -13,7 +13,7 @@ public final class MockRW implements DBReadWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MockRW.class);
 
-	// note: debug fields are not atomic, only test for single thread
+	// note: debug fields are not atomic, mismatch for multiple threads
 	private static boolean isDebug = PerfTestEnv.isDebug;
 	private static int debugCount = 0;
 	private static long debugSum = 0L;
@@ -24,6 +24,9 @@ public final class MockRW implements DBReadWriter {
 	public MockRW() {
 		rand = new Random();
 		rand.setSeed(666L);
+
+		debugCount = 0;
+		debugSum = 0L;
 	}
 
 	@Override

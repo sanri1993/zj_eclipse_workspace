@@ -188,4 +188,24 @@ public class TestDemo {
 		}
 	}
 
+	@Test
+	public void testSample05() throws InterruptedException {
+		// 连续数字分桶
+		int rangeStart = 1;
+		int rangeEnd = 100;
+		int partition = 3;
+
+		int range = (rangeEnd - rangeStart + 1) / partition;
+		int remained = (rangeEnd - rangeStart + 1) % partition;
+
+		for (int i = 0; i < partition; i++) {
+			int start = rangeStart + range * i;
+			int end = start + range;
+			if (i == (partition - 1)) {
+				end += remained;
+			}
+			System.out.printf("[%d,%d)\n", start, end);
+		}
+	}
+
 }
