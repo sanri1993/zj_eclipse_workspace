@@ -23,6 +23,8 @@ public final class PerfTestEnv {
 	public static int rpsLimit;
 
 	public static int matrixInterval;
+	public static String rsTimeUnit;
+	public static boolean isDebug;
 
 	private static Properties properties = new Properties();
 
@@ -62,16 +64,19 @@ public final class PerfTestEnv {
 		rpsLimit = Integer.valueOf(properties.getProperty("rps_limit", "100").toString());
 
 		matrixInterval = Integer.valueOf(properties.getProperty("matrix_interval", "30").toString());
+		rsTimeUnit = properties.getProperty("rt_time_unit", "ms");
+		isDebug = Boolean.parseBoolean(properties.getProperty("is_debug", "false"));
 	}
 
 	static void printPerfTestEnv() {
 		LOG.info(String.format("[Config] action:%s, runtime:%d, threads:%d", action, runTime, threads));
 		LOG.info(String.format("key_prefix:%s, key_range_start:%d, key_range_end:%d, rps_limit:%d", keyPrefix,
 				keyRangeStart, keyRangeEnd, rpsLimit));
-
+		LOG.info(String.format("matrix_interval: %d, rt_time_unit: %s", matrixInterval, rsTimeUnit));
 	}
 
 	public static void main(String[] args) {
+
 		printPerfTestEnv();
 	}
 

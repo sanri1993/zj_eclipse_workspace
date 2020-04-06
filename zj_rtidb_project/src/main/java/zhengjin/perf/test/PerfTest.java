@@ -12,16 +12,18 @@ import com.google.common.util.concurrent.RateLimiter;
 
 import zhengjin.perf.test.io.DBReadWriter;
 import zhengjin.perf.test.io.MockRW;
+import zhengjin.perf.test.process.MatrixProcess;
+import zhengjin.perf.test.process.PutProcess;
 
 public final class PerfTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PerfTest.class);
 
-	static long start;
-	static boolean isRunning = false;
-	static ExecutorService svc = Executors.newFixedThreadPool(PerfTestEnv.threads + 1);
-	static ScheduledExecutorService scheSvc = Executors.newScheduledThreadPool(1);
-	static RateLimiter limit;
+	public static long start;
+	public static boolean isRunning = false;
+	public static ExecutorService svc = Executors.newFixedThreadPool(PerfTestEnv.threads);
+	public static ScheduledExecutorService scheSvc = Executors.newScheduledThreadPool(2);
+	public static RateLimiter limit;
 
 	public void exec(DBReadWriter rw) throws InterruptedException {
 		PerfTestEnv.printPerfTestEnv();
@@ -33,19 +35,21 @@ public final class PerfTest {
 		for (int i = 0; i < PerfTestEnv.threads; i++) {
 			svc.submit(new PutProcess(rw));
 		}
-		TimeUnit.MILLISECONDS.sleep(1000L);
-		svc.submit(new MatrixProcess());
+
+		scheSvc.schedule(new MatrixProcess(), PerfTestEnv.matrixInterval, TimeUnit.SECONDS);
 
 		scheSvc.schedule(new Runnable() {
 			@Override
 			public void run() {
-				isRunning = false;
-				svc.shutdown();
-				scheSvc.shutdown();
-				LOG.info("PERF TEST END");
+				stop();
 			}
-
 		}, PerfTestEnv.runTime, TimeUnit.SECONDS);
+	}
+
+	public static void stop() {
+		isRunning = false;
+		svc.shutdown();
+		scheSvc.shutdown();
 	}
 
 	public static void main(String[] args) throws InterruptedException {

@@ -1,4 +1,4 @@
-package zhengjin.perf.test;
+package zhengjin.perf.test.process;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,6 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import zhengjin.perf.test.PerfTest;
+import zhengjin.perf.test.PerfTestEnv;
 import zhengjin.perf.test.io.DBReadWriter;
 
 /**
@@ -28,6 +30,8 @@ public final class PutProcess implements Runnable {
 	@Override
 	public void run() {
 		final String tag = Thread.currentThread().getName();
+		final long interval = PerfTestEnv.matrixInterval * 1000L;
+
 		int failCount = 0;
 		List<Long> elapsedTimes = new LinkedList<Long>();
 		HashMap<String, Object> row = new HashMap<String, Object>();
@@ -51,25 +55,33 @@ public final class PutProcess implements Runnable {
 				LOG.warn(e.getMessage());
 				failCount++;
 			} finally {
-				elapsedTimes.add((System.nanoTime() - putStart / 1000L));
+				elapsedTimes.add(this.formatTimeUnit(System.nanoTime() - putStart));
+				row.clear();
 			}
 
 			long pEnd = System.currentTimeMillis();
-			if ((pEnd - pStart) > (PerfTestEnv.matrixInterval * 1000L)) {
+			if ((pEnd - pStart) > interval) {
 				LOG.info("[{}]: sync maxtrix data", tag);
-				pStart = pEnd;
 				syncMatrixData(failCount, elapsedTimes);
+
+				pStart = pEnd;
 				failCount = 0;
 				elapsedTimes.clear();
 			}
 		}
-		LOG.info("[{}]: put end", tag);
+
+		syncMatrixData(failCount, elapsedTimes);
+		LOG.info("[{}]: PUT end", tag);
 	}
 
 	private void syncMatrixData(int failCount, List<Long> elapsedTimes) {
 		MatrixProcess.matrixFailCounts.addAndGet(failCount);
 		MatrixProcess.matrixElapsed.addAll(elapsedTimes);
 		MatrixProcess.num.incrementAndGet();
+	}
+
+	private long formatTimeUnit(long time) {
+		return "ms".equals(PerfTestEnv.rsTimeUnit) ? time / 1000L / 1000L : time / 1000L;
 	}
 
 }
