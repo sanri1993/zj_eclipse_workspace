@@ -18,27 +18,30 @@ import zhengjin.perf.test.io.MockRW;
 /**
  * 
  * @author zhengjin 1) Print performance test summary info matrix at specified
- *         interval. 2) Check all active threads.
+ *         interval; 2) Check all active threads.
  *
  */
 public final class PerfTestMatrixProcess implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PerfTestMatrixProcess.class);
 
-	// number of threads set the matrix data
+	// number of threads which set matrix data
 	static AtomicInteger num = new AtomicInteger(0);
-	// fields save matrix data from performance test started
+	// sync fields save matrix data from perf test started
 	static AtomicInteger matrixFailCounts = new AtomicInteger(0);
 	static CopyOnWriteArrayList<Long> matrixElapsed = new CopyOnWriteArrayList<Long>();
+
+	// TODO: all matrix data are in memory, prefer to dump to IO file at the
+	// sametime.
 
 	@Override
 	public void run() {
 		final String tag = Thread.currentThread().getName();
 		ThreadPoolExecutor pool = (ThreadPoolExecutor) PerfTest.svc;
 
-		LOG.info("[{}]: MATRIX started", tag);
+		LOG.info("[{}]: MATRIX start", tag);
 		while (PerfTest.isRunning) {
-			if (num.get() > 0 && (num.get() == PerfTestEnv.threads)) {
+			if (num.get() == PerfTestEnv.threads) {
 				this.printSummaryContent();
 				this.printLinesContent();
 				MockRW.debugInfo();
@@ -48,7 +51,7 @@ public final class PerfTestMatrixProcess implements Runnable {
 			// check all threads are active
 			if (PerfTest.isRunning && (pool.getActiveCount() < PerfTestEnv.threads)) {
 				PerfTest.stop();
-				LOG.error("[{}]: active threads {} is less than {}", tag, pool.getActiveCount(), PerfTestEnv.threads);
+				LOG.error("now active threads count is {}, less than {}", pool.getActiveCount(), PerfTestEnv.threads);
 				LOG.error("PERF TEST END WITH ERROR");
 				return;
 			}
@@ -99,10 +102,10 @@ public final class PerfTestMatrixProcess implements Runnable {
 		int line9999 = ((int) Math.round(size * 0.9999F) - 1);
 
 		List<String> lines = new ArrayList<String>();
-		lines.add("tp90:" + matrixElapsed.get(line90));
-		lines.add("tp99:" + matrixElapsed.get(line99));
-		lines.add("tp999:" + matrixElapsed.get(line999));
-		lines.add("tp9999:" + matrixElapsed.get(line9999));
+		lines.add("line90:" + matrixElapsed.get(line90));
+		lines.add("line99:" + matrixElapsed.get(line99));
+		lines.add("line999:" + matrixElapsed.get(line999));
+		lines.add("line9999:" + matrixElapsed.get(line9999));
 		String lineContent = String.join(PerfTestEnv.rsTimeUnit + ", ", lines);
 		LOG.info("[Lines]: " + lineContent + PerfTestEnv.rsTimeUnit);
 	}

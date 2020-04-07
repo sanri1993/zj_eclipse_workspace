@@ -21,13 +21,14 @@ public final class CreateMatrixProcess implements Runnable {
 	@Override
 	public void run() {
 		final String tag = Thread.currentThread().getName();
+		final int allCount = PerfTestEnv.keyRangeEnd - PerfTestEnv.keyRangeStart + 1;
 		ThreadPoolExecutor pool = (ThreadPoolExecutor) PerfTest.svc;
 
-		LOG.info("[{}]: MATRIX started", tag);
+		LOG.info("[{}]: MATRIX start", tag);
 		while (pool.getActiveCount() > 0) {
-			if (num.get() > 0 && (num.get() == PerfTestEnv.threads)) {
-				float percent = matrixCounts.get() / (float) (PerfTestEnv.keyRangeEnd - PerfTestEnv.keyRangeStart + 1);
-				LOG.info(String.format("[Matrix]: create data process: %.2f", (percent * 100)) + "%");
+			if (num.get() == PerfTestEnv.threads) {
+				float percent = matrixCounts.get() / (float) allCount;
+				LOG.info(String.format("[Matrix]: create data process: %.1f", (percent * 100)) + "%");
 				MockRW.debugInfo();
 				num.set(0);
 			}
@@ -41,7 +42,6 @@ public final class CreateMatrixProcess implements Runnable {
 
 		PerfTest.svc.shutdown();
 		PerfTest.scheSvc.shutdown();
-
 		LOG.info("[Matrix]: create data process: 100%");
 		MockRW.debugInfo();
 		LOG.info("PERF TEST END");

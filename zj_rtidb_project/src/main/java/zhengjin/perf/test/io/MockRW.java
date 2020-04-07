@@ -13,7 +13,7 @@ public final class MockRW implements DBReadWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MockRW.class);
 
-	// note: debug fields are not atomic, mismatch for multiple threads
+	// Note: debug fields are non atomic
 	private static boolean isDebug = PerfTestEnv.isDebug;
 	private static int debugCount = 0;
 	private static long debugSum = 0L;
@@ -22,7 +22,7 @@ public final class MockRW implements DBReadWriter {
 	private static int hotKeyLine = PerfTestEnv.keyRangeStart
 			+ (int) ((PerfTestEnv.keyRangeEnd - PerfTestEnv.keyRangeStart) * 0.2);
 
-	private final int base = 100;
+	private final int randBase = 100;
 	private Random rand;
 
 	public MockRW() {
@@ -35,7 +35,7 @@ public final class MockRW implements DBReadWriter {
 
 	@Override
 	public boolean put(String tbName, Map<String, Object> row) throws Exception {
-		int t = rand.nextInt(base);
+		int t = rand.nextInt(randBase);
 		if (isDebug) {
 			debugCount++;
 			debugSum += t;
@@ -46,7 +46,7 @@ public final class MockRW implements DBReadWriter {
 
 	@Override
 	public Object[] get(String tbName, String key) throws Exception {
-		int t = rand.nextInt(base);
+		int t = rand.nextInt(randBase);
 		if (isDebug) {
 			int val = Integer.valueOf(key.substring(PerfTestEnv.keyPrefix.length()));
 			if (val < hotKeyLine) {
@@ -61,9 +61,14 @@ public final class MockRW implements DBReadWriter {
 
 	public static void debugInfo() {
 		if (isDebug) {
-			String text = String.format("[RW debug]: count:%d, hotkey count: %d, avg rt:%.2f", debugCount,
-					debugHotKeyCount, (debugSum / (float) debugCount));
-			LOG.info(text + PerfTestEnv.rsTimeUnit);
+			String text = String.format("[RW debug]: count:%d, avg rt:%.2f", debugCount,
+					(debugSum / (float) debugCount)) + PerfTestEnv.rsTimeUnit;
+			if ("get".equals(PerfTestEnv.action)) {
+				String more = String.format("hotkey count:%d, hotkey rate:%.2f", debugHotKeyCount,
+						(100 * debugHotKeyCount / (float) debugCount)) + "%";
+				text += ", " + more;
+			}
+			LOG.info(text);
 		}
 	}
 

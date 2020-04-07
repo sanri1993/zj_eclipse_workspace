@@ -13,8 +13,8 @@ import zhengjin.perf.test.io.DBReadWriter;
 
 /**
  * 
- * @author zhengjin Performance test for put action. Put data by random unique
- *         key and inserted ts.
+ * @author zhengjin Performance test for put action. Put data by random and
+ *         unique key, and inserted ts.
  *
  */
 public final class PutRowsProcess implements Runnable {
@@ -37,7 +37,7 @@ public final class PutRowsProcess implements Runnable {
 		List<Long> elapsedTimes = new LinkedList<Long>();
 		HashMap<String, Object> row = new HashMap<String, Object>();
 
-		LOG.info("[{}]: PUT ROWS started", tag);
+		LOG.info("[{}]: PUT ROWS start", tag);
 		long pStart = System.currentTimeMillis();
 		long pEnd = pStart;
 		while (PerfTest.isRunning) {
@@ -61,9 +61,11 @@ public final class PutRowsProcess implements Runnable {
 				row.clear();
 			}
 
+			// sync matrix data by interval
 			pEnd = System.currentTimeMillis();
 			if ((pEnd - pStart) > interval) {
 				LOG.info("[{}]: sync maxtrix data", tag);
+				// TODO: save matrix data to IO file
 				BaseUtils.syncMatrixData(failCount, elapsedTimes);
 
 				pStart = pEnd;

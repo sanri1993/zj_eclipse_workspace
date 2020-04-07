@@ -32,6 +32,7 @@ public final class PerfTest {
 		int rangeStart = PerfTestEnv.keyRangeStart;
 		int rangeEnd = PerfTestEnv.keyRangeEnd;
 
+		// key根据执行的线程数进行分桶
 		int range = (rangeEnd - rangeStart + 1) / PerfTestEnv.threads;
 		int remained = (rangeEnd - rangeStart + 1) % PerfTestEnv.threads;
 		for (int i = 0; i < PerfTestEnv.threads; i++) {
@@ -42,7 +43,6 @@ public final class PerfTest {
 			}
 			svc.submit(new CreateProcess(rw, start, end));
 		}
-
 		scheSvc.schedule(new CreateMatrixProcess(), PerfTestEnv.matrixInterval, TimeUnit.SECONDS);
 	}
 
@@ -86,11 +86,16 @@ public final class PerfTest {
 		LOG.info("PERF TEST START");
 		PerfTest test = new PerfTest();
 		if ("put".equals(PerfTestEnv.action)) {
+			// perf test for db put by random and unique key
 			test.runPut(rw);
 		} else if ("get".equals(PerfTestEnv.action)) {
+			// perf test for db get with 2-8 hotkey
 			test.runGet(rw);
 		} else if ("create".equals(PerfTestEnv.action)) {
+			// create data by key range
 			test.runCreateData(rw);
+		} else {
+			LOG.error("invalid action: " + PerfTestEnv.action);
 		}
 	}
 

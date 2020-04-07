@@ -12,6 +12,11 @@ import zhengjin.perf.test.PerfTest;
 import zhengjin.perf.test.PerfTestEnv;
 import zhengjin.perf.test.io.DBReadWriter;
 
+/**
+ * 
+ * @author zhengjin Performance test for get action. Get data by 2-8 hotkey.
+ *
+ */
 public final class GetRowsProcess implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PutRowsProcess.class);
@@ -26,10 +31,11 @@ public final class GetRowsProcess implements Runnable {
 	public void run() {
 		final String tag = Thread.currentThread().getName();
 		final long interval = PerfTestEnv.matrixInterval * 1000L;
+
 		int failCount = 0;
 		List<Long> elapsedTimes = new LinkedList<Long>();
 
-		LOG.info("[{}]: GET ROWS started", tag);
+		LOG.info("[{}]: GET ROWS start", tag);
 		long pStart = System.currentTimeMillis();
 		long pEnd = pStart;
 		while (PerfTest.isRunning) {
@@ -39,7 +45,7 @@ public final class GetRowsProcess implements Runnable {
 			try {
 				Object[] row = rw.get("tbname", this.getHotKey());
 				if (row != null) {
-					LOG.debug("[{}]: get row: " + Arrays.toString(row));
+					LOG.debug("get row: " + Arrays.toString(row));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -64,6 +70,7 @@ public final class GetRowsProcess implements Runnable {
 	}
 
 	private String getHotKey() {
+		// 80%的请求访问20%的热点key
 		int count = PerfTestEnv.keyRangeEnd - PerfTestEnv.keyRangeStart + 1;
 		Random rand = new Random();
 		int percent = rand.nextInt(100);

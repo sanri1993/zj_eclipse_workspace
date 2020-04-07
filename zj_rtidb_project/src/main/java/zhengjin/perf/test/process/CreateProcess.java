@@ -36,7 +36,7 @@ public final class CreateProcess implements Runnable {
 		int count = 0;
 		HashMap<String, Object> row = new HashMap<String, Object>();
 
-		LOG.info("[{}]: CREATE DATA started [{}:{})", tag, this.keyStart, this.keyEnd);
+		LOG.info("[{}]: CREATE DATA start by key range [{}:{})", tag, this.keyStart, this.keyEnd);
 		long pStart = System.currentTimeMillis();
 		long pEnd = pStart;
 		for (int i = this.keyStart; i < this.keyEnd; i++) {
