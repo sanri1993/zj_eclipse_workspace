@@ -14,7 +14,7 @@ import zhengjin.perf.test.io.DBReadWriter;
  * @author zhengjin Create data by key range [start, end).
  *
  */
-public final class CreateDataProcess implements Runnable {
+public final class CreateProcess implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PutRowsProcess.class);
 
@@ -22,7 +22,7 @@ public final class CreateDataProcess implements Runnable {
 	int keyStart;
 	int keyEnd;
 
-	public CreateDataProcess(DBReadWriter rw, int start, int end) {
+	public CreateProcess(DBReadWriter rw, int start, int end) {
 		this.rw = rw;
 		this.keyStart = start;
 		this.keyEnd = end;
@@ -36,7 +36,7 @@ public final class CreateDataProcess implements Runnable {
 		int count = 0;
 		HashMap<String, Object> row = new HashMap<String, Object>();
 
-		LOG.info("[{}]: CREATE DATA started", tag);
+		LOG.info("[{}]: CREATE DATA started [{}:{})", tag, this.keyStart, this.keyEnd);
 		long pStart = System.currentTimeMillis();
 		long pEnd = pStart;
 		for (int i = this.keyStart; i < this.keyEnd; i++) {
@@ -53,16 +53,18 @@ public final class CreateDataProcess implements Runnable {
 				row.clear();
 			}
 
+			pEnd = System.currentTimeMillis();
 			if ((pEnd - pStart) > interval) {
 				LOG.info("[{}]: sync maxtrix data", tag);
-				CreateDataMatrixProcess.matrixCounts.addAndGet(count);
+				CreateMatrixProcess.matrixCounts.addAndGet(count);
+				CreateMatrixProcess.num.incrementAndGet();
 
 				pStart = pEnd;
 				count = 0;
 			}
 		}
 
-		CreateDataMatrixProcess.matrixCounts.addAndGet(count);
+		CreateMatrixProcess.matrixCounts.addAndGet(count);
 		LOG.info("[{}]: CREATE DATA end", tag);
 	}
 

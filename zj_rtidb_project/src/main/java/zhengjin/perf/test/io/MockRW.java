@@ -18,6 +18,10 @@ public final class MockRW implements DBReadWriter {
 	private static int debugCount = 0;
 	private static long debugSum = 0L;
 
+	private static int debugHotKeyCount = 0;
+	private static int hotKeyLine = PerfTestEnv.keyRangeStart
+			+ (int) ((PerfTestEnv.keyRangeEnd - PerfTestEnv.keyRangeStart) * 0.2);
+
 	private final int base = 100;
 	private Random rand;
 
@@ -44,6 +48,10 @@ public final class MockRW implements DBReadWriter {
 	public Object[] get(String tbName, String key) throws Exception {
 		int t = rand.nextInt(base);
 		if (isDebug) {
+			int val = Integer.valueOf(key.substring(PerfTestEnv.keyPrefix.length()));
+			if (val < hotKeyLine) {
+				debugHotKeyCount++;
+			}
 			debugCount++;
 			debugSum += t;
 		}
@@ -53,8 +61,8 @@ public final class MockRW implements DBReadWriter {
 
 	public static void debugInfo() {
 		if (isDebug) {
-			String text = String.format("[RW debug]: count:%d, avg rt:%.2f", debugCount,
-					(debugSum / (float) debugCount));
+			String text = String.format("[RW debug]: count:%d, hotkey count: %d, avg rt:%.2f", debugCount,
+					debugHotKeyCount, (debugSum / (float) debugCount));
 			LOG.info(text + PerfTestEnv.rsTimeUnit);
 		}
 	}

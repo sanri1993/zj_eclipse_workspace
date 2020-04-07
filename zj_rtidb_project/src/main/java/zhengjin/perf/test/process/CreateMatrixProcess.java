@@ -1,5 +1,6 @@
 package zhengjin.perf.test.process;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -8,10 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import zhengjin.perf.test.PerfTest;
 import zhengjin.perf.test.PerfTestEnv;
+import zhengjin.perf.test.io.MockRW;
 
-public final class CreateDataMatrixProcess implements Runnable {
+public final class CreateMatrixProcess implements Runnable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CreateDataMatrixProcess.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CreateMatrixProcess.class);
 
 	static AtomicInteger matrixCounts = new AtomicInteger(0);
 	static AtomicInteger num = new AtomicInteger(0);
@@ -19,12 +21,14 @@ public final class CreateDataMatrixProcess implements Runnable {
 	@Override
 	public void run() {
 		final String tag = Thread.currentThread().getName();
-		LOG.info("[{}]: MATRIX started", tag);
+		ThreadPoolExecutor pool = (ThreadPoolExecutor) PerfTest.svc;
 
-		while (!PerfTest.svc.isTerminated()) {
-			if (num.get() > 0 && (num.get() % PerfTestEnv.threads == 0)) {
+		LOG.info("[{}]: MATRIX started", tag);
+		while (pool.getActiveCount() > 0) {
+			if (num.get() > 0 && (num.get() == PerfTestEnv.threads)) {
 				float percent = matrixCounts.get() / (float) (PerfTestEnv.keyRangeEnd - PerfTestEnv.keyRangeStart + 1);
-				LOG.info(String.format("[Matrix]: create data process %.2f", (percent * 100)) + "%");
+				LOG.info(String.format("[Matrix]: create data process: %.2f", (percent * 100)) + "%");
+				MockRW.debugInfo();
 				num.set(0);
 			}
 
@@ -35,8 +39,12 @@ public final class CreateDataMatrixProcess implements Runnable {
 			}
 		}
 
+		PerfTest.svc.shutdown();
+		PerfTest.scheSvc.shutdown();
+
 		LOG.info("[Matrix]: create data process: 100%");
-		LOG.info("CREATE DATA END");
+		MockRW.debugInfo();
+		LOG.info("PERF TEST END");
 	}
 
 }

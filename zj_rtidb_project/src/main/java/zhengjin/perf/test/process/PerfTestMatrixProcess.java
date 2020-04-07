@@ -38,8 +38,7 @@ public final class PerfTestMatrixProcess implements Runnable {
 
 		LOG.info("[{}]: MATRIX started", tag);
 		while (PerfTest.isRunning) {
-			if (num.get() > 0 && (num.get() % PerfTestEnv.threads == 0)) {
-				LOG.info("[{}]: print perf test summary info matrix.", tag);
+			if (num.get() > 0 && (num.get() == PerfTestEnv.threads)) {
 				this.printSummaryContent();
 				this.printLinesContent();
 				MockRW.debugInfo();
@@ -86,7 +85,7 @@ public final class PerfTestMatrixProcess implements Runnable {
 
 		float rps = allCnt / ((System.currentTimeMillis() - PerfTest.start) / 1000L);
 
-		String summaryContent = String.format("samplers:%d, failed:%d, qps:%.2f, avg:%.2fms", allCnt, failCnt, rps,
+		String summaryContent = String.format("samplers:%d, failed:%d, rps:%.2f, avg:%.2fms", allCnt, failCnt, rps,
 				avg);
 		LOG.info("[Matrix]: " + summaryContent);
 	}

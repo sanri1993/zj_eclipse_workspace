@@ -12,8 +12,8 @@ import com.google.common.util.concurrent.RateLimiter;
 
 import zhengjin.perf.test.io.DBReadWriter;
 import zhengjin.perf.test.io.MockRW;
-import zhengjin.perf.test.process.CreateDataProcess;
-import zhengjin.perf.test.process.CreateDataMatrixProcess;
+import zhengjin.perf.test.process.CreateProcess;
+import zhengjin.perf.test.process.CreateMatrixProcess;
 import zhengjin.perf.test.process.GetRowsProcess;
 import zhengjin.perf.test.process.PerfTestMatrixProcess;
 import zhengjin.perf.test.process.PutRowsProcess;
@@ -40,10 +40,10 @@ public final class PerfTest {
 			if (i == (PerfTestEnv.threads - 1)) {
 				end += remained;
 			}
-			svc.submit(new CreateDataProcess(rw, start, end));
+			svc.submit(new CreateProcess(rw, start, end));
 		}
 
-		scheSvc.schedule(new CreateDataMatrixProcess(), PerfTestEnv.matrixInterval, TimeUnit.SECONDS);
+		scheSvc.schedule(new CreateMatrixProcess(), PerfTestEnv.matrixInterval, TimeUnit.SECONDS);
 	}
 
 	void runPut(DBReadWriter rw) throws InterruptedException {
@@ -85,7 +85,13 @@ public final class PerfTest {
 
 		LOG.info("PERF TEST START");
 		PerfTest test = new PerfTest();
-		test.runPut(rw);
+		if ("put".equals(PerfTestEnv.action)) {
+			test.runPut(rw);
+		} else if ("get".equals(PerfTestEnv.action)) {
+			test.runGet(rw);
+		} else if ("create".equals(PerfTestEnv.action)) {
+			test.runCreateData(rw);
+		}
 	}
 
 }

@@ -2,8 +2,10 @@ package zhengjin.app.demo;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -189,11 +191,11 @@ public class TestDemo {
 	}
 
 	@Test
-	public void testSample05() throws InterruptedException {
+	public void testSample05() {
 		// 连续数字分桶
 		int rangeStart = 1;
 		int rangeEnd = 100;
-		int partition = 3;
+		int partition = 2;
 
 		int range = (rangeEnd - rangeStart + 1) / partition;
 		int remained = (rangeEnd - rangeStart + 1) % partition;
@@ -206,6 +208,56 @@ public class TestDemo {
 			}
 			System.out.printf("[%d,%d)\n", start, end);
 		}
+	}
+
+	@Test
+	public void testSample06() {
+		// 2-8原则访问热点key
+		int count = 60;
+		int KeyCount = 0;
+		List<String> list = new LinkedList<String>();
+
+		for (int i = 0; i < count; i++) {
+			String key = this.getHotKey(101, 200);
+			if (key.startsWith("key")) {
+				KeyCount++;
+				list.add(key);
+			}
+		}
+
+		System.out.printf("hot keys count: %d / %d\n", KeyCount, count);
+		Collections.sort(list, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				int val1 = Integer.valueOf(o1.split("_")[1]);
+				int val2 = Integer.valueOf(o2.split("_")[1]);
+				return val1 - val2;
+			}
+
+		});
+		System.out.println("sorted hot keys:\n" + list);
+	}
+
+	private String getHotKey(int start, int end) {
+		int count = end - start + 1;
+		Random rand = new Random();
+		int percent = rand.nextInt(100);
+
+		if (percent < 80) {
+			float offset = 0.2F * rand.nextFloat(); // [0.0f, 1.0f)
+			return String.format("hotkey_%d", (int) (start + count * offset));
+		} else {
+			float offset = 0.8F * rand.nextFloat();
+			return String.format("key_%d", (int) (start + count * 0.2 + count * offset));
+		}
+	}
+
+	@Test
+	public void testSample07() {
+		// get key number
+		String prefix = "user_id";
+		String key = prefix + 1001;
+		System.out.println("key number: " + key.substring(prefix.length()));
 	}
 
 }
