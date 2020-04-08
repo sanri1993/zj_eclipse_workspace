@@ -18,6 +18,12 @@ import zhengjin.perf.test.process.GetRowsProcess;
 import zhengjin.perf.test.process.PerfTestMatrixProcess;
 import zhengjin.perf.test.process.PutRowsProcess;
 
+/**
+ * 
+ * 1.rw线程指定间隔同步数据到matrix线程，展示matrix数据 2.对keyRange进行分桶，来造数据 3.
+ * 基于2-8原则，对热点key进行get压测
+ *
+ */
 public final class PerfTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PerfTest.class);

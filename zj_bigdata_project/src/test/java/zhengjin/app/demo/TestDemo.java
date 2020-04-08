@@ -139,6 +139,7 @@ public class TestDemo {
 
 	@Test
 	public void testSample03() throws InterruptedException {
+		// 测试非线程安全的List.add()方法
 		List<String> list = new LinkedList<String>();
 		List<Thread> pool = new LinkedList<Thread>();
 
@@ -158,6 +159,7 @@ public class TestDemo {
 
 	@Test
 	public void testSample04() throws InterruptedException {
+		// 测试线程安全的List.add()方法
 		List<String> list = new LinkedList<String>();
 		Collection<String> syncList = Collections.synchronizedCollection(list);
 		List<Thread> pool = new LinkedList<Thread>();
@@ -265,7 +267,7 @@ public class TestDemo {
 
 	@Test
 	public void testSample08() throws InterruptedException {
-		// when set RateLimiter, check wait time of each thread
+		// set RateLimiter, check wait time of each thread
 		Thread[] pool = new Thread[3];
 		RateLimiter limit = RateLimiter.create(0.5d);
 		int[] ints = { 1, 6, 2 };
@@ -276,7 +278,7 @@ public class TestDemo {
 				@Override
 				public void run() {
 					double wait = limit.acquire(ints[idx]);
-					System.out.printf("[%s] wait for %.2f seconds\n", Thread.currentThread().getName(), wait);
+					System.out.printf("[%s] wait for %.2f seconds.\n", Thread.currentThread().getName(), wait);
 				}
 			});
 			t.start();
