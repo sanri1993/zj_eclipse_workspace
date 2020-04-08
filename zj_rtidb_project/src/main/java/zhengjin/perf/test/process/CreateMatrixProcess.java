@@ -11,6 +11,12 @@ import zhengjin.perf.test.PerfTest;
 import zhengjin.perf.test.PerfTestEnv;
 import zhengjin.perf.test.io.MockRW;
 
+/**
+ * 
+ * Print performance test summary info matrix at fixed interval for Create Data
+ * action.
+ *
+ */
 public final class CreateMatrixProcess implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CreateMatrixProcess.class);

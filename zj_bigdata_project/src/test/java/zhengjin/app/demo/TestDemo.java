@@ -6,12 +6,15 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
+import com.google.common.util.concurrent.RateLimiter;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestDemo {
@@ -258,6 +261,33 @@ public class TestDemo {
 		String prefix = "user_id";
 		String key = prefix + 1001;
 		System.out.println("key number: " + key.substring(prefix.length()));
+	}
+
+	@Test
+	public void testSample08() throws InterruptedException {
+		// when set RateLimiter, check wait time of each thread
+		Thread[] pool = new Thread[3];
+		RateLimiter limit = RateLimiter.create(0.5d);
+		int[] ints = { 1, 6, 2 };
+
+		for (int i = 0; i < ints.length; i++) {
+			final int idx = i;
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					double wait = limit.acquire(ints[idx]);
+					System.out.printf("[%s] wait for %.2f seconds\n", Thread.currentThread().getName(), wait);
+				}
+			});
+			t.start();
+			pool[i] = t;
+			TimeUnit.MILLISECONDS.sleep(100l);
+		}
+
+		for (Thread t : pool) {
+			t.join();
+		}
+		System.out.println("RateLimiter test done");
 	}
 
 }

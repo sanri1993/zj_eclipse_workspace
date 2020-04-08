@@ -14,7 +14,7 @@ import zhengjin.perf.test.io.DBReadWriter;
 
 /**
  * 
- * @author zhengjin Performance test for get action. Get data by 2-8 hotkey.
+ * Performance test for get action by 2-8 hot key.
  *
  */
 public final class GetRowsProcess implements Runnable {

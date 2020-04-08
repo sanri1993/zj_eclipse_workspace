@@ -17,8 +17,8 @@ import zhengjin.perf.test.io.MockRW;
 
 /**
  * 
- * @author zhengjin 1) Print performance test summary info matrix at specified
- *         interval; 2) Check all active threads.
+ * 1) Print performance test summary info matrix at fixed interval for Put and
+ * Get; 2) Check all active threads.
  *
  */
 public final class PerfTestMatrixProcess implements Runnable {

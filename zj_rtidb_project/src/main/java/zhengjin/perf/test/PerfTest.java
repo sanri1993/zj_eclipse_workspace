@@ -25,7 +25,7 @@ public final class PerfTest {
 	public static long start;
 	public static boolean isRunning = false;
 	public static ExecutorService svc = Executors.newFixedThreadPool(PerfTestEnv.threads);
-	public static ScheduledExecutorService scheSvc = Executors.newScheduledThreadPool(2);
+	public static ScheduledExecutorService scheSvc;
 	public static RateLimiter limit;
 
 	void runCreateData(DBReadWriter rw) {
@@ -43,6 +43,7 @@ public final class PerfTest {
 			}
 			svc.submit(new CreateProcess(rw, start, end));
 		}
+		scheSvc = Executors.newScheduledThreadPool(1);
 		scheSvc.schedule(new CreateMatrixProcess(), PerfTestEnv.matrixInterval, TimeUnit.SECONDS);
 	}
 
@@ -61,6 +62,7 @@ public final class PerfTest {
 			svc.submit(process);
 		}
 
+		scheSvc = Executors.newScheduledThreadPool(2);
 		scheSvc.schedule(new PerfTestMatrixProcess(), PerfTestEnv.matrixInterval, TimeUnit.SECONDS);
 
 		scheSvc.schedule(new Runnable() {

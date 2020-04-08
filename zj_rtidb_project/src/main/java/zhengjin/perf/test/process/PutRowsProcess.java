@@ -13,8 +13,8 @@ import zhengjin.perf.test.io.DBReadWriter;
 
 /**
  * 
- * @author zhengjin Performance test for put action. Put data by random and
- *         unique key, and inserted ts.
+ * Performance test for put action. Put data by random and unique key, and
+ * inserted ts. Put process sync perf data to Matrix thread at fixed interval.
  *
  */
 public final class PutRowsProcess implements Runnable {

@@ -11,7 +11,7 @@ import zhengjin.perf.test.io.DBReadWriter;
 
 /**
  * 
- * @author zhengjin Create data by key range [start, end).
+ * Create rows data by key range [start, end).
  *
  */
 public final class CreateProcess implements Runnable {
