@@ -32,6 +32,28 @@
 		<rtidb-version>1.4.3.0-RELEASE</rtidb-version>
 	</properties>
 
+	<!--
+	<repositories>
+		<repository>
+			<id>aliyun-repos</id>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>nexus-public</id>
+			<url>http://nexus.4paradigm.com:8081/nexus/content/repositories/central/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	-->
+
 	<!-- common -->
 	<dependencies>
 		<dependency>
