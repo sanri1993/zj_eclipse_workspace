@@ -19,15 +19,20 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
+		<!-- common -->
 		<junit.version>4.12</junit.version>
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
+		<guava.version>28.1-jre</guava.version>
+
+		<zookepper.version>3.4.13</zookepper.version>
 
 		<!-- 4paradigm -->
 		<protobuf.version>3.6.1</protobuf.version>
 		<rtidb-version>1.4.3.0-RELEASE</rtidb-version>
 	</properties>
 
+	<!-- common -->
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -50,7 +55,19 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+			<version>${zookepper.version}</version>
+		</dependency>
+
+		<!-- 4paradigm -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
@@ -60,6 +77,8 @@
 			<groupId>com._4paradigm</groupId>
 			<artifactId>rtidb-client</artifactId>
 			<version>${rtidb-version}</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/rtidb-client-${rtidb-version}.jar</systemPath>
 		</dependency>
 	</dependencies>
 
