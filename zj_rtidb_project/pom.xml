@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>zhengjin.rtidb</groupId>
+	<groupId>com.zhengjin</groupId>
 	<artifactId>rtidb-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>ZhengJin Rtidb App</name>
+	<name>rtidb-app</name>
 	<url>http://maven.apache.org</url>
 	<!-- use configs: /usr/local/Cellar/maven/3.6.0/libexec/conf/settings_4pd.xml -->
 
@@ -32,27 +32,11 @@
 		<rtidb-version>1.4.3.0-RELEASE</rtidb-version>
 	</properties>
 
-	<!--
-	<repositories>
-		<repository>
-			<id>aliyun-repos</id>
-			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>nexus-public</id>
-			<url>http://nexus.4paradigm.com:8081/nexus/content/repositories/central/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	-->
+	<!-- <repositories> <repository> <id>aliyun-repos</id> <url>http://maven.aliyun.com/nexus/content/groups/public/</url> 
+		<snapshots> <enabled>true</enabled> </snapshots> </repository> <repository> 
+		<id>nexus-public</id> <url>http://nexus.4paradigm.com:8081/nexus/content/repositories/central/</url> 
+		<releases> <enabled>true</enabled> </releases> <snapshots> <enabled>true</enabled> 
+		</snapshots> </repository> </repositories> -->
 
 	<!-- common -->
 	<dependencies>
@@ -100,15 +84,10 @@
 			<artifactId>rtidb-client</artifactId>
 			<version>${rtidb-version}</version>
 		</dependency>
-		<!-- Note: jar with "system" scope will not be added in final jar
-		<dependency>
-			<groupId>com._4paradigm</groupId>
-			<artifactId>rtidb-client</artifactId>
-			<version>${rtidb-version}</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/rtidb-client-${rtidb-version}.jar</systemPath>
-		</dependency>
-		 -->
+		<!-- Note: jar with "system" scope will not be added in final jar <dependency> 
+			<groupId>com._4paradigm</groupId> <artifactId>rtidb-client</artifactId> <version>${rtidb-version}</version> 
+			<scope>system</scope> <systemPath>${project.basedir}/libs/rtidb-client-${rtidb-version}.jar</systemPath> 
+			</dependency> -->
 	</dependencies>
 
 	<build>
