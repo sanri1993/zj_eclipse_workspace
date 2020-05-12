@@ -1,10 +1,15 @@
 package zhengjin.app.demo;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -290,6 +295,112 @@ public class TestDemo {
 			t.join();
 		}
 		System.out.println("RateLimiter test done");
+	}
+
+	@Test
+	public void testSample09() throws InterruptedException {
+		// monkey random events
+		float[] pcts = new float[] { 0.2f, 0.3f, 0.5f };
+		float sum = 0.0f;
+		for (int i = 0; i < pcts.length; i++) {
+			pcts[i] += sum;
+			sum = pcts[i];
+		}
+		System.out.println("pcts: " + Arrays.toString(pcts));
+
+		float tmp = 0;
+		Random rand = new Random();
+		MyEvents events = new MyEvents();
+		for (int i = 0; i < 100; i++) {
+			tmp = rand.nextFloat();
+			if (tmp < pcts[0]) {
+				events.event1();
+			} else if (tmp < pcts[1]) {
+				events.event2();
+			} else if (tmp < pcts[2]) {
+				events.event3();
+			}
+		}
+		String result = String.format("event1_cnt=%d, event2_cnt=%d, event3_cnt=%d\n", events.count1, events.count2,
+				events.count3);
+		System.out.println(result);
+	}
+
+	private static class MyEvents {
+
+		public int count1 = 0;
+		public int count2 = 0;
+		public int count3 = 0;
+
+		private Random rand = new Random(66);
+		private int sleepTime = 100;
+
+		public void event1() throws InterruptedException {
+			TimeUnit.MILLISECONDS.sleep(this.rand.nextInt(this.sleepTime));
+			this.count1++;
+		}
+
+		public void event2() throws InterruptedException {
+			TimeUnit.MILLISECONDS.sleep(this.rand.nextInt(this.sleepTime));
+			this.count2++;
+		}
+
+		public void event3() throws InterruptedException {
+			TimeUnit.MILLISECONDS.sleep(this.rand.nextInt(this.sleepTime));
+			this.count3++;
+		}
+	}
+
+	@Test
+	public void testSample10() throws IllegalArgumentException, IllegalAccessException {
+		TestObject obj1 = new TestObject(1, "test01");
+		System.out.println(obj1);
+		System.out.println();
+
+		// 使用java反射将map转化为object
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", new Integer(2));
+		map.put("name", "test02");
+
+		TestObject obj2 = new TestObject();
+		TestObject newObj2 = mapToObject(map, obj2);
+		System.out.println(obj2);
+		System.out.println(newObj2);
+	}
+
+	private static <T> T mapToObject(Map<String, Object> map, T object)
+			throws IllegalArgumentException, IllegalAccessException {
+		@SuppressWarnings("unchecked")
+		Class<T> cls = (Class<T>) object.getClass();
+		for (Field field : cls.getFields()) {
+			int mod = field.getModifiers();
+			if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+				continue;
+			}
+			field.setAccessible(true);
+			field.set(object, map.get(field.getName().toLowerCase()));
+		}
+
+		return object;
+	}
+
+	private static class TestObject {
+
+		public int id;
+		public String name;
+
+		public TestObject() {
+		}
+
+		public TestObject(int id, String name) {
+			this.id = id;
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("TestObject{id=%d, name=%s}", this.id, this.name);
+		}
 	}
 
 }
