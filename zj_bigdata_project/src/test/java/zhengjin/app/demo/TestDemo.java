@@ -403,4 +403,68 @@ public class TestDemo {
 		}
 	}
 
+	@Test
+	public void testSampler11() throws InterruptedException {
+		// test keyword synchronized
+		boolean sync = true;
+		int iteratorCnt = 100_000;
+		Runnable r = null;
+		MyCalulation cal = new MyCalulation();
+		if (sync) {
+			r = new Runnable() {
+				@Override
+				public void run() {
+					for (int j = 0; j < iteratorCnt; j++) {
+						cal.syncAdd();
+					}
+				}
+			};
+		} else {
+			r = new Runnable() {
+				@Override
+				public void run() {
+					for (int j = 0; j < iteratorCnt; j++) {
+						cal.add();
+					}
+				}
+			};
+		}
+
+		final int threadsCnt = 20;
+		Thread[] pool = new Thread[threadsCnt];
+		for (int i = 0; i < threadsCnt; i++) {
+			Thread t = new Thread(r);
+			pool[i] = t;
+		}
+
+		long start = System.currentTimeMillis();
+		for (Thread t : pool) {
+			t.start();
+		}
+		System.out.println("all threads are running...");
+
+		for (Thread t : pool) {
+			t.join();
+		}
+		System.out.printf("exec time: %dms\n", System.currentTimeMillis() - start);
+		System.out.println("calulation add results: " + cal.getBase());
+	}
+
+	private static class MyCalulation {
+
+		int base = 0;
+
+		public void add() {
+			this.base++;
+		}
+
+		public synchronized void syncAdd() {
+			this.base++;
+		}
+
+		public int getBase() {
+			return this.base;
+		}
+	}
+
 }
