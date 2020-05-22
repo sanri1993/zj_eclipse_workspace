@@ -467,4 +467,14 @@ public class TestDemo {
 		}
 	}
 
+	@Test
+	public void testSampler12() {
+		Map<String, Integer> map = new HashMap<>();
+		for (int i = 0; i < 100; i++) {
+			map.put(String.valueOf(i), new Integer(i));
+			map.remove(String.valueOf(i - 1));
+		}
+		System.out.println("map size: " + map.size());
+	}
+
 }
