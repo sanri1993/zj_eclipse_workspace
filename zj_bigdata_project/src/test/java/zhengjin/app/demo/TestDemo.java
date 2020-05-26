@@ -3,6 +3,7 @@ package zhengjin.app.demo;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -475,6 +476,15 @@ public class TestDemo {
 			map.remove(String.valueOf(i - 1));
 		}
 		System.out.println("map size: " + map.size());
+	}
+
+	@Test
+	public void testSampler13() {
+		// get current date and time
+		Calendar c = Calendar.getInstance();
+		String curTime = String.format("%d%d%d_%d%d%d", c.get(Calendar.YEAR), (c.get(Calendar.MONTH) + 1),
+				c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+		System.out.println("current date time: " + curTime);
 	}
 
 }
