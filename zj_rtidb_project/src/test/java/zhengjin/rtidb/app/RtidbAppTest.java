@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 import com._4paradigm.rtidb.client.KvIterator;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RtidbAppTest01 {
+public class RtidbAppTest {
 
 	private static final String TAG = RtidbApp.class.getSimpleName() + " => ";
-	private static final Logger LOG = LoggerFactory.getLogger(RtidbAppTest01.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RtidbAppTest.class);
 
 	private static final String kvTbName = "zj_kv_test1";
 	private static final String schemaTbName01 = "zj_schema_test1";
