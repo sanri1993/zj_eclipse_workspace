@@ -20,6 +20,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import zhengjin.fl.pipeline.apis.HttpUtils;
 
 /**
  * 
@@ -167,6 +168,60 @@ public class OkHttpTest {
 		}
 
 		System.out.println("\nResponse Body: " + response.body().string());
+	}
+
+	@Test
+	public void httpUtilsTest01() throws IOException {
+		// get
+		String url = "http://127.0.0.1:17891/demo/1";
+
+		Map<String, String> params = new HashMap<>();
+		params.put("userid", "001");
+		params.put("username", "Tester");
+
+		Map<String, String> headers = new HashMap<>();
+		headers.put("User-Agent", "OkHttp Example");
+		headers.put("Accept", "application/json; q=0.5");
+
+		String response = HttpUtils.get(url, params, headers);
+		System.out.println("Response text: " + response);
+	}
+
+	@Test
+	public void httpUtilsTest02() throws IOException {
+		// post
+		String url = "http://127.0.0.1:17891/demo/3";
+		String requestBody = "{\"server_list\": [{\"server_name\": \"svr_a_002\",\"server_ip\": \"127.0.1.2\"}], \"server_group_id\": \"svr_grp_001\"}";
+
+		Map<String, String> headers = new HashMap<>();
+		headers.put("User-Agent", "OkHttp Example");
+		headers.put("Accept", "application/vnd.github.v3+json");
+
+		String response = HttpUtils.post(url, headers, requestBody);
+		System.out.println("Response json text: " + response);
+	}
+
+	@Test
+	public void httpUtilsTest03() {
+		// retry for status code 5xx
+		String url = "http://127.0.0.1:17891/mocktest/one/3";
+
+		Map<String, String> params = new HashMap<>();
+		params.put("code", "502");
+
+		String response;
+		try {
+			response = HttpUtils.get(url, params);
+			System.out.println("Response text: " + response);
+		} catch (IOException e) {
+			System.out.println("Failed with error: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void httpUtilsTest04() {
+		// retry for connection timeout
+		// TODO:
 	}
 
 }
