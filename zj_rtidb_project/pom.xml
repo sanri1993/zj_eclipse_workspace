@@ -28,7 +28,7 @@
 		<okhttp3.version>4.7.2</okhttp3.version>
 		<fastjson.version>1.2.72</fastjson.version>
 		<!-- app -->
-		<zookepper.version>3.4.13</zookepper.version>
+		<zookepper.version>3.4.14</zookepper.version>
 		<!-- 4paradigm -->
 		<protobuf.version>3.6.1</protobuf.version>
 		<rtidb-version>1.4.3.0-RELEASE</rtidb-version>
