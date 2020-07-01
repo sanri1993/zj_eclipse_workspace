@@ -1,4 +1,4 @@
-package zhengjin.fl.pipeline.apis;
+package zhengjin.fl.pipeline.http;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -33,7 +33,7 @@ public final class HttpUtils {
 				.readTimeout(Constants.SOCKET_TIME_OUT, TimeUnit.SECONDS)
 				.writeTimeout(Constants.SOCKET_TIME_OUT, TimeUnit.SECONDS).retryOnConnectionFailure(false)
 				.connectionPool(connectionPool).addInterceptor(new RetryInterceptor(Constants.MAX_RETRY_COUNT))
-				.addInterceptor(new LogInterceptor()).build();
+				.addInterceptor(new LogInterceptor()).cookieJar(new CookieHandler()).build();
 	}
 
 	public static OkHttpClient getHttpClient() {

@@ -1,4 +1,4 @@
-package zhengjin.rtidb.app;
+package zhengjin.fl.pipeline.http;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import zhengjin.fl.pipeline.apis.HttpUtils;
+import zhengjin.fl.pipeline.http.HttpUtils;
 
 /**
  * 
