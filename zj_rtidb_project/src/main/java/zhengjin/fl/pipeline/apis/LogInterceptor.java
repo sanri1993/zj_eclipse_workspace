@@ -9,9 +9,9 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public final class NetworkIntercepter implements Interceptor {
+public final class LogInterceptor implements Interceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NetworkIntercepter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LogInterceptor.class);
 
 	@Override
 	public Response intercept(Chain chain) throws IOException {
@@ -20,14 +20,14 @@ public final class NetworkIntercepter implements Interceptor {
 		String requestBody = HttpUtils.getRequestBody(request);
 
 		Response response = null;
-		String responseCode = "-1";
+		String responseCode = "";
 		long start = System.currentTimeMillis();
 		try {
 			response = chain.proceed(request);
 			responseCode = String.valueOf(response.code());
 		} finally {
 			String duration = String.valueOf(System.currentTimeMillis() - start);
-			LOGGER.info("requestUrl={}, requestBody={}, responseCode={}, responseTime={}ms", url, requestBody,
+			LOGGER.info("requestUrl:[{}], requestBody:[{}], responseCode:[{}], responseTime:[{}ms]", url, requestBody,
 					responseCode, duration);
 		}
 

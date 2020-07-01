@@ -10,14 +10,13 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public final class RetryIntercepter implements Interceptor {
+public final class RetryInterceptor implements Interceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RetryIntercepter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RetryInterceptor.class);
 
 	private int maxRetryCount;
-	private int count = 0;
 
-	public RetryIntercepter(int maxRetryCount) {
+	public RetryInterceptor(int maxRetryCount) {
 		this.maxRetryCount = maxRetryCount;
 	}
 
@@ -25,28 +24,31 @@ public final class RetryIntercepter implements Interceptor {
 	public Response intercept(Chain chain) throws IOException {
 		Response response = null;
 		Request request = chain.request();
-		while (this.count < this.maxRetryCount) {
-			this.count++;
+
+		int count = 0;
+		for (; count < this.maxRetryCount; count++) {
+			if (count > 0) {
+				LOGGER.info("Failed and retry {}.", String.valueOf(count));
+			}
+
 			try {
 				response = chain.proceed(request);
 				if (response.isSuccessful()) {
 					return response;
 				}
-				// invoke response.body().string() instead of response.close() to close stream
-				// when exception
-				throw new IOException(
-						String.format("status code: %d, response body: %s", response.code(), response.body().string()));
+				throw new ErrorCodeException(String.format("status code [%d], response body [%s]", response.code(),
+						response.body().string()));
 			} catch (IOException e) {
-				LOGGER.warn("Error: " + e.getMessage());
-				LOGGER.info("Failed and retry " + String.valueOf(this.count));
+				LOGGER.warn(e.getMessage());
 				try {
 					TimeUnit.MILLISECONDS.sleep(300L);
 				} catch (InterruptedException e1) {
-					e1.printStackTrace();
+					LOGGER.warn(e1.getMessage());
 				}
 			}
 		}
 
+		LOGGER.info("Failed and retry {}.", String.valueOf(count));
 		return chain.proceed(request);
 	}
 

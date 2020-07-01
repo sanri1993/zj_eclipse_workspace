@@ -24,7 +24,7 @@ public final class HttpUtils {
 	private static final OkHttpClient client;
 
 	static {
-		LOGGER.info("init OkHttpClient");
+		LOGGER.info("init OkHttpClient.");
 		ConnectionPool connectionPool = new ConnectionPool(Constants.MAX_IDLE_CONNECTIONS, Constants.KEEP_ALLIVE_TIME,
 				TimeUnit.MILLISECONDS);
 
@@ -32,33 +32,12 @@ public final class HttpUtils {
 		client = new OkHttpClient().newBuilder().connectTimeout(Constants.CONNECTION_TIME_OUT, TimeUnit.SECONDS)
 				.readTimeout(Constants.SOCKET_TIME_OUT, TimeUnit.SECONDS)
 				.writeTimeout(Constants.SOCKET_TIME_OUT, TimeUnit.SECONDS).retryOnConnectionFailure(false)
-				.connectionPool(connectionPool).addInterceptor(new RetryIntercepter(Constants.MAX_RETRY_COUNT))
-				.addInterceptor(new NetworkIntercepter()).build();
+				.connectionPool(connectionPool).addInterceptor(new RetryInterceptor(Constants.MAX_RETRY_COUNT))
+				.addInterceptor(new LogInterceptor()).build();
 	}
 
 	public static OkHttpClient getHttpClient() {
 		return client;
-	}
-
-	public static String getRequestBody(Request request) {
-		String requestContent = "";
-		if (request == null) {
-			return requestContent;
-		}
-
-		RequestBody body = request.body();
-		if (body == null) {
-			return requestContent;
-		}
-
-		Buffer buffer = new Buffer();
-		try {
-			body.writeTo(buffer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		requestContent = buffer.readString(Charset.forName("utf-8"));
-		return requestContent;
 	}
 
 	public static String get(String url) throws IOException {
@@ -82,8 +61,8 @@ public final class HttpUtils {
 
 		Response response = client.newCall(request.build()).execute();
 		if (!response.isSuccessful()) {
-			throw new IOException(
-					String.format("status code: %d, response body: %s", response.code(), response.body().string()));
+			throw new ErrorCodeException(
+					String.format("status code [%d], response body [%s]", response.code(), response.body().string()));
 		}
 
 		return response.body().string();
@@ -112,11 +91,32 @@ public final class HttpUtils {
 
 		Response response = client.newCall(request.build()).execute();
 		if (!response.isSuccessful()) {
-			throw new IOException(
-					String.format("status code: %d, response body: %s", response.code(), response.body().string()));
+			throw new ErrorCodeException(
+					String.format("status code [%d], response body [%s]", response.code(), response.body().string()));
 		}
 
 		return response.body().string();
+	}
+
+	public static String getRequestBody(Request request) {
+		String requestContent = "";
+		if (request == null) {
+			return requestContent;
+		}
+
+		RequestBody body = request.body();
+		if (body == null) {
+			return requestContent;
+		}
+
+		Buffer buffer = new Buffer();
+		try {
+			body.writeTo(buffer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		requestContent = buffer.readString(Charset.forName("utf-8"));
+		return requestContent;
 	}
 
 }

@@ -25,9 +25,8 @@ import zhengjin.fl.pipeline.apis.HttpUtils;
 /**
  * 
  * Refer: https://square.github.io/okhttp/recipes/#synchronous-get-kt-java
- *
  */
-public class OkHttpTest {
+public final class OkHttpTest {
 
 	private static OkHttpClient client;
 
@@ -54,6 +53,8 @@ public class OkHttpTest {
 	@Test
 	public void okHttpTest01() throws InterruptedException {
 		// 异步GET请求
+		// Notes: finally, close response stream by invoke response.close() or
+		// response.body().string()
 		String url = "http://127.0.0.1:17891/demo/1?userid=xxx&username=xxx";
 
 		final Request request = new Request.Builder().url(url).header("User-Agent", "OkHttp Example")
@@ -209,19 +210,29 @@ public class OkHttpTest {
 		Map<String, String> params = new HashMap<>();
 		params.put("code", "502");
 
-		String response;
 		try {
-			response = HttpUtils.get(url, params);
+			String response = HttpUtils.get(url, params);
 			System.out.println("Response text: " + response);
 		} catch (IOException e) {
-			System.out.println("Failed with error: " + e.getMessage());
+			System.out.println("Failed: " + e.getMessage());
 		}
 	}
 
 	@Test
 	public void httpUtilsTest04() {
 		// retry for connection timeout
-		// TODO:
+		final String url = "http://127.0.0.1:17891/mocktest/one/4";
+
+		final String timeout = "4";
+		Map<String, String> params = new HashMap<>();
+		params.put("wait", timeout);
+
+		try {
+			String response = HttpUtils.get(url, params);
+			System.out.println("Response text: " + response);
+		} catch (IOException e) {
+			System.out.println("Failed: " + e.getMessage());
+		}
 	}
 
 }
