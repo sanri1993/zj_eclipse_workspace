@@ -14,10 +14,9 @@ import zhengjin.fl.pipeline.http.HttpUtils;
 public final class FlowengineApi {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlowengineApi.class);
-	private static final String BASE_URL = "http://172.27.128.236:40121/";
 
 	public static boolean login() {
-		final String url = BASE_URL + "keystone/v1/sessions";
+		final String url = Constants.BASE_URL + "keystone/v1/sessions";
 
 		Map<String, String> body = new HashMap<>();
 		body.put("username", "4pdadmin");
@@ -25,8 +24,6 @@ public final class FlowengineApi {
 
 		try {
 			String response = HttpUtils.post(url, JSONObject.toJSONString(body));
-			LOGGER.debug(response);
-
 			JSONObject json = (JSONObject) JSONObject.parse(response);
 			return "0".equals(json.getString("status"));
 		} catch (IOException e) {
@@ -36,7 +33,7 @@ public final class FlowengineApi {
 	}
 
 	public static String listRunningFlowengines(String workspaceId) {
-		final String url = BASE_URL + "automl-manager/v1/appList";
+		final String url = Constants.BASE_URL + "automl-manager/v1/appList";
 
 		Map<String, String> params = new HashMap<>();
 		params.put("workspaceId", workspaceId);
@@ -46,11 +43,23 @@ public final class FlowengineApi {
 		String response = "";
 		try {
 			response = HttpUtils.get(url, params);
-			LOGGER.debug(response);
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
-
 		return response;
 	}
+
+	public static String listFlPipelines(String instanceId, String templateId) {
+		final String url = Constants.BASE_URL
+				+ String.format("automl-engine/%s/automl/v1/pipeline/%s/list", instanceId, templateId);
+
+		String response = "";
+		try {
+			response = HttpUtils.get(url);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return response;
+	}
+
 }
