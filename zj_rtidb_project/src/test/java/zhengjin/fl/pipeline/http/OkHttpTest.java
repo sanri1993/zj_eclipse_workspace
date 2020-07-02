@@ -3,6 +3,9 @@ package zhengjin.fl.pipeline.http;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.BeforeClass;
@@ -10,6 +13,14 @@ import org.junit.Test;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.rholder.retry.Attempt;
+import com.github.rholder.retry.RetryException;
+import com.github.rholder.retry.RetryListener;
+import com.github.rholder.retry.Retryer;
+import com.github.rholder.retry.RetryerBuilder;
+import com.github.rholder.retry.StopStrategies;
+import com.github.rholder.retry.WaitStrategies;
+import com.google.common.base.Predicates;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -233,6 +244,88 @@ public final class OkHttpTest {
 		} catch (IOException e) {
 			System.out.println("Failed: " + e.getMessage());
 		}
+	}
+
+	@Test
+	public void GuavaRetryTest01() {
+		final int maxRetryNumber = 3;
+
+		Callable<String> callable = new Callable<String>() {
+			int i = 0;
+
+			@Override
+			public String call() throws Exception {
+				System.out.println("execute i++");
+				i++;
+				if (i > maxRetryNumber) {
+					return String.valueOf(i);
+				}
+				throw new IOException("mock io error");
+			}
+		};
+
+		RetryListener listener = new RetryListener() {
+			@Override
+			public <V> void onRetry(Attempt<V> attempt) {
+				long cur = attempt.getAttemptNumber();
+				System.out.println(String.format("retry %d times.", cur));
+				if (cur == maxRetryNumber) {
+					System.out.println(String.format("now, max retry number %d, and handle error.", maxRetryNumber));
+				}
+			}
+		};
+
+		Retryer<String> retryer = RetryerBuilder.<String>newBuilder().retryIfResult(Predicates.isNull())
+				.retryIfRuntimeException().retryIfExceptionOfType(IOException.class)
+				.withWaitStrategy(WaitStrategies.fixedWait(500L, TimeUnit.MILLISECONDS))
+				.withStopStrategy(StopStrategies.stopAfterAttempt(maxRetryNumber)).withRetryListener(listener).build();
+
+		try {
+			retryer.call(callable);
+		} catch (ExecutionException | RetryException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void GuavaRetryTest02() {
+		Callable<String> callable = new Callable<String>() {
+			int i = 0;
+			int[] mockCodes = new int[] { 502, 403, 200 };
+
+			@Override
+			public String call() throws Exception {
+				int mockCode = mockCodes[new Random().nextInt(mockCodes.length)];
+				System.out.println(String.format("retry %d with mock code %d", ++i, mockCode));
+				return getMock(mockCode);
+			}
+		};
+
+		Retryer<String> retryer = RetryerBuilder.<String>newBuilder().retryIfResult(Predicates.isNull())
+				.retryIfExceptionOfType(IOException.class)
+				.withWaitStrategy(WaitStrategies.fixedWait(500L, TimeUnit.MILLISECONDS))
+				.withStopStrategy(StopStrategies.stopAfterAttempt(3)).build();
+
+		try {
+			String response = retryer.call(callable);
+			System.out.println("response: " + response);
+		} catch (ExecutionException | RetryException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String getMock(int mockCode) throws IOException {
+		final String url = "http://127.0.0.1:17891/mocktest/one/3?code=" + String.valueOf(mockCode);
+
+		final Request request = new Request.Builder().url(url).build();
+		final Call call = client.newCall(request);
+		Response response = call.execute();
+		if (!response.isSuccessful()) {
+			throw new IOException(
+					String.format("error code=[%s], response=[%s]", response.code(), response.body().string()));
+		}
+
+		return response.body().string();
 	}
 
 }
