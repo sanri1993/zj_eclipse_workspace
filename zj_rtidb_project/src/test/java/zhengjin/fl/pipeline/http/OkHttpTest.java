@@ -1,7 +1,9 @@
 package zhengjin.fl.pipeline.http;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -45,6 +47,15 @@ public final class OkHttpTest {
 	public static void beforeClass() {
 		client = new OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS)
 				.readTimeout(30, TimeUnit.SECONDS).addInterceptor(new LoggingInterceptor()).build();
+	}
+
+	@Test
+	public void ListToJsonString() {
+		List<String> langs = new ArrayList<>();
+		langs.add("Java");
+		langs.add("Golang");
+		langs.add("Python");
+		System.out.println(JSONObject.toJSON(langs));
 	}
 
 	@Test

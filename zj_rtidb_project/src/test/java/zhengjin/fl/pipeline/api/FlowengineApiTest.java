@@ -1,5 +1,7 @@
 package zhengjin.fl.pipeline.api;
 
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,10 +23,9 @@ public final class FlowengineApiTest {
 	}
 
 	@Test
-	public void listRunningFlowenginesTest() {
+	public void listRunningFlowenginesTest() throws IOException {
 		String response = FlowengineApi.listRunningFlowengines(workspaceId);
 		JSONObject json = (JSONObject) JSONObject.parse(response);
-		Assert.assertTrue("0".equals(json.getString("status")));
 
 		JSONArray list = json.getJSONObject("data").getJSONArray("appList");
 		for (int i = 0; i < list.size(); i++) {
@@ -35,10 +36,9 @@ public final class FlowengineApiTest {
 	}
 
 	@Test
-	public void listFlPipelinesTest() {
+	public void listFlPipelinesTest() throws IOException {
 		String response = FlowengineApi.listFlPipelines(instanceId, templateId);
 		JSONObject json = (JSONObject) JSONObject.parse(response);
-		Assert.assertTrue("0".equals(json.getString("status")));
 
 		JSONArray list = json.getJSONObject("data").getJSONArray("engineJobPipelineTemplateList");
 		for (int i = 0; i < list.size(); i++) {

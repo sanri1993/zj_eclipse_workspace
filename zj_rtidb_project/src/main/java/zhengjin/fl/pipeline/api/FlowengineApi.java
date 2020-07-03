@@ -16,7 +16,7 @@ public final class FlowengineApi {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlowengineApi.class);
 
 	public static boolean login() {
-		final String url = Constants.BASE_URL + "keystone/v1/sessions";
+		final String url = Common.BASE_URL + "keystone/v1/sessions";
 
 		Map<String, String> body = new HashMap<>();
 		body.put("username", "4pdadmin");
@@ -32,33 +32,27 @@ public final class FlowengineApi {
 		}
 	}
 
-	public static String listRunningFlowengines(String workspaceId) {
-		final String url = Constants.BASE_URL + "automl-manager/v1/appList";
+	public static String listRunningFlowengines(String workspaceId) throws IOException {
+		final String url = Common.BASE_URL + "automl-manager/v1/appList";
 
 		Map<String, String> params = new HashMap<>();
 		params.put("workspaceId", workspaceId);
 		params.put("status", "RUNNING");
-		params.put("size", Constants.DEFAULT_PAGE_SIZE);
+		params.put("size", Common.DEFAULT_PAGE_SIZE);
 
 		String response = "";
-		try {
-			response = HttpUtils.get(url, params);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-		}
+		response = HttpUtils.get(url, params);
+		Common.verifyStatusCode(response);
 		return response;
 	}
 
-	public static String listFlPipelines(String instanceId, String templateId) {
-		final String url = Constants.BASE_URL
+	public static String listFlPipelines(String instanceId, String templateId) throws IOException {
+		final String url = Common.BASE_URL
 				+ String.format("automl-engine/%s/automl/v1/pipeline/%s/list", instanceId, templateId);
 
 		String response = "";
-		try {
-			response = HttpUtils.get(url);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-		}
+		response = HttpUtils.get(url);
+		Common.verifyStatusCode(response);
 		return response;
 	}
 
