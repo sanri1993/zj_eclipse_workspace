@@ -62,4 +62,19 @@ public final class FlTemplateApiTest {
 		System.out.println(String.format("name=[%s], desc=[%s]", job.getString("name"), job.getString("desc")));
 	}
 
+	@Test
+	public void deleteTemplatePipelineTest() {
+		Assert.assertTrue(FlTemplateApi.deleteTemplatePipeline(templateId, "75"));
+	}
+
+	@Test
+	public void deleteTemplatePipelineJobTest() {
+		Assert.assertTrue(FlTemplateApi.deleteTemplatePipelineJob(templateId, "147"));
+	}
+
+	@Test
+	public void copyTemplatePipelineTest() throws IOException {
+		Assert.assertTrue(FlTemplateApi.copyTemplatePipeline(templateId, "65", "copied_pipeline_test11"));
+	}
+
 }

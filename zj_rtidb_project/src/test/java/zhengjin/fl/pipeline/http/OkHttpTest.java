@@ -55,11 +55,18 @@ public final class OkHttpTest {
 		langs.add("Java");
 		langs.add("Golang");
 		langs.add("Python");
-		System.out.println(JSONObject.toJSON(langs));
+		System.out.println(JSONObject.toJSONString(langs));
+
+		JSONArray langs2 = new JSONArray();
+		langs2.add("Java");
+		langs2.add("Golang");
+		langs2.add("Python");
+		System.out.println(JSONObject.toJSONString(langs2));
 	}
 
 	@Test
 	public void mapToJsonString() {
+		// map
 		Map<String, String> sub = new HashMap<>();
 		sub.put("server_name", "svr_a_002");
 		sub.put("server_ip", "127.0.1.2");
@@ -67,9 +74,17 @@ public final class OkHttpTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put("server", sub);
 		map.put("server_group_id", "svr_grp_001");
+		System.out.println("json: " + JSONObject.toJSONString(map));
 
-		String json = JSONObject.toJSONString(map);
-		System.out.println("json: " + json);
+		// json object
+		JSONObject sub2 = new JSONObject();
+		sub2.put("server_name", "svr_a_002");
+		sub2.put("server_ip", "127.0.1.2");
+
+		JSONObject json = new JSONObject();
+		json.put("server", sub2);
+		json.put("server_group_id", "svr_grp_001");
+		System.out.println("json: " + JSONObject.toJSONString(json));
 	}
 
 	@Test

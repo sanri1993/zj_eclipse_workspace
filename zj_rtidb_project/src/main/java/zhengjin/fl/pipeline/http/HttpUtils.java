@@ -98,6 +98,31 @@ public final class HttpUtils {
 		return response.body().string();
 	}
 
+	public static String delete(String url) throws IOException {
+		return delete(url, "{}");
+	}
+
+	public static String delete(String url, String body) throws IOException {
+		return delete(url, Collections.emptyMap(), body);
+	}
+
+	public static String delete(String url, Map<String, String> headers, String body) throws IOException {
+		HttpUrl.Builder builder = HttpUrl.parse(url).newBuilder();
+		RequestBody requestBody = RequestBody.create(body, Constants.MEDIA_TYPE_JSON);
+		Request.Builder request = new Request.Builder().url(builder.build().toString()).delete(requestBody);
+		for (String key : headers.keySet()) {
+			request.addHeader(key, headers.get(key));
+		}
+
+		Response response = client.newCall(request.build()).execute();
+		if (!response.isSuccessful()) {
+			throw new ErrorCodeException(
+					String.format("status code [%d], response body [%s]", response.code(), response.body().string()));
+		}
+
+		return response.body().string();
+	}
+
 	public static String getRequestBody(Request request) {
 		String requestContent = "";
 		if (request == null) {

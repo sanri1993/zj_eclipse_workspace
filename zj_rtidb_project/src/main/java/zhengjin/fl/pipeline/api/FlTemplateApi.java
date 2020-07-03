@@ -3,6 +3,7 @@ package zhengjin.fl.pipeline.api;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
@@ -15,7 +16,6 @@ import zhengjin.fl.pipeline.http.HttpUtils;
 
 public final class FlTemplateApi {
 
-	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(FlTemplateApi.class);
 
 	public static String listTemplatePipelines(String templateId) throws IOException {
@@ -70,10 +70,10 @@ public final class FlTemplateApi {
 			JSONObject pipeline = pipelines.getJSONObject(i);
 			if (pipelineId.equals(pipeline.getString("id"))) {
 				response = JSONObject.toJSONString(pipeline);
-				break;
+				return response;
 			}
 		}
-		return response;
+		return "";
 	}
 
 	public static String getTemplateJobData(String templateId, String jobId) throws IOException {
@@ -93,10 +93,86 @@ public final class FlTemplateApi {
 			JSONObject job = jobs.getJSONObject(i);
 			if (jobId.equals(job.getString("id"))) {
 				response = JSONObject.toJSONString(job);
-				break;
+				return response;
 			}
 		}
-		return response;
+		return "";
+	}
+
+	public static boolean deleteTemplatePipeline(String templateId, String pipelineId) {
+		final String url = Common.BASE_URL
+				+ String.format("template-market/v1/pipeline/template/%s/%s/delete", templateId, pipelineId);
+
+		String response = "";
+		try {
+			response = HttpUtils.delete(url);
+			LOGGER.info("delete template pipeline response: " + response);
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean deleteTemplatePipelineJob(String templateId, String jobId) {
+		final String url = Common.BASE_URL
+				+ String.format("template-market/v1/job/template/%s/%s/delete", templateId, jobId);
+
+		String response = "";
+		try {
+			response = HttpUtils.delete(url);
+			LOGGER.info("delete template job response: " + response);
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean copyTemplatePipeline(String templateId, String srcPipelineId, String newPipelineName) {
+		final String url = Common.BASE_URL
+				+ String.format("template-market/v1/pipeline/template/%s/create", templateId);
+
+		String srcPipeline = "";
+		try {
+			srcPipeline = getTemplatePipelineData(templateId, srcPipelineId);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		if (srcPipeline.length() == 0) {
+			LOGGER.error(
+					String.format("source templateId=[%s] pipeline=[%s] is not found!", templateId, srcPipelineId));
+			return false;
+		}
+
+		JSONObject json = (JSONObject) JSONObject.parse(srcPipeline);
+		JSONObject data = json.getJSONObject("data");
+		data.put("name", newPipelineName);
+		data.put("describe", String.format("pipeline copied from pipelineID=[%s]", srcPipelineId));
+
+		JSONObject requestJson = new JSONObject();
+		requestJson.put("engineTemplateId", templateId);
+		requestJson.put("pipelineKey", newPipelineName + "_" + UUID.randomUUID().toString().split("-")[0]);
+		requestJson.put("data", data);
+
+		String requestJsonStr = JSONObject.toJSONString(requestJson);
+		LOGGER.debug("copy template pipeline request: " + requestJsonStr);
+		try {
+			String response = HttpUtils.post(url, requestJsonStr);
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean copyTemplateJob(String templateId, String srcJobId, String newJobName) {
+		// TODO:
+		return true;
 	}
 
 }
