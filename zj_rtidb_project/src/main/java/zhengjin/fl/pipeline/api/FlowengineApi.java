@@ -56,4 +56,55 @@ public final class FlowengineApi {
 		return response;
 	}
 
+	public static boolean runFlPipeline(String instanceId, String templateId, String pipelineId) {
+		final String url = Common.BASE_URL
+				+ String.format("automl-engine/%s/automl/v1/pipeline/%s/%s/start", instanceId, templateId, pipelineId);
+
+		try {
+			String response = HttpUtils.post(url, "{}");
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	public static String listFlPipelineHistoryTasks(String instanceId, String pipelineId) throws IOException {
+		final String url = Common.BASE_URL
+				+ String.format("automl-engine/%s/automl/v1/pipeline/%s/historyList", instanceId, pipelineId);
+
+		String response = HttpUtils.get(url);
+		Common.verifyStatusCode(response);
+		return response;
+	}
+
+	public static boolean stopFlPipelineTask(String instanceId, String pipelineId, String taskId) {
+		final String url = Common.BASE_URL + String.format(
+				"automl-engine/%s/automl/v1/pipeline/%s/stopHistory?engineId=%s", instanceId, taskId, pipelineId);
+
+		try {
+			String response = HttpUtils.delete(url, "{}");
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean resumeFlPipelineTask(String instanceId, String pipelineId, String taskId) {
+		final String url = Common.BASE_URL + String.format(
+				"automl-engine/%s/automl/v1/pipeline/%s/resumeHistory?engineId=%s", instanceId, taskId, pipelineId);
+
+		try {
+			String response = HttpUtils.post(url, "{}");
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
 }
