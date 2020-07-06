@@ -107,9 +107,30 @@ public final class HttpUtils {
 	}
 
 	public static String delete(String url, Map<String, String> headers, String body) throws IOException {
+		return putOrDelete(url, headers, body, RequestType.DELETE);
+	}
+
+	public static String put(String url, String body) throws IOException {
+		return put(url, Collections.emptyMap(), body);
+	}
+
+	public static String put(String url, Map<String, String> headers, String body) throws IOException {
+		return putOrDelete(url, headers, body, RequestType.PUT);
+	}
+
+	public static String putOrDelete(String url, Map<String, String> headers, String body, RequestType type)
+			throws IOException {
 		HttpUrl.Builder builder = HttpUrl.parse(url).newBuilder();
 		RequestBody requestBody = RequestBody.create(body, Constants.MEDIA_TYPE_JSON);
-		Request.Builder request = new Request.Builder().url(builder.build().toString()).delete(requestBody);
+		Request.Builder request = new Request.Builder().url(builder.build().toString());
+		if (type == RequestType.DELETE) {
+			request.delete(requestBody);
+		} else if (type == RequestType.PUT) {
+			request.put(requestBody);
+		} else {
+			throw new IllegalArgumentException("invalid RequestType!");
+		}
+
 		for (String key : headers.keySet()) {
 			request.addHeader(key, headers.get(key));
 		}
@@ -142,6 +163,10 @@ public final class HttpUtils {
 		}
 		requestContent = buffer.readString(Charset.forName("utf-8"));
 		return requestContent;
+	}
+
+	private static enum RequestType {
+		PUT, DELETE;
 	}
 
 }

@@ -77,4 +77,21 @@ public final class FlTemplateApiTest {
 		Assert.assertTrue(FlTemplateApi.copyTemplatePipeline(templateId, "65", "copied_pipeline_test11"));
 	}
 
+	@Test
+	public void copyTemplateJobTest() {
+		Assert.assertTrue(FlTemplateApi.copyTemplateJob(templateId, "114", "copied_job_test11"));
+	}
+
+	@Test
+	public void updateTemplatePipelineDescTest() {
+		String desc = "copied pipeline, updated.";
+		Assert.assertTrue(FlTemplateApi.updateTemplatePipelineDesc(templateId, "77", desc));
+	}
+
+	@Test
+	public void updateTemplateJobDescTest() {
+		String desc = "copied job, updated.";
+		Assert.assertTrue(FlTemplateApi.updateTemplateJobDesc(templateId, "150", desc));
+	}
+
 }

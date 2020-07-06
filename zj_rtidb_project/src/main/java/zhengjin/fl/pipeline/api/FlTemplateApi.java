@@ -171,7 +171,90 @@ public final class FlTemplateApi {
 	}
 
 	public static boolean copyTemplateJob(String templateId, String srcJobId, String newJobName) {
-		// TODO:
+		final String url = Common.BASE_URL + String.format("template-market/v1/job/template/%s/create", templateId);
+
+		String srcJob = "";
+		try {
+			srcJob = getTemplateJobData(templateId, srcJobId);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		if (srcJob.length() == 0) {
+			LOGGER.error(String.format("source templateId=[%s] job=[%s] is not found!", templateId, srcJobId));
+			return false;
+		}
+
+		JSONObject reqJson = (JSONObject) JSONObject.parse(srcJob);
+		reqJson.put("id", null);
+		reqJson.put("name", newJobName);
+		reqJson.put("desc", String.format("job copied from jobID=[%s]", srcJobId));
+
+		String reqJsonStr = JSONObject.toJSONString(reqJson);
+		try {
+			String response = HttpUtils.post(url, reqJsonStr);
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean updateTemplatePipelineDesc(String templateId, String pipelineId, String desc) {
+		final String url = Common.BASE_URL
+				+ String.format("template-market/v1/pipeline/template/%s/update", templateId);
+
+		String srcPipeline = "";
+		try {
+			srcPipeline = getTemplatePipelineData(templateId, pipelineId);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		if (srcPipeline.length() == 0) {
+			LOGGER.error(String.format("source templateId=[%s] pipeline=[%s] is not found!", templateId, pipelineId));
+			return false;
+		}
+
+		JSONObject json = (JSONObject) JSONObject.parse(srcPipeline);
+		json.getJSONObject("data").put("describe", desc);
+
+		try {
+			String response = HttpUtils.put(url, JSONObject.toJSONString(json));
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean updateTemplateJobDesc(String templateId, String jobId, String desc) {
+		final String url = Common.BASE_URL + String.format("template-market/v1/job/template/%s/update", templateId);
+
+		String srcJob = "";
+		try {
+			srcJob = getTemplateJobData(templateId, jobId);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		if (srcJob.length() == 0) {
+			LOGGER.error(String.format("source templateId=[%s] job=[%s] is not found!", templateId, jobId));
+			return false;
+		}
+
+		JSONObject json = (JSONObject) JSONObject.parse(srcJob);
+		json.put("desc", desc);
+
+		try {
+			String response = HttpUtils.put(url, JSONObject.toJSONString(json));
+			Common.verifyStatusCode(response);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
 		return true;
 	}
 
