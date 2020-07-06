@@ -16,12 +16,15 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 public final class NioHttpTest {
 
 	private static ExecutorService pool = Executors.newCachedThreadPool();
 
 	@Test
-	public void syncNioHttpGetTest() throws InterruptedException {
+	public void syncNioHttpPostTest() throws InterruptedException {
 		SocketChannel socketChannel = null;
 
 		try {
@@ -34,11 +37,28 @@ public final class NioHttpTest {
 			socketChannel.connect(new InetSocketAddress("127.0.0.1", 17891));
 			Assert.assertTrue(socketChannel.isConnected());
 
+			// json
+			JSONObject serverInfo = new JSONObject();
+			serverInfo.put("server_name", "svr_a_002");
+			serverInfo.put("server_ip", "127.0.1.2");
+
+			JSONArray serverInfos = new JSONArray();
+			serverInfos.add(serverInfo);
+
+			JSONObject json = new JSONObject();
+			json.put("server_group_id", "svr_grp_001");
+			json.put("server_list", serverInfos);
+			String jsonStr = JSONObject.toJSONString(json);
+
 			// write
 			StringBuffer sb = new StringBuffer();
-			sb.append("GET / HTTP/1.1\r\n");
-			sb.append("Host: 127.0.0.1\r\n");
-			sb.append("\r\n");
+			sb.append("POST /demo/3 HTTP/1.1\r\n");
+			sb.append("Host: 127.0.0.1:17891\r\n");
+			sb.append("Content-Type: application/json;charset=utf-8\r\n");
+			sb.append(String.format("Content-Length: %d", jsonStr.length()));
+			sb.append("\r\n\r\n");
+			sb.append(jsonStr);
+			sb.append("\r\n\r\n");
 
 			ByteBuffer writeBuffer = ByteBuffer.wrap(sb.toString().getBytes());
 			while (writeBuffer.hasRemaining()) {
@@ -136,14 +156,12 @@ public final class NioHttpTest {
 			String[] fields = host.split(":");
 			socketChannel.configureBlocking(false);
 			socketChannel.connect(new InetSocketAddress(fields[0], Integer.valueOf(fields[1])));
-			socketChannel.register(selector, SelectionKey.OP_CONNECT);
+			socketChannel.register(selector, SelectionKey.OP_CONNECT); // => key.isConnectable()
 
-			HttpHandler handler;
+			HttpHandler handler = new HttpHandler(host, path);
 			while (true) {
 				System.out.println("Loop ...");
-				// if readyChannels > 0; select keys (return from selectedKeys()) of ready
-				// channels
-				int readyChannels = selector.select(500L);
+				int readyChannels = selector.select(500L); // => selector.selectedKeys()
 				if (readyChannels == 0) {
 					continue;
 				}
@@ -152,11 +170,10 @@ public final class NioHttpTest {
 				while (keyIterator.hasNext()) {
 					System.out.println("SelectedKeys loop ...");
 					SelectionKey key = keyIterator.next();
-					handler = new HttpHandler(key, host, path);
 					if (key.isConnectable()) {
-						handler.handleConnect();
+						handler.handleConnect(key);
 					} else if (key.isReadable()) {
-						handler.handleRead();
+						handler.handleRead(key);
 					}
 					keyIterator.remove();
 				}
@@ -177,29 +194,27 @@ public final class NioHttpTest {
 
 	private static class HttpHandler {
 
-		private SelectionKey key;
 		String host;
 		String path;
 
-		public HttpHandler(SelectionKey key, String host, String path) {
-			this.key = key;
+		public HttpHandler(String host, String path) {
 			this.host = host;
 			this.path = path;
 		}
 
-		public void handleConnect() throws IOException {
+		public void handleConnect(SelectionKey key) throws IOException {
 			System.out.println("Connect ready");
 			SocketChannel channel = (SocketChannel) key.channel();
 			channel.configureBlocking(false);
 
+			final int parallelNum = 3;
+			final int loopNum = 5;
 			if (channel.finishConnect()) {
-				final int parallelNum = 3;
 				for (int i = 0; i < parallelNum; i++) {
 					pool.submit(new Runnable() {
 						@Override
 						public void run() {
 							try {
-								int loopNum = 5;
 								for (int i = 0; i < loopNum; i++) {
 									write(channel, path, host);
 									TimeUnit.MILLISECONDS.sleep(100L);
@@ -210,11 +225,11 @@ public final class NioHttpTest {
 						}
 					});
 				}
-				channel.register(this.key.selector(), SelectionKey.OP_READ);
+				channel.register(key.selector(), SelectionKey.OP_READ); // => key.isReadable()
 			}
 		}
 
-		public void handleRead() throws IOException {
+		public void handleRead(SelectionKey key) throws IOException {
 			System.out.println("Read ready");
 			SocketChannel channel = (SocketChannel) key.channel();
 			channel.configureBlocking(false);
@@ -235,7 +250,7 @@ public final class NioHttpTest {
 	}
 
 	/**
-	 * 向通道内写入数据（from client to service）
+	 * 向通道内写入数据（client to service）
 	 * 
 	 * @param socketChannel
 	 * @throws IOException
@@ -260,7 +275,7 @@ public final class NioHttpTest {
 	}
 
 	/**
-	 * 从通道内读取数据（from server to client）
+	 * 从通道内读取数据（server to client）
 	 * 
 	 * @param socketChannel
 	 * @throws IOException
