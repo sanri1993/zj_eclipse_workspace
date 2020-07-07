@@ -27,7 +27,7 @@ public final class LogInterceptor implements Interceptor {
 			responseCode = String.valueOf(response.code());
 		} finally {
 			String duration = String.valueOf(System.currentTimeMillis() - start);
-			LOGGER.info("requestUrl:[{}], requestBody:[{}], responseCode:[{}], responseTime:[{}ms]", url, requestBody,
+			LOGGER.debug("requestUrl:[{}], requestBody:[{}], responseCode:[{}], responseTime:[{}ms]", url, requestBody,
 					responseCode, duration);
 		}
 

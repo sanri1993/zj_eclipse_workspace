@@ -148,6 +148,59 @@ public final class NioHttpTest {
 	}
 
 	@Test
+	public void asyncNioHttpGetTest02() {
+		final String path = "/demo/2?userid=xxx&username=xxx";
+		final String host = "127.0.0.1:17891";
+
+		try (SocketChannel socketChannel = SocketChannel.open(); Selector selector = Selector.open();) {
+			socketChannel.configureBlocking(false);
+			String[] fields = host.split(":");
+			socketChannel.connect(new InetSocketAddress(fields[0], Integer.valueOf(fields[1])));
+			socketChannel.register(selector, SelectionKey.OP_CONNECT);
+
+			// write
+			selector.select(); // blocked
+			Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
+			System.out.println("Write loop ...");
+			while (keyIterator.hasNext()) {
+				SelectionKey selectionKey = keyIterator.next();
+				if (selectionKey.isConnectable()) {
+					System.out.println("Connect ready");
+					SocketChannel channel = (SocketChannel) selectionKey.channel();
+					channel.configureBlocking(false);
+
+					if (channel.finishConnect()) { // do connect
+						for (int i = 0; i < 3; i++) {
+							write(channel, path, host);
+						}
+						channel.register(selector, SelectionKey.OP_READ);
+						break;
+					}
+					keyIterator.remove();
+				}
+			}
+
+			// read
+			selector.select(); // blocked
+			keyIterator = selector.selectedKeys().iterator();
+			while (keyIterator.hasNext()) {
+				SelectionKey selectionKey = keyIterator.next();
+				if (selectionKey.isReadable()) {
+					System.out.println("Read ready");
+					SocketChannel channel = (SocketChannel) selectionKey.channel();
+					channel.configureBlocking(false);
+
+					if (channel.isConnected()) {
+						read(channel);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
 	public void asyncNioMultiHttpGetTest() {
 		final String host = "127.0.0.1:17891";
 		final String path = "/mocktest/one/4?wait=200&unit=milli";
