@@ -13,8 +13,8 @@ import zhengjin.fl.pipeline.api.FlowengineApi;
 
 public final class FlowengineApiTest {
 
-	private final String workspaceId = "1";
-	private final String instanceId = "42";
+	private final String workspaceId = "47";
+	private final String instanceId = "371";
 	private final String templateId = "1";
 
 	@BeforeClass
@@ -56,7 +56,7 @@ public final class FlowengineApiTest {
 
 	@Test
 	public void listFlPipelineHistoryTasksTest() throws IOException {
-		String response = FlowengineApi.listFlPipelineHistoryTasks(instanceId, "6");
+		String response = FlowengineApi.listFlPipelineHistoryTasks(instanceId, "3");
 		JSONObject json = (JSONObject) JSONObject.parse(response);
 
 		JSONArray resList = new JSONArray();

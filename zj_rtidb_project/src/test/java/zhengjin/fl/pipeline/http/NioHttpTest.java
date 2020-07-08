@@ -13,7 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.alibaba.fastjson.JSONArray;
@@ -21,12 +23,26 @@ import com.alibaba.fastjson.JSONObject;
 
 public final class NioHttpTest {
 
-	private static ExecutorService pool = Executors.newCachedThreadPool();
+	private static ExecutorService pool;
+
+	private final String host = "127.0.0.1:17891";
+	private final String path = "/demo/2?userid=xxx&username=xxx";
+
+	@BeforeClass
+	public static void before() {
+		pool = Executors.newCachedThreadPool();
+	}
+
+	@AfterClass
+	public static void after() {
+		if (pool != null) {
+			pool.shutdown();
+		}
+	}
 
 	@Test
 	public void syncNioHttpPostTest() throws InterruptedException {
 		SocketChannel socketChannel = null;
-
 		try {
 			// 建立通道 此时并未连接网络
 			socketChannel = SocketChannel.open();
@@ -89,13 +105,11 @@ public final class NioHttpTest {
 
 	@Test
 	public void asyncNioHttpGetTest() {
-		final String path = "/demo/2?userid=xxx&username=xxx";
-		final String host = "127.0.0.1:17891";
+		String[] fields = this.host.split(":");
 
 		try (SocketChannel socketChannel = SocketChannel.open(); Selector selector = Selector.open();) {
 			// 非阻塞通道
 			socketChannel.configureBlocking(false);
-			String[] fields = host.split(":");
 			socketChannel.connect(new InetSocketAddress(fields[0], Integer.valueOf(fields[1])));
 
 			// SelectionKey.OP_CONNECT 连接就绪
@@ -125,7 +139,7 @@ public final class NioHttpTest {
 						channel.configureBlocking(false);
 
 						if (channel.finishConnect()) {
-							write(channel, path, host);
+							write(channel, this.path, this.host);
 							channel.register(selector, SelectionKey.OP_READ);
 						}
 					} else if (selectionKey.isReadable()) {
@@ -149,12 +163,10 @@ public final class NioHttpTest {
 
 	@Test
 	public void asyncNioHttpGetTest02() {
-		final String path = "/demo/2?userid=xxx&username=xxx";
-		final String host = "127.0.0.1:17891";
+		String[] fields = this.host.split(":");
 
 		try (SocketChannel socketChannel = SocketChannel.open(); Selector selector = Selector.open();) {
 			socketChannel.configureBlocking(false);
-			String[] fields = host.split(":");
 			socketChannel.connect(new InetSocketAddress(fields[0], Integer.valueOf(fields[1])));
 			socketChannel.register(selector, SelectionKey.OP_CONNECT);
 
@@ -171,7 +183,7 @@ public final class NioHttpTest {
 
 					if (channel.finishConnect()) { // do connect
 						for (int i = 0; i < 3; i++) {
-							write(channel, path, host);
+							write(channel, this.path, this.host);
 						}
 						channel.register(selector, SelectionKey.OP_READ);
 						break;
@@ -193,6 +205,7 @@ public final class NioHttpTest {
 					if (channel.isConnected()) {
 						read(channel);
 					}
+					keyIterator.remove();
 				}
 			}
 		} catch (IOException e) {
@@ -201,12 +214,37 @@ public final class NioHttpTest {
 	}
 
 	@Test
-	public void asyncNioMultiHttpGetTest() {
+	public void asyncNioHttpGetTest03() {
+		// NIO without event register
+		String[] fields = this.host.split(":");
+
+		try (SocketChannel socketChannel = SocketChannel.open(); Selector selector = Selector.open();) {
+			socketChannel.configureBlocking(false);
+			socketChannel.connect(new InetSocketAddress(fields[0], Integer.valueOf(fields[1])));
+
+			// write
+			if (socketChannel.finishConnect()) { // do connect
+				for (int i = 0; i < 3; i++) {
+					write(socketChannel, this.path, this.host);
+				}
+			}
+
+			// read
+			if (socketChannel.isConnected()) {
+				read(socketChannel);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void asyncNioMultiHttpGetTest() throws InterruptedException {
 		final String host = "127.0.0.1:17891";
 		final String path = "/mocktest/one/4?wait=200&unit=milli";
+		String[] fields = host.split(":");
 
-		try (SocketChannel socketChannel = SocketChannel.open(); Selector selector = Selector.open()) {
-			String[] fields = host.split(":");
+		try (SocketChannel socketChannel = SocketChannel.open(); Selector selector = Selector.open();) {
 			socketChannel.configureBlocking(false);
 			socketChannel.connect(new InetSocketAddress(fields[0], Integer.valueOf(fields[1])));
 			socketChannel.register(selector, SelectionKey.OP_CONNECT); // => key.isConnectable()
@@ -230,18 +268,12 @@ public final class NioHttpTest {
 					}
 					keyIterator.remove();
 				}
-
-				try {
-					TimeUnit.MILLISECONDS.sleep(50L);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				System.out.println("Active threads count: " + ((ThreadPoolExecutor) pool).getActiveCount());
+
+				TimeUnit.MILLISECONDS.sleep(50L);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			pool.shutdown();
 		}
 	}
 
@@ -260,7 +292,7 @@ public final class NioHttpTest {
 			SocketChannel channel = (SocketChannel) key.channel();
 			channel.configureBlocking(false);
 
-			final int parallelNum = 3;
+			final int parallelNum = 2;
 			final int loopNum = 5;
 			if (channel.finishConnect()) {
 				for (int i = 0; i < parallelNum; i++) {
@@ -319,9 +351,10 @@ public final class NioHttpTest {
 		sb.append("Accept: */*\r\n");
 		sb.append("\r\n");
 
-		ByteBuffer writeBuffer = ByteBuffer.wrap(sb.toString().getBytes());
 		String tag = String.format("[%s]: ", Thread.currentThread().getId());
 		System.out.println(tag + "Write to channel: " + sb.toString());
+
+		ByteBuffer writeBuffer = ByteBuffer.wrap(sb.toString().getBytes());
 		while (writeBuffer.hasRemaining()) {
 			socketChannel.write(writeBuffer);
 		}
@@ -346,6 +379,7 @@ public final class NioHttpTest {
 			result.append(new String(readBuffer.array(), 0, read, "UTF-8"));
 			readBuffer.clear();
 		}
+
 		String tag = String.format("[%s]: ", Thread.currentThread().getId());
 		System.out.println(tag + "Read from channel: " + result.toString());
 	}

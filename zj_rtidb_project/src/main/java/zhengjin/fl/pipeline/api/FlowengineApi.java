@@ -19,8 +19,8 @@ public final class FlowengineApi {
 		final String url = Common.BASE_URL + "keystone/v1/sessions";
 
 		Map<String, String> body = new HashMap<>();
-		body.put("username", "4pdadmin");
-		body.put("password", "admin");
+		body.put("username", Common.USER_NAME);
+		body.put("password", Common.PWD);
 
 		try {
 			String response = HttpUtils.post(url, JSONObject.toJSONString(body));

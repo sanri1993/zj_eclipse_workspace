@@ -5,16 +5,19 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,40 +35,47 @@ public final class HttpPerfTest {
 	private static boolean isRun = false;
 	private static boolean isWait = true;
 
-	@Test
-	public void HttpGetPerfTest() throws InterruptedException {
-		String url = "";
+	private final String host = "127.0.0.1:17891";
+	private String path;
+
+	@Before
+	public void before() {
 		if (isWait) {
 			// 当服务端mock等待时间 瓶颈在服务端 则http与nio的吞吐量相当
 			// 执行30s,2线程,mock等待时间5-10ms 总吞吐量为3.5k
-			url = "http://127.0.0.1:17891/mocktest/one/4";
+			path = "/mocktest/one/4?wait=%d&unit=milli";
 		} else {
 			// 当服务端没有mock等待时间 瓶颈在加压的客户端
 			// 执行30s,2线程 http总吞吐量为9W nio总吞吐量为15W
-			url = "http://127.0.0.1:17891/demo/2";
+			path = "/demo/2?wait=%d&unit=milli";
 		}
+	}
 
+	@Test
+	public void HttpGetPerfTest() {
 		int parallelNum = 2;
-		int runTime = 30;
+		int runTime = 5;
 
 		LOGGER.info("Running ...");
-		ExecutorService pool = null;
-		try {
-			pool = Executors.newFixedThreadPool(parallelNum);
-			for (int i = 0; i < parallelNum; i++) {
-				pool.submit(new httpGetProcess(url));
-			}
-
-			for (int i = 0; i < runTime; i++) {
-				TimeUnit.SECONDS.sleep(1L);
-				LOGGER.info("runTime=[{}]sec, thoughtput=[{}], failed=[{}].", i, COUNT.get(), FAILED.get());
-			}
-		} finally {
-			if (pool != null) {
-				pool.shutdown();
-			}
+		isRun = true;
+		ExecutorService pool = Executors.newFixedThreadPool(parallelNum);
+		List<Future<?>> futures = new ArrayList<>();
+		for (int i = 0; i < parallelNum; i++) {
+			Future<?> future = pool.submit(new httpGetProcess("http://" + this.host + this.path));
+			futures.add(future);
 		}
 
+		Thread schedule = new Thread(new MySchedule(pool, runTime));
+		schedule.start();
+
+		// if error, get exception from threads in pool
+		for (Future<?> future : futures) {
+			try {
+				future.get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
 		LOGGER.info("HTTP get perf test finish:");
 		LOGGER.info("thoughtput=[{}], failed=[{}].", COUNT.get(), FAILED.get());
 	}
@@ -80,43 +90,69 @@ public final class HttpPerfTest {
 
 		@Override
 		public void run() {
-			Map<String, String> params = new HashMap<>();
-			params.put("unit", "milli");
-
-			while (FAILED.get() < 10) {
+			while (isRun && (FAILED.get() < 10)) {
+				String reqUrl = String.format(this.url, (5 + new Random().nextInt(5)));
+				String response = "";
 				try {
-					params.put("wait", String.valueOf(5 + new Random().nextInt(5)));
-					String response = HttpUtils.get(this.url, params);
-					if (response.length() > 0) {
-						COUNT.addAndGet(1);
-					} else {
-						FAILED.addAndGet(1);
-					}
+					response = HttpUtils.get(reqUrl);
 				} catch (IOException e) {
 					FAILED.addAndGet(1);
 					LOGGER.error(e.getMessage());
 				}
+
+				if (response.length() > 0) {
+					COUNT.addAndGet(1);
+				} else {
+					FAILED.addAndGet(1);
+				}
+			}
+		}
+	}
+
+	private static class MySchedule implements Runnable {
+
+		ExecutorService pool;
+		int runTime;
+
+		public MySchedule(ExecutorService pool, int runTime) {
+			this.pool = pool;
+			this.runTime = runTime;
+		}
+
+		@Override
+		public void run() {
+			for (int i = 1; i <= this.runTime; i++) {
+				LOGGER.info("runTime=[{}]sec, thoughtput=[{}], failed=[{}].", i, COUNT.get(), FAILED.get());
+				try {
+					TimeUnit.SECONDS.sleep(1L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			LOGGER.info("Ready to shutdown");
+			if (pool != null) {
+				isRun = false;
+				try {
+					this.pool.awaitTermination(1L, TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				this.pool.shutdown();
 			}
 		}
 	}
 
 	@Test
 	public void NioGetPerfTest() throws InterruptedException, IOException {
-		String host = "127.0.0.1:17891";
-		String path = "";
-		if (isWait) {
-			path = "/mocktest/one/4?wait=%d&unit=milli";
-		} else {
-			path = "/demo/2?wait=%d&unit=milli";
-		}
-
 		int writeParallelNum = 1;
 		int readParallelNum = 1;
-		int runTime = 30;
+		int runTime = 5;
+		String[] fields = this.host.split(":");
 
 		StringBuffer sb = new StringBuffer();
-		sb.append(String.format("GET %s HTTP/1.1\r\n", path));
-		sb.append(String.format("Host: %s\r\n", host));
+		sb.append(String.format("GET %s HTTP/1.1\r\n", this.path));
+		sb.append(String.format("Host: %s\r\n", this.host));
 		sb.append("Accept: */*\r\n\r\n");
 
 		ExecutorService pool = null;
@@ -126,7 +162,6 @@ public final class HttpPerfTest {
 			socketChannel = SocketChannel.open();
 			selector = Selector.open();
 
-			String[] fields = host.split(":");
 			socketChannel.configureBlocking(false);
 			socketChannel.connect(new InetSocketAddress(fields[0], Integer.valueOf(fields[1])));
 			socketChannel.register(selector, SelectionKey.OP_CONNECT);
@@ -141,6 +176,7 @@ public final class HttpPerfTest {
 			Thread reader = new Thread((new NioReadProcess(selector, pool)));
 			reader.start();
 
+			// TODO: use a scheduled monitor task instead of main process
 			for (int i = 0; i < runTime; i++) {
 				TimeUnit.SECONDS.sleep(1L);
 				LOGGER.info("activeCount=[{}], blockQueueSize=[{}]", ((ThreadPoolExecutor) pool).getActiveCount(),
@@ -183,7 +219,7 @@ public final class HttpPerfTest {
 			while (keyIterator.hasNext()) {
 				SelectionKey key = keyIterator.next();
 				if (key.isConnectable()) {
-					System.out.println("Connect ready");
+					LOGGER.info("Connect ready");
 					SocketChannel channel = (SocketChannel) key.channel();
 					channel.configureBlocking(false);
 
@@ -193,7 +229,7 @@ public final class HttpPerfTest {
 								@Override
 								public void run() {
 									String reqBody = "";
-									while (isRun) {
+									while (isRun && (FAILED.get() < 10)) {
 										WRITE_COUNT.addAndGet(1);
 										reqBody = String.format(body, (5 + new Random().nextInt(5)));
 										try {
@@ -225,7 +261,7 @@ public final class HttpPerfTest {
 
 		@Override
 		public void run() {
-			while (isRun) {
+			while (isRun && (FAILED.get() < 10)) {
 				try {
 					int readyChannels = this.selector.select(500L);
 					if (readyChannels == 0) {

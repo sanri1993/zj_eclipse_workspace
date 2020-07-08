@@ -11,8 +11,8 @@ import com.alibaba.fastjson.JSONObject;
 
 public final class FlTemplateApiTest {
 
-	private final String templateId = "10032";
-	private final String pipelineId = "65";
+	private final String templateId = "10027";
+	private final String pipelineId = "33";
 	private final String jobId = "147";
 
 	@BeforeClass

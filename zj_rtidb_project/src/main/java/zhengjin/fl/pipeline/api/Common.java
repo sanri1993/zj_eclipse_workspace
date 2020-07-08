@@ -6,7 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 
 public final class Common {
 
-	static final String BASE_URL = "http://172.27.128.236:40121/";
+	static final String BASE_URL = "http://kp.hwwt2.com/";
+	static final String USER_NAME = "xxxxx";
+	static final String PWD = "xxxxx";
 	static final String DEFAULT_PAGE_SIZE = "20";
 
 	public static void verifyStatusCode(String response) throws IOException {
