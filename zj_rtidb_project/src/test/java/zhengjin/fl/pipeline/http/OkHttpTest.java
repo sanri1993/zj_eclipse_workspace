@@ -273,7 +273,7 @@ public final class OkHttpTest {
 	}
 
 	@Test
-	public void GuavaRetryTest01() {
+	public void guavaRetryTest01() {
 		final int maxRetryNumber = 3;
 
 		Callable<String> callable = new Callable<String>() {
@@ -314,7 +314,7 @@ public final class OkHttpTest {
 	}
 
 	@Test
-	public void GuavaRetryTest02() {
+	public void guavaRetryTest02() {
 		Callable<String> callable = new Callable<String>() {
 			int i = 0;
 			int[] mockCodes = new int[] { 502, 403, 200 };

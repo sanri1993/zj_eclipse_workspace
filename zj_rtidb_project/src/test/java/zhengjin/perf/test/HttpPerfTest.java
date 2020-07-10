@@ -52,7 +52,25 @@ public final class HttpPerfTest {
 	}
 
 	@Test
-	public void HttpGetPerfTest() {
+	public void loggerLevelTest() {
+		LOGGER.trace("Sample Trace");
+		LOGGER.debug("Sample Debug");
+		LOGGER.info("Sample Info");
+		LOGGER.warn("Sample Warn");
+		LOGGER.error("Sample Error\n");
+
+		org.apache.log4j.Logger logger4j = org.apache.log4j.Logger.getRootLogger();
+		logger4j.setLevel(org.apache.log4j.Level.toLevel("error"));
+
+		LOGGER.trace("Sample Trace After setLevel");
+		LOGGER.debug("Sample Debug After setLevel");
+		LOGGER.info("Sample Info After setLevel");
+		LOGGER.warn("Sample Warn After setLevel");
+		LOGGER.error("Sample Error After setLevel");
+	}
+
+	@Test
+	public void httpGetPerfTest() {
 		int parallelNum = 2;
 		int runTime = 5;
 
@@ -144,7 +162,7 @@ public final class HttpPerfTest {
 	}
 
 	@Test
-	public void NioGetPerfTest() throws InterruptedException, IOException {
+	public void nioGetPerfTest() throws InterruptedException, IOException {
 		int writeParallelNum = 1;
 		int readParallelNum = 1;
 		int runTime = 5;
