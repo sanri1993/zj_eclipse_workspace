@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicStampedReference;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -485,6 +487,87 @@ public class TestDemo {
 		String curTime = String.format("%d%d%d_%d%d%d", c.get(Calendar.YEAR), (c.get(Calendar.MONTH) + 1),
 				c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
 		System.out.println("current date time: " + curTime);
+	}
+
+	private static AtomicInteger index = new AtomicInteger(10);
+
+	@Test
+	public void testSampler14() throws InterruptedException {
+		// CAS机制中的ABA问题
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				index.compareAndSet(10, 11);
+				index.compareAndSet(11, 10);
+			}
+		}).start();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					TimeUnit.SECONDS.sleep(2L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				boolean isSuccess = index.compareAndSet(10, 12);
+				String message = String.format("Expected value is 10: %s, and set new value %d.",
+						String.valueOf(isSuccess), index.get());
+				System.out.println(message);
+			}
+		}).start();
+
+		TimeUnit.SECONDS.sleep(3L);
+		System.out.println("CAS ABA demo done.");
+	}
+
+	private static AtomicStampedReference<Integer> stampRef = new AtomicStampedReference<>(10, 1);
+
+	@Test
+	public void testSampler15() throws InterruptedException {
+		// 使用 AtomicStampedReference 解决ABA问题
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					TimeUnit.MILLISECONDS.sleep(200L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				String tag = Thread.currentThread().getName();
+				System.out.println(tag + " => 1st version: " + stampRef.getStamp());
+
+				stampRef.compareAndSet(10, 11, stampRef.getStamp(), stampRef.getStamp() + 1);
+				System.out.println(tag + " => 2nd version: " + stampRef.getStamp());
+
+				stampRef.compareAndSet(11, 10, stampRef.getStamp(), stampRef.getStamp() + 1);
+				System.out.println(tag + " => 3rd version: " + stampRef.getStamp());
+			}
+		}, "process-01").start();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String tag = Thread.currentThread().getName();
+				int stamp = stampRef.getStamp();
+				System.out.println(tag + " => 1st version: " + stampRef.getStamp());
+
+				try {
+					TimeUnit.SECONDS.sleep(2L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				boolean isSuccess = stampRef.compareAndSet(10, 12, stamp, stamp + 1);
+				String message = String.format("%s => update success: %s, and version expected [%d] and current: [%d].",
+						tag, isSuccess, stamp, stampRef.getStamp());
+				System.out.println(message);
+			}
+		}, "process-02").start();
+
+		TimeUnit.SECONDS.sleep(3L);
+		System.out.println("CAS ABA demo done.");
 	}
 
 }
