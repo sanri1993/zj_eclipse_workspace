@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -57,10 +59,23 @@ public class TestJsonDemo {
 	@Test
 	public void testDeSerialize() throws JsonProcessingException {
 		// 反序列化 将json转化成Java对象
+		System.out.println("De serialize by class:");
 		String json = "{\"name\":\"Henry\",\"age\":30}";
 		ObjectMapper mapper = new ObjectMapper();
 		User user = mapper.readValue(json, User.class);
 		System.out.println(user);
+
+		System.out.println("\nDe serialize by map:");
+		Map<?, ?> map = mapper.readValue(json, Map.class);
+		System.out.println(String.format("name:%s, age:%s", map.get("name"), map.get("age")));
+
+		System.out.println("\nDe serialize by jackson node:");
+		json = "[{\"name\":\"Henry\",\"age\":31}]";
+		ArrayNode arr = mapper.readValue(json, ArrayNode.class);
+		for (int i = 0; i < arr.size(); i++) {
+			JsonNode node = arr.get(i);
+			System.out.println(String.format("name:%s, age:%d", node.get("name").asText(), node.get("age").asInt()));
+		}
 	}
 
 	@Test
