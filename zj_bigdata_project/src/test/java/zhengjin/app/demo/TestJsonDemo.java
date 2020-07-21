@@ -7,14 +7,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -28,10 +31,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class TestJsonDemo {
 
+	private static ObjectMapper mapper;
+
+	@BeforeClass
+	public static void classSetup() {
+		mapper = new ObjectMapper();
+	}
+
 	@Test
 	public void testJsonObject() {
 		// json object操作
-		ObjectMapper mapper = new ObjectMapper();
 		ObjectNode json = mapper.createObjectNode();
 		json.put("name", "Henry");
 		json.put("age", 31);
@@ -43,6 +52,39 @@ public class TestJsonDemo {
 	}
 
 	@Test
+	public void testJsonObjectNull() throws JsonProcessingException {
+		// fastjson
+		JSONObject obj1 = new JSONObject();
+		obj1.put("name", "Vieira");
+		obj1.put("age", 35);
+		obj1.put("desc", null);
+		System.out.println("user info: " + JSONObject.toJSONString(obj1));
+
+		// jackson
+		ObjectNode obj2 = mapper.createObjectNode();
+		obj2.put("name", "Vieira");
+		obj2.put("age", 35);
+		// obj2.put("desc", null);
+		obj2.put("desc", "");
+		System.out.println("user info: " + mapper.writeValueAsString(obj2));
+	}
+
+	@Test
+	public void testJsonObjectUpdate() throws JsonMappingException, JsonProcessingException {
+		String json = "{\"name\":\"Henry\",\"age\":30}";
+
+		// fastjson
+		JSONObject user1 = (JSONObject) JSONObject.parse(json);
+		user1.put("age", 35);
+		System.out.println("update user info: " + JSONObject.toJSONString(user1));
+
+		// jackson
+		JsonNode user2 = mapper.readValue(json, JsonNode.class);
+		((ObjectNode) user2).put("age", 38);
+		System.out.println("update user info: " + mapper.writeValueAsString(user2));
+	}
+
+	@Test
 	public void testSerialize() throws JsonProcessingException {
 		// 序列化操作 将Java对象转化成json
 		User user = new User();
@@ -51,7 +93,6 @@ public class TestJsonDemo {
 		user.setGender(GENDER.MALE);
 		user.setBirthday(new Date());
 
-		ObjectMapper mapper = new ObjectMapper();
 		String s = mapper.writeValueAsString(user);
 		System.out.println(s);
 	}
@@ -61,7 +102,6 @@ public class TestJsonDemo {
 		// 反序列化 将json转化成Java对象
 		System.out.println("De serialize by class:");
 		String json = "{\"name\":\"Henry\",\"age\":30}";
-		ObjectMapper mapper = new ObjectMapper();
 		User user = mapper.readValue(json, User.class);
 		System.out.println(user);
 
@@ -71,17 +111,19 @@ public class TestJsonDemo {
 
 		System.out.println("\nDe serialize by jackson node:");
 		json = "[{\"name\":\"Henry\",\"age\":31}]";
-		ArrayNode arr = mapper.readValue(json, ArrayNode.class);
-		for (int i = 0; i < arr.size(); i++) {
-			JsonNode node = arr.get(i);
-			System.out.println(String.format("name:%s, age:%d", node.get("name").asText(), node.get("age").asInt()));
+		JsonNode arr = mapper.readValue(json, JsonNode.class);
+		if (arr.isArray()) {
+			for (int i = 0; i < arr.size(); i++) {
+				JsonNode node = arr.get(i);
+				System.out
+						.println(String.format("name:%s, age:%d", node.get("name").asText(), node.get("age").asInt()));
+			}
 		}
 	}
 
 	@Test
 	public void testDeSerializeDate() throws JsonProcessingException {
 		String json = "{\"name\":\"Henry\",\"age\":30,\"birthday\":1592800446397}";
-		ObjectMapper mapper = new ObjectMapper();
 		User user = mapper.readValue(json, User.class);
 		System.out.println(user);
 		System.out.println("user birthday: " + user.getBirthday());
@@ -95,7 +137,6 @@ public class TestJsonDemo {
 	@Test
 	public void testDeSerializeCustomDate() throws JsonProcessingException {
 		String json = "{\"name\":\"Henry\",\"age\":30,\"custom_birthday\":\"2020-01-01 01:12:23\"}";
-		ObjectMapper mapper = new ObjectMapper();
 		User user = mapper.readValue(json, User.class);
 		System.out.println(user);
 		System.out.println("user birthday: " + user.getCustomBirthday());
@@ -104,7 +145,6 @@ public class TestJsonDemo {
 	@Test
 	public void testDeSerializeEnum() throws JsonProcessingException {
 		String json = "{\"name\":\"Henry\",\"age\":30,\"gender\":1}";
-		ObjectMapper mapper = new ObjectMapper();
 		User user = mapper.readValue(json, User.class);
 		System.out.println(user);
 		System.out.println("user gender: " + user.getGender());
