@@ -33,7 +33,7 @@
 
 		<!-- cicd workflow -->
 		<!-- junit -->
-		<junit.version>4.11</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<maven.surefire.version>2.12.4</maven.surefire.version>
 		<runSuite>**/Test*.class</runSuite>
 		<!-- checkstyle -->
