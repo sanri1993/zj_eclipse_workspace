@@ -1,4 +1,4 @@
-package zhengjin.app.demo;
+package zhengjin.future.app;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -14,12 +14,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
-public final class FuturesApp {
+public final class ListenableFutureApp {
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 
 		// Generic
-		FuturesApp app = new FuturesApp();
+		ListenableFutureApp app = new ListenableFutureApp();
 		app.TestGeneric();
 
 		// ListenableFuture

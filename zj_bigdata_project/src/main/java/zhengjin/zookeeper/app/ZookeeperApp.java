@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.KeeperException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZookeeperApp {
 
 	private final static String TAG = ZookeeperLock.class.getSimpleName() + " => ";
-	private final static Logger logger = Logger.getLogger(ZookeeperApp.class);
+	private final static Logger logger = LoggerFactory.getLogger(ZookeeperApp.class);
 
 	private static List<String> msgCache = new ArrayList<>(20);
 

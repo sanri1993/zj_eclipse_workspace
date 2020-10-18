@@ -6,13 +6,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZookeeperConnectionPool implements ConnectionPool<ZooKeeper> {
 
-	private final static Logger logger = Logger.getLogger(ZookeeperConnectionPool.class);
+	private final static Logger logger = LoggerFactory.getLogger(ZookeeperConnectionPool.class);
 
 	// 等待zookeeper客户端创建完成的计数器
 	private static ThreadLocal<CountDownLatch> latchThreadLocal = ThreadLocal.withInitial(() -> new CountDownLatch(1));
