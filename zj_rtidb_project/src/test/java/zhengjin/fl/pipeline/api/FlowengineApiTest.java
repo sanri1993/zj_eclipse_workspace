@@ -9,8 +9,6 @@ import org.junit.Test;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import zhengjin.fl.pipeline.api.FlowengineApi;
-
 public final class FlowengineApiTest {
 
 	private final String workspaceId = "47";

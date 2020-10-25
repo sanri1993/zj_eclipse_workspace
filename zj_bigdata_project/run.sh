@@ -1,19 +1,34 @@
 #!/bin/bash
-set -uex
+set -eu
+
+jar_file="zj-bigdata-app.jar"
 
 if [[ $1 == "jar" ]]; then
-  # build jar package for hadoop, flink
+  # build jar package for hadoop, flink apps
   # if hadoop, check maven.compiler.source=1.7
   echo "run clean and package."
   mvn clean package -Dmaven.test.skip=true
 
   jar_dir="/tmp/flink_test"
-  jar_file="zj-bigdata-app.jar"
   if [[ ! -d ${jar_dir} ]]; then
     mkdir ${jar_dir}
   fi
-  mv target/${jar_file} ${jar_dir}/${jar_file}
+  cp target/${jar_file} ${jar_dir}/${jar_file}
 fi
+
+if [[ $1 == "server" ]]; then
+  echo "run netty http server."
+  java -cp target/${jar_file} zhengjin.netty.app.HttpServer
+fi
+
+if [[ $1 == "client" ]]; then
+  echo "run netty http client."
+  java -cp target/${jar_file} zhengjin.netty.app.HttpClient
+fi
+
+#
+# CI/CD
+#
 
 if [[ $1 == "check" ]]; then
   echo "run checkstyle."
@@ -51,4 +66,4 @@ fi
 
 echo "Java project ci DONE."
 
-set +uex
+set +ue

@@ -100,15 +100,23 @@
 			<artifactId>protobuf-java</artifactId>
 			<version>${protobuf.version}</version>
 		</dependency>
+
+<!-- 
 		<dependency>
 			<groupId>com._4paradigm</groupId>
 			<artifactId>rtidb-client</artifactId>
 			<version>${rtidb-version}</version>
 		</dependency>
-		<!-- Note: jar with "system" scope will not be added in final jar <dependency> 
-			<groupId>com._4paradigm</groupId> <artifactId>rtidb-client</artifactId> <version>${rtidb-version}</version> 
-			<scope>system</scope> <systemPath>${project.basedir}/libs/rtidb-client-${rtidb-version}.jar</systemPath> 
-			</dependency> -->
+ -->
+
+		<!-- Note: jar with "system" scope will not be added in final jar -->
+		<dependency>
+			<groupId>com._4paradigm</groupId>
+			<artifactId>rtidb-client</artifactId>
+			<version>${rtidb-version}</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/rtidb-client-${rtidb-version}.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>

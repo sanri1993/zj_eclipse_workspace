@@ -25,6 +25,7 @@
 		<jackson.version>2.11.0</jackson.version>
 		<fastjson.version>1.2.72</fastjson.version>
 		<guava.version>28.1-jre</guava.version>
+		<netty.version>4.1.42.Final</netty.version>
 
 		<!-- bigdata -->
 		<zookepper.version>3.4.13</zookepper.version>
@@ -95,6 +96,12 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>${netty.version}</version>
 		</dependency>
 
 		<!-- json -->
