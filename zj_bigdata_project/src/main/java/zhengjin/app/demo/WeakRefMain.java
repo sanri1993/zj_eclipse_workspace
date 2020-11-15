@@ -8,10 +8,11 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 
  * LeakCanary 原理例子
  *
  */
-public final class WeakRefApp {
+public final class WeakRefMain {
 
 	private static class MyKeyedWeakReference<T> extends WeakReference<T> {
 
@@ -99,7 +100,7 @@ public final class WeakRefApp {
 	public static void main(String[] args) {
 
 		boolean retained = true;
-		WeakRefApp app = new WeakRefApp();
+		WeakRefMain app = new WeakRefMain();
 
 		Object obj = new Object();
 		System.out.println("#1.create an object");

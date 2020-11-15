@@ -5,14 +5,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
-public final class BigdataApp {
+public final class BigdataMain {
 
-	private static final String TAG = BigdataApp.class.getSimpleName() + " => ";
-	private static final Logger logger = LoggerFactory.getLogger(BigdataApp.class);
+	private static final String TAG = BigdataMain.class.getSimpleName() + " => ";
+	private static final Logger logger = LoggerFactory.getLogger(BigdataMain.class);
 
 	public static void main(String[] args) {
 
-		BigdataApp app = new BigdataApp();
+		BigdataMain app = new BigdataMain();
 
 		for (String arg : args) {
 			logger.info(TAG + "argument: " + arg);
