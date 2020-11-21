@@ -26,6 +26,7 @@
 		<fastjson.version>1.2.72</fastjson.version>
 
 		<guava.version>28.1-jre</guava.version>
+		<jdt.version>3.3.0-v_771</jdt.version>
 		<netty.version>4.1.42.Final</netty.version>
 
 		<!--
@@ -125,6 +126,13 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>${fastjson.version}</version>
+		</dependency>
+
+		<!-- eclipse jdt -->
+		<dependency>
+		    <groupId>org.eclipse.jdt</groupId>
+		    <artifactId>core</artifactId>
+		    <version>${jdt.version}</version>
 		</dependency>
 
 		<!--

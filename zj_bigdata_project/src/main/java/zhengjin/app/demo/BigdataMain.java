@@ -22,11 +22,9 @@ public final class BigdataMain {
 		// test showcaseThrowables01
 		try {
 			app.showcaseThrowables01();
-
 		} catch (InvalidInputException e) {
 			// get the root cause
 			logger.error(Throwables.getRootCause(e).toString());
-
 		} catch (Exception e) {
 			// get the stack trace in string format
 			logger.error(Throwables.getStackTraceAsString(e));
@@ -38,7 +36,6 @@ public final class BigdataMain {
 		} catch (Exception e) {
 			logger.error(Throwables.getStackTraceAsString(e));
 		}
-
 	}
 
 	private void showcaseThrowables01() throws InvalidInputException {
