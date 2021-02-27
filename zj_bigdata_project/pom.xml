@@ -27,6 +27,7 @@
 
 		<guava.version>28.1-jre</guava.version>
 		<jdt.version>3.3.0-v_771</jdt.version>
+		<asm.version>8.0.1</asm.version>
 		<netty.version>4.1.42.Final</netty.version>
 
 		<!--
@@ -133,6 +134,18 @@
 		    <groupId>org.eclipse.jdt</groupId>
 		    <artifactId>core</artifactId>
 		    <version>${jdt.version}</version>
+		</dependency>
+
+		<!-- asm -->
+		<dependency>
+			<artifactId>asm-commons</artifactId>
+			<groupId>org.ow2.asm</groupId>
+			<version>${asm.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>asm-util</artifactId>
+			<groupId>org.ow2.asm</groupId>
+			<version>${asm.version}</version>
 		</dependency>
 
 		<!--
