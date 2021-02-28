@@ -1,6 +1,5 @@
 package zhengjin.asm.demo;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.objectweb.asm.ClassReader;
@@ -14,6 +13,14 @@ import org.objectweb.asm.tree.FieldNode;
 import static jdk.internal.org.objectweb.asm.Opcodes.ASM5;
 
 public class AddFieldDemo {
+
+	String coreApiSavePath;
+	String treeApiSavePath;
+
+	public AddFieldDemo(String coreApiSavePath, String treeApiSavePath) {
+		this.coreApiSavePath = coreApiSavePath;
+		this.treeApiSavePath = treeApiSavePath;
+	}
 
 	public void addFieldByCoreAPI() throws IOException {
 		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
@@ -34,7 +41,7 @@ public class AddFieldDemo {
 			}
 		};
 		cr.accept(cv, 0);
-		this.save(cw.toByteArray(), "/tmp/test/ApplicationModifiedByCoreApi.class");
+		Tools.save(cw.toByteArray(), this.coreApiSavePath);
 	}
 
 	@SuppressWarnings("restriction")
@@ -48,20 +55,7 @@ public class AddFieldDemo {
 
 		ClassWriter cw = new ClassWriter(0);
 		cn.accept(cw);
-		this.save(cw.toByteArray(), "/tmp/test/ApplicationModifiedByTreeApi.class");
-	}
-
-	private void save(byte[] bytes, String path) throws IOException {
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(path);
-			fos.write(bytes);
-		} finally {
-			if (fos != null) {
-				fos.close();
-			}
-		}
-		System.out.println("save to modified bytes to file: " + path);
+		Tools.save(cw.toByteArray(), this.treeApiSavePath);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -69,12 +63,19 @@ public class AddFieldDemo {
 		// see modified bytecode:
 		// javap -verbose ApplicationModified.class
 
-		AddFieldDemo demo = new AddFieldDemo();
+		String coreApiSavePath = "/tmp/test/ApplicationModifiedByCoreApi.class";
+		String treeApiSavePath = "/tmp/test/ApplicationModifiedByTreeApi.class";
+		AddFieldDemo demo = new AddFieldDemo(coreApiSavePath, treeApiSavePath);
+
 		System.out.println("add field for class by core API:");
 		demo.addFieldByCoreAPI();
+		Class<?> clazz = Tools.loadClass(coreApiSavePath);
+		Tools.printDeclaredMethodsAndFields(clazz);
 
 		System.out.println("\nadd field for class by tree API:");
 		demo.addFiledByTreeAPI();
+		clazz = Tools.loadClass(coreApiSavePath);
+		Tools.printDeclaredMethodsAndFields(clazz);
 	}
 
 }
