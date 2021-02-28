@@ -74,7 +74,7 @@ public class AddFieldDemo {
 
 		System.out.println("\nadd field for class by tree API:");
 		demo.addFiledByTreeAPI();
-		clazz = Tools.loadClass(coreApiSavePath);
+		clazz = Tools.loadClass(treeApiSavePath);
 		Tools.printDeclaredMethodsAndFields(clazz);
 	}
 
