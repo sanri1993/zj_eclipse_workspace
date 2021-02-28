@@ -10,11 +10,15 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.ASM5;
 
-public class DelComponentsDemo {
+/**
+ * Remove field and method of class by asm.
+ *
+ */
+public class RemoveContentDemo {
 
 	String savePath;
 
-	public DelComponentsDemo(String path) {
+	public RemoveContentDemo(String path) {
 		this.savePath = path;
 	}
 
@@ -49,7 +53,7 @@ public class DelComponentsDemo {
 	public static void main(String[] args) throws Exception {
 
 		String path = "/tmp/test/ApplicationModified.class";
-		DelComponentsDemo demo = new DelComponentsDemo(path);
+		RemoveContentDemo demo = new RemoveContentDemo(path);
 
 		System.out.println("delete field and method for class:");
 		demo.removeContentByCoreAPI();
