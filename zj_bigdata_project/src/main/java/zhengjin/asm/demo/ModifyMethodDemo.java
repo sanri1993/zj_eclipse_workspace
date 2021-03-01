@@ -1,7 +1,6 @@
 package zhengjin.asm.demo;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import org.objectweb.asm.ClassReader;
@@ -14,25 +13,16 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.esotericsoftware.reflectasm.shaded.org.objectweb.asm.Type;
 
-import static org.objectweb.asm.Opcodes.ASM5;
-
 public class ModifyMethodDemo {
-
-	String coreAPISavePath;
-	String treeAPISavePath;
 
 	private String owner = Type.getInternalName(Application.class);
 
-	public ModifyMethodDemo(String coreAPISavePath, String treeAPISavePath) {
-		this.coreAPISavePath = coreAPISavePath;
-		this.treeAPISavePath = treeAPISavePath;
-	}
-
-	public void modifyMethodByCoreAPI() throws IOException {
+	public void modifyMethodByCoreAPI(String coreAPISavePath) throws IOException {
 		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
-		ClassWriter cw = new ClassWriter(0);
+		// if no COMPUTE_MAXS, then get ERROR: java.lang.ClassFormatError
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 
-		ClassVisitor cv = new ClassVisitor(ASM5, cw) {
+		ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
 
 			@Override
 			public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
@@ -59,13 +49,13 @@ public class ModifyMethodDemo {
 		};
 
 		cr.accept(cv, 0);
-		Tools.save(cw.toByteArray(), this.coreAPISavePath);
+		Tools.save(cw.toByteArray(), coreAPISavePath);
 	}
 
-	public void modifyMethodByTreeAPI() throws IOException {
+	public void modifyMethodByTreeAPI(String treeAPISavePath) throws IOException {
 		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
 		ClassNode cn = new ClassNode();
-		cr.accept(cn, ASM5);
+		cr.accept(cn, Opcodes.ASM5);
 
 		final String methodName = "test01";
 		MethodNode newmn = new MethodNode(Opcodes.ACC_PUBLIC, methodName, "(I)I", null, null);
@@ -93,26 +83,7 @@ public class ModifyMethodDemo {
 
 		ClassWriter cw = new ClassWriter(0);
 		cn.accept(cw);
-		Tools.save(cw.toByteArray(), this.treeAPISavePath);
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		String coreApiSavePath = "/tmp/test/ApplicationModifiedByCoreApi.class";
-		String treeApiSavePath = "/tmp/test/ApplicationModifiedByTreeApi.class";
-		ModifyMethodDemo demo = new ModifyMethodDemo(coreApiSavePath, treeApiSavePath);
-
-		// ERROR: java.lang.ClassFormatError
-//		Tools.loadClass(coreApiSavePath);
-
-		System.out.println("modify method for class by tree api:");
-		demo.modifyMethodByTreeAPI();
-		Class<?> clazz = Tools.loadClass(treeApiSavePath);
-		Tools.printDeclaredMethodsAndFields(clazz);
-
-		Method test01 = clazz.getMethod("test01", int.class);
-		Integer result = (Integer) test01.invoke(clazz.newInstance(), 3);
-		System.out.println("\napplication test01 results: " + result);
+		Tools.save(cw.toByteArray(), treeAPISavePath);
 	}
 
 }

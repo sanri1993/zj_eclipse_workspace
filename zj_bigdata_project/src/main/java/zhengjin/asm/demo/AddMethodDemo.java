@@ -1,7 +1,6 @@
 package zhengjin.asm.demo;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -14,23 +13,19 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import static org.objectweb.asm.Opcodes.ASM5;
-
 public class AddMethodDemo {
 
-	String coreAPISavePath;
-	String treeAPISavePath;
-
-	public AddMethodDemo(String coreAPISavePath, String treeAPISavePath) {
-		this.coreAPISavePath = coreAPISavePath;
-		this.treeAPISavePath = treeAPISavePath;
-	}
-
-	public void addMethodByCoreAPI() throws IOException {
+	/**
+	 * Add a method for class and save to .class file by core API.
+	 * 
+	 * @param coreAPISavePath
+	 * @throws IOException
+	 */
+	public void addMethodByCoreAPI(String coreAPISavePath) throws IOException {
 		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
 		ClassWriter cw = new ClassWriter(0);
 
-		ClassVisitor cv = new ClassVisitor(ASM5, cw) {
+		ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
 
 			@Override
 			public void visitEnd() {
@@ -47,13 +42,19 @@ public class AddMethodDemo {
 			}
 		};
 		cr.accept(cv, 0);
-		Tools.save(cw.toByteArray(), this.coreAPISavePath);
+		Tools.save(cw.toByteArray(), coreAPISavePath);
 	}
 
-	public void addMethodByTreeAPI() throws IOException {
+	/**
+	 * Add a method for class and save to .class file by tree API.
+	 * 
+	 * @param treeAPISavePath
+	 * @throws IOException
+	 */
+	public void addMethodByTreeAPI(String treeAPISavePath) throws IOException {
 		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
 		ClassNode cn = new ClassNode();
-		cr.accept(cn, ASM5);
+		cr.accept(cn, Opcodes.ASM5);
 
 		// 添加add方法
 		MethodNode fn = new MethodNode(Opcodes.ACC_PUBLIC, "add", "(II)I", null, null);
@@ -68,32 +69,7 @@ public class AddMethodDemo {
 
 		ClassWriter cw = new ClassWriter(0);
 		cn.accept(cw);
-		Tools.save(cw.toByteArray(), this.treeAPISavePath);
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		String coreAPISavePath = "/tmp/test/ApplicationModifiedByCoreApi.class";
-		String treeAPISavePath = "/tmp/test/ApplicationModifiedByTreeApi.class";
-		AddMethodDemo demo = new AddMethodDemo(coreAPISavePath, treeAPISavePath);
-
-		System.out.println("add method for class by core API:");
-		demo.addMethodByCoreAPI();
-		Class<?> clazz = Tools.loadClass(coreAPISavePath);
-		Tools.printDeclaredMethodsAndFields(clazz);
-
-		Method add = clazz.getMethod("add", int.class, int.class);
-		Object result = add.invoke(clazz.newInstance(), 10, 20);
-		System.out.println("\nadd results: " + (Integer) result);
-
-		System.out.println("\nadd method for class by tree API:");
-		demo.addMethodByTreeAPI();
-		clazz = Tools.loadClass(treeAPISavePath);
-		Tools.printDeclaredMethodsAndFields(clazz);
-
-		add = clazz.getMethod("add", int.class, int.class);
-		result = add.invoke(clazz.newInstance(), 15, 25);
-		System.out.println("\nadd results: " + (Integer) result);
+		Tools.save(cw.toByteArray(), treeAPISavePath);
 	}
 
 }

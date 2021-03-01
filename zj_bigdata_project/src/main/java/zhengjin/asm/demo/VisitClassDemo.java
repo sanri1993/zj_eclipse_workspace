@@ -7,20 +7,18 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import static jdk.internal.org.objectweb.asm.Opcodes.ASM5;
-
 public class VisitClassDemo {
 
 	public void visitByCoreAPI() throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
+		ClassReader cr = new ClassReader(Application.class.getName());
 		ClassWriter cw = new ClassWriter(0);
 
-		@SuppressWarnings("restriction")
-		ClassVisitor cv = new ClassVisitor(ASM5, cw) {
+		ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
 
 			@Override
 			public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {

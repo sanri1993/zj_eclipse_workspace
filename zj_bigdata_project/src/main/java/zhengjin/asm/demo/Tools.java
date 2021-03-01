@@ -61,10 +61,14 @@ public final class Tools {
 		return loader.loadClass(classFile);
 	}
 
-	public static void printDeclaredMethodsAndFields(Class<?> clazz) {
+	public static void printDeclaredMethodsAndFields(Class<?> clazz)
+			throws InstantiationException, IllegalAccessException {
+		System.out.println("print class info for: " + clazz.getName());
 		System.out.println("class fields:");
+		Object instance = clazz.newInstance();
 		for (Field field : clazz.getDeclaredFields()) {
-			System.out.println(field.getName());
+			field.setAccessible(true);
+			System.out.printf("%s=%s\n", field.getName(), field.get(instance));
 		}
 
 		System.out.println("class methods:");
@@ -83,11 +87,6 @@ public final class Tools {
 		Class<?> clz = loadJAR("/tmp/test/app.jar", "zhengjin.asm.demo.Application");
 		System.out.println("load (jar) Application class hashcode: " + clz.hashCode());
 		printDeclaredMethodsAndFields(clz);
-
-		System.out.println("\nload .class, and print class info:");
-		Class<?> clazz = loadClass("/tmp/test/ApplicationModifiedByTreeApi.class");
-		System.out.println("load (.class) Application class hashcode: " + clazz.hashCode());
-		printDeclaredMethodsAndFields(clazz);
 	}
 
 }
