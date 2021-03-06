@@ -14,6 +14,11 @@ import org.objectweb.asm.tree.MethodNode;
 
 public class VisitClassDemo {
 
+	/**
+	 * Visit Application class fields and methods by core API.
+	 * 
+	 * @throws IOException
+	 */
 	public void visitByCoreAPI() throws IOException {
 		ClassReader cr = new ClassReader(Application.class.getName());
 		ClassWriter cw = new ClassWriter(0);
@@ -37,8 +42,13 @@ public class VisitClassDemo {
 		cr.accept(cv, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG);
 	}
 
+	/**
+	 * Visit Application class fields and methods by tree API.
+	 * 
+	 * @throws IOException
+	 */
 	public void visitByTreeAPI() throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
+		ClassReader cr = new ClassReader(Application.class.getName());
 		ClassNode cn = new ClassNode();
 		cr.accept(cn, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG);
 

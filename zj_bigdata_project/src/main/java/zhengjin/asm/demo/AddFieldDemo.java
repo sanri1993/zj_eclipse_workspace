@@ -1,6 +1,5 @@
 package zhengjin.asm.demo;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.objectweb.asm.ClassReader;
@@ -15,13 +14,13 @@ import org.objectweb.asm.tree.FieldNode;
 public class AddFieldDemo {
 
 	/**
-	 * Add a field for class and save to .class file by core API.
+	 * Add a field for Application class and save to .class file by core API.
 	 * 
 	 * @param coreApiSavePath
 	 * @throws IOException
 	 */
-	public void addFieldByCoreAPI(String coreApiSavePath) throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getName());
+	public void addFieldByCoreAPI(String classFilePath, String coreApiSavePath) throws IOException {
+		ClassReader cr = Tools.getClassReaderFromClassFile(classFilePath);
 		ClassWriter cw = new ClassWriter(0);
 
 		ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
@@ -30,25 +29,27 @@ public class AddFieldDemo {
 			public void visitEnd() {
 				super.visitEnd();
 
-				FieldVisitor fv = cv.visitField(Opcodes.ACC_PUBLIC, "name", "Ljava/lang/String;", null, "demo");
+				FieldVisitor fv = cv.visitField(Opcodes.ACC_PUBLIC, "name", Type.getDescriptor(String.class), null,
+						"demo");
 				if (fv != null) {
 					System.out.println("field added.");
 					fv.visitEnd();
 				}
 			}
 		};
+
 		cr.accept(cv, 0);
 		Tools.save(cw.toByteArray(), coreApiSavePath);
 	}
 
 	/**
-	 * Add a field for class and save to .class file by tree API.
+	 * Add a field for Application class and save to .class file by tree API.
 	 * 
 	 * @param treeApiSavePath
 	 * @throws IOException
 	 */
-	public void addFiledByTreeAPI(String treeApiSavePath) throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getName());
+	public void addFiledByTreeAPI(String classFilePath, String treeApiSavePath) throws IOException {
+		ClassReader cr = Tools.getClassReaderFromClassFile(classFilePath);
 		ClassNode cn = new ClassNode();
 		cr.accept(cn, Opcodes.ASM5);
 
@@ -61,17 +62,15 @@ public class AddFieldDemo {
 	}
 
 	/**
-	 * Read bytes from .class file and add a field.
+	 * Get class from .class file, and add a field for class.
 	 * 
 	 * @param readPath
-	 * @param savePath
-	 * @return
+	 * @return Modified class.
 	 * @throws IOException
 	 */
 	public Class<?> readClassFileAndAddField(String readPath) throws IOException {
-		FileInputStream fis = new FileInputStream(readPath);
-		ClassReader reader = new ClassReader(fis);
-		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		ClassReader reader = Tools.getClassReaderFromClassFile(readPath);
+		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 
 		ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, writer) {
 

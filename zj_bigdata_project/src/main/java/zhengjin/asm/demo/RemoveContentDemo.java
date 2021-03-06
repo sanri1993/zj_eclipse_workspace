@@ -10,21 +10,16 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.ASM5;
 
-/**
- * Remove field and method of class by asm.
- *
- */
 public class RemoveContentDemo {
 
-	String savePath;
-
-	public RemoveContentDemo(String path) {
-		this.savePath = path;
-	}
-
-	public void removeContentByCoreAPI() throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
-		ClassWriter cw = new ClassWriter(0);
+	/**
+	 * Remove a field and method from Application class, and save to .class file.
+	 * 
+	 * @throws IOException
+	 */
+	public void removeContentByCoreAPI(String classFilePath, String savePath) throws IOException {
+		ClassReader cr = Tools.getClassReaderFromClassFile(classFilePath);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
 		ClassVisitor cv = new ClassVisitor(ASM5, cw) {
 
@@ -47,18 +42,7 @@ public class RemoveContentDemo {
 		};
 
 		cr.accept(cv, 0);
-		Tools.save(cw.toByteArray(), this.savePath);
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		String path = "/tmp/test/ApplicationModified.class";
-		RemoveContentDemo demo = new RemoveContentDemo(path);
-
-		System.out.println("delete field and method for class:");
-		demo.removeContentByCoreAPI();
-		Class<?> clazz = Tools.loadClass(path);
-		Tools.printDeclaredMethodsAndFields(clazz);
+		Tools.save(cw.toByteArray(), savePath);
 	}
 
 }

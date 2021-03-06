@@ -16,13 +16,13 @@ import org.objectweb.asm.tree.VarInsnNode;
 public class AddMethodDemo {
 
 	/**
-	 * Add a method for class and save to .class file by core API.
+	 * Add a method for Application class and save to .class file by core API.
 	 * 
 	 * @param coreAPISavePath
 	 * @throws IOException
 	 */
-	public void addMethodByCoreAPI(String coreAPISavePath) throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
+	public void addMethodByCoreAPI(String classFilePath, String coreAPISavePath) throws IOException {
+		ClassReader cr = Tools.getClassReaderFromClassFile(classFilePath);
 		ClassWriter cw = new ClassWriter(0);
 
 		ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
@@ -41,18 +41,19 @@ public class AddMethodDemo {
 				mv.visitEnd();
 			}
 		};
+
 		cr.accept(cv, 0);
 		Tools.save(cw.toByteArray(), coreAPISavePath);
 	}
 
 	/**
-	 * Add a method for class and save to .class file by tree API.
+	 * Add a method for Application class and save to .class file by tree API.
 	 * 
 	 * @param treeAPISavePath
 	 * @throws IOException
 	 */
-	public void addMethodByTreeAPI(String treeAPISavePath) throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
+	public void addMethodByTreeAPI(String classFilePath, String treeAPISavePath) throws IOException {
+		ClassReader cr = Tools.getClassReaderFromClassFile(classFilePath);
 		ClassNode cn = new ClassNode();
 		cr.accept(cn, Opcodes.ASM5);
 

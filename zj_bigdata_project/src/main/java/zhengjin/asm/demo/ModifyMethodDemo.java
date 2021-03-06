@@ -17,9 +17,14 @@ public class ModifyMethodDemo {
 
 	private String owner = Type.getInternalName(Application.class);
 
+	/**
+	 * Modify a method of Application, and save to .class file by core API.
+	 * 
+	 * @param coreAPISavePath
+	 * @throws IOException
+	 */
 	public void modifyMethodByCoreAPI(String coreAPISavePath) throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
-		// if no COMPUTE_MAXS, then get ERROR: java.lang.ClassFormatError
+		ClassReader cr = new ClassReader(Application.class.getName());
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 
 		ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
@@ -40,7 +45,7 @@ public class ModifyMethodDemo {
 					mv.visitVarInsn(Opcodes.ILOAD, 1);
 					mv.visitInsn(Opcodes.IADD);
 					mv.visitInsn(Opcodes.IRETURN);
-					mv.visitMaxs(2, 2);
+//					mv.visitMaxs(2, 2);
 					mv.visitEnd();
 					return mv;
 				}
@@ -52,8 +57,14 @@ public class ModifyMethodDemo {
 		Tools.save(cw.toByteArray(), coreAPISavePath);
 	}
 
+	/**
+	 * Modify a method of Application, and save to .class file by tree API.
+	 * 
+	 * @param treeAPISavePath
+	 * @throws IOException
+	 */
 	public void modifyMethodByTreeAPI(String treeAPISavePath) throws IOException {
-		ClassReader cr = new ClassReader(Application.class.getCanonicalName());
+		ClassReader cr = new ClassReader(Application.class.getName());
 		ClassNode cn = new ClassNode();
 		cr.accept(cn, Opcodes.ASM5);
 

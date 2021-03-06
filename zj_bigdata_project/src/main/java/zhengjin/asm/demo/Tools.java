@@ -1,6 +1,7 @@
 package zhengjin.asm.demo;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+
+import org.objectweb.asm.ClassReader;
 
 public final class Tools {
 
@@ -31,6 +34,15 @@ public final class Tools {
 		System.out.println("save bytes to file: " + path);
 	}
 
+	/**
+	 * Load class from jar file.
+	 * 
+	 * @param path
+	 * @param className
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public static Class<?> loadJAR(String path, String className) throws ClassNotFoundException, IOException {
 		File file = new File(path);
 		if (!file.exists()) {
@@ -51,6 +63,13 @@ public final class Tools {
 		return clz;
 	}
 
+	/**
+	 * Load class from .class file by custom class loader.
+	 * 
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
 	public static Class<?> loadClass(String path) throws IOException {
 		File classFile = new File(path);
 		if (!classFile.exists()) {
@@ -59,6 +78,18 @@ public final class Tools {
 
 		MyClassLoader loader = new MyClassLoader();
 		return loader.loadClass(classFile);
+	}
+
+	public static ClassReader getClassReaderFromClassFile(String classFilePath) throws IOException {
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(classFilePath);
+			return new ClassReader(fis);
+		} finally {
+			if (fis != null) {
+				fis.close();
+			}
+		}
 	}
 
 	public static void printDeclaredMethodsAndFields(Class<?> clazz)

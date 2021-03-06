@@ -15,4 +15,8 @@ public class Application {
 	void test02() {
 	}
 
+	public void test03() {
+		System.out.println("mid");
+	}
+
 }
