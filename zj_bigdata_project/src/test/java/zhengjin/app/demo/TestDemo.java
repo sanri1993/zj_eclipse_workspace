@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -568,6 +569,26 @@ public class TestDemo {
 
 		TimeUnit.SECONDS.sleep(3L);
 		System.out.println("CAS ABA demo done.");
+	}
+
+	@Test
+	public void testSampler16() {
+		// test delete node from head for LinkedHashSet
+		LinkedHashSet<String> set = new LinkedHashSet<>(10);
+		set.add("a");
+		set.add("b");
+		set.add("c");
+
+		for (String item : set) {
+			set.remove(item);
+			break;
+		}
+
+		set.add("d");
+		System.out.println("LinkedHashSet items:");
+		for (String item : set) {
+			System.out.println(item);
+		}
 	}
 
 }
