@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 /**
- * 淘汰算法 LRU: Least Recently Used
+ * 淘汰算法 LRU: Least Recently Used. 当存储的数据已满时，把最久没有被访问到的数据淘汰。
  *
  */
 public class LRUCache implements Cache {

@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * 淘汰算法 LFU: Least Frequently Used.
+ * 淘汰算法 LFU: Least Frequently Used. 存储数据已满时，先检查访问次数，如果次数一致，则把最久没有被访问到的数据淘汰。
  * 
  */
 public class LFUCache implements Cache {
@@ -59,7 +59,7 @@ public class LFUCache implements Cache {
 			}
 		});
 
-		System.out.println("Cache nodes by freq:");
+		System.out.println("Cache items by freq:");
 		for (Integer key : keysArray) {
 			for (Node node : this.sequence.get(key)) {
 				System.out.printf("%s,", node);
