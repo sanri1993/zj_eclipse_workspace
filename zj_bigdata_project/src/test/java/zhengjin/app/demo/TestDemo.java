@@ -1,7 +1,9 @@
 package zhengjin.app.demo;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -588,6 +590,117 @@ public class TestDemo {
 		System.out.println("LinkedHashSet items:");
 		for (String item : set) {
 			System.out.println(item);
+		}
+	}
+
+	public static class MySuper {
+
+		private static final Map<String, Map<String, Method>> setters = new HashMap<>();
+
+		public void init(String key, String value) throws Exception {
+			String clazzName = this.getClass().getSimpleName();
+			Map<String, Method> methods = setters.get(clazzName);
+			if (methods == null) {
+				methods = new HashMap<>();
+				setters.put(clazzName, methods);
+			}
+
+			String methodName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
+			Method setter = methods.get(methodName);
+			if (setter == null) {
+				System.out.println("init method: " + methodName);
+				setter = this.getClass().getDeclaredMethod(methodName, String.class);
+				methods.put(methodName, setter);
+			}
+			setter.invoke(this, value);
+		}
+	}
+
+	public static class MyChild01 extends MySuper {
+
+		private String id;
+		private String name;
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getId() {
+			return this.id;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return this.name;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("child01: id=%s, name=%s", this.id, this.name);
+		}
+	}
+
+	public static class MyChild02 extends MySuper {
+
+		private String id;
+		private String role;
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getId() {
+			return this.id;
+		}
+
+		public void setRole(String role) {
+			this.role = role;
+		}
+
+		public String getRole() {
+			return this.role;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("child02: id=%s, role=%s", this.id, this.role);
+		}
+	}
+
+	@Test
+	public void testSampler17() throws Exception {
+		// 1. 通过反射来创建对象
+		// 2. 创建多个对象时，通过缓存Method来提高性能
+		String[] names = new String[] { "python", "java", "golang" };
+		String[] roles = new String[] { "admin", "dev", "tester" };
+
+		List<MyChild01> children01 = new ArrayList<>();
+		for (int i = 0; i < names.length; i++) {
+			MyChild01 child = new MyChild01();
+			child.init("id", Integer.toString(i));
+			child.init("name", names[i]);
+			children01.add(child);
+		}
+
+		List<MyChild02> children02 = new ArrayList<>();
+		for (int i = 0; i < roles.length; i++) {
+			MyChild02 child = new MyChild02();
+			child.init("id", Integer.toString(i));
+			child.init("role", roles[i]);
+			children02.add(child);
+		}
+
+		System.out.println("\nchild01 init:");
+		for (MyChild01 child : children01) {
+			System.out.println(child);
+		}
+
+		System.out.println("\nchild02 init:");
+		for (MyChild02 child : children02) {
+			System.out.println(child);
 		}
 	}
 
