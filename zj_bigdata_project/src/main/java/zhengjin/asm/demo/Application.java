@@ -10,13 +10,15 @@ public class Application {
 	int b = 1;
 
 	public void test01() {
+		b = 2;
 	}
 
 	void test02() {
 	}
 
 	public void test03() {
-		System.out.println("mid");
+		System.out.println("hello");
+		System.out.println("asm");
 	}
 
 }
