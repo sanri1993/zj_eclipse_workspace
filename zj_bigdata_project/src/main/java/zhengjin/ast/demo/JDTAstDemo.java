@@ -1,4 +1,4 @@
-package zhengjin.app.demo;
+package zhengjin.ast.demo;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,14 +17,23 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-public class JDTAstMain {
+public class JDTAstDemo {
 
 	public static void main(String[] args) throws IOException {
+
+		System.out.println("JDTAstSample");
 		JDTAstSample();
+
+		System.out.println("\n\nvisitorMethods");
 		visitorMethods();
+
 		System.out.println("JDT ast sample Done.");
 	}
 
+	/**
+	 * ASTVisitor Refer:
+	 * https://help.eclipse.org/2020-09/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/dom/ASTVisitor.html
+	 */
 	private static void JDTAstSample() {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(
@@ -33,8 +42,6 @@ public class JDTAstMain {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
 		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-		// ASTVisitor Ref:
-		// https://help.eclipse.org/2020-09/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/dom/ASTVisitor.html
 		cu.accept(new ASTVisitor() {
 
 			Set<String> names = new HashSet<>();
@@ -59,7 +66,7 @@ public class JDTAstMain {
 	}
 
 	private static void visitorMethods() throws IOException {
-		String path = "/tmp/test/BigdataMain.java";
+		String path = "/tmp/test/Application.java";
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		String source = FileUtils.readFileToString(new File(path));
 		if (source.length() == 0) {
@@ -80,7 +87,7 @@ public class JDTAstMain {
 
 				List<String> stats = Arrays.asList(node.getBody().toString().split("\n"));
 				System.out.println("stats count: " + stats.stream().map(stat -> stat.trim()).count());
-				// stats.stream().forEach(System.out::println);
+				stats.stream().forEach(System.out::println);
 
 				node.getBody().accept(new ASTVisitor() {
 

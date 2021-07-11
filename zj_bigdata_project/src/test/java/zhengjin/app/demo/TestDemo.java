@@ -10,11 +10,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicStampedReference;
@@ -702,6 +704,34 @@ public class TestDemo {
 		for (MyChild02 child : children02) {
 			System.out.println(child);
 		}
+	}
+
+	@Test
+	public void testSampler18() throws Exception {
+		Set<String> set1 = new HashSet<>();
+		set1.add("a");
+		set1.add("b");
+		set1.add("c");
+
+		Set<String> set2 = new HashSet<>();
+		set2.add("b");
+		set2.add("c");
+		set2.add("d");
+
+		Set<String> results = new HashSet<>();
+		results.addAll(set1);
+		results.addAll(set2);
+		System.out.println("并集 " + String.join(",", results));
+
+		results.clear();
+		results.addAll(set1);
+		results.retainAll(set2);
+		System.out.println("交集 " + String.join(",", results));
+
+		results.clear();
+		results.addAll(set1);
+		results.removeAll(set2);
+		System.out.println("差集 " + String.join(",", results));
 	}
 
 }

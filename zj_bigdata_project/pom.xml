@@ -26,14 +26,13 @@
 		<fastjson.version>1.2.72</fastjson.version>
 
 		<guava.version>28.1-jre</guava.version>
-		<jdt.version>3.3.0-v_771</jdt.version>
-		<asm.version>8.0.1</asm.version>
 		<netty.version>4.1.42.Final</netty.version>
 
-		<!--
-		<protobuf.java.format>1.4</protobuf.java.format>
-		<protobuf.version>3.13.0</protobuf.version>
-		-->
+		<jdt.version>3.3.0-v_771</jdt.version>
+		<javaparser.version>3.15.21</javaparser.version>
+		<asm.version>8.0.1</asm.version>
+
+		<!-- <protobuf.java.format>1.4</protobuf.java.format> <protobuf.version>3.13.0</protobuf.version> -->
 
 		<!-- bigdata -->
 		<zookepper.version>3.4.13</zookepper.version>
@@ -129,11 +128,17 @@
 			<version>${fastjson.version}</version>
 		</dependency>
 
-		<!-- eclipse jdt -->
+		<!-- ast -->
 		<dependency>
-		    <groupId>org.eclipse.jdt</groupId>
-		    <artifactId>core</artifactId>
-		    <version>${jdt.version}</version>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>core</artifactId>
+			<version>${jdt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-symbol-solver-core</artifactId>
+			<version>${javaparser.version}</version>
 		</dependency>
 
 		<!-- asm -->
@@ -148,18 +153,10 @@
 			<version>${asm.version}</version>
 		</dependency>
 
-		<!--
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>${protobuf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.protobuf-java-format</groupId>
-			<artifactId>protobuf-java-format</artifactId>
-			<version>${protobuf.java.format}</version>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>com.google.protobuf</groupId> <artifactId>protobuf-java</artifactId> 
+			<version>${protobuf.version}</version> </dependency> <dependency> <groupId>com.googlecode.protobuf-java-format</groupId> 
+			<artifactId>protobuf-java-format</artifactId> <version>${protobuf.java.format}</version> 
+			</dependency> -->
 
 		<!-- netty -->
 		<dependency>
@@ -358,8 +355,9 @@
 					</rules>
 				</configuration>
 				<executions>
-					<!-- this will overwrite default "prepare-agent" <execution> <id>pre-test</id> 
-						<goals> <goal>prepare-agent</goal> </goals> </execution> -->
+					<!-- this will overwrite default "prepare-agent" -->
+					<!-- <execution> <id>pre-test</id> <goals> <goal>prepare-agent</goal> 
+						</goals> </execution> -->
 					<!-- external goal bind to "test" phase -->
 					<execution>
 						<id>post-test</id>
