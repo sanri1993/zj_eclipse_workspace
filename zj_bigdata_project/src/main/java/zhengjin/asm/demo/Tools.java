@@ -49,18 +49,18 @@ public final class Tools {
 			throw new FileNotFoundException("JAR file not found: " + path);
 		}
 
-		Class<?> clz = null;
 		URLClassLoader loader = null;
 		try {
+			Class<?> clz = null;
 			URL url = file.toURI().toURL();
 			loader = new URLClassLoader(new URL[] { url }, Thread.currentThread().getContextClassLoader());
 			clz = loader.loadClass(className);
+			return clz;
 		} finally {
 			if (loader != null) {
 				loader.close();
 			}
 		}
-		return clz;
 	}
 
 	/**

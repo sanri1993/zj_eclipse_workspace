@@ -7,10 +7,10 @@ import java.io.IOException;
 public final class MyClassLoader extends ClassLoader {
 
 	public Class<?> loadClass(File classFile) throws IOException {
-		byte[] bytes = new byte[(int) classFile.length()];
-		FileInputStream fis = null;
 		int len = 0;
+		byte[] bytes = new byte[(int) classFile.length()];
 
+		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(classFile);
 			while (true) {
